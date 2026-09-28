@@ -12,7 +12,7 @@ import {
   AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction,
 } from "@/components/ui/alert-dialog";
 import {
-  Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose,
+  Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter, DialogClose,
 } from "@/components/ui/dialog";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem,
@@ -161,7 +161,12 @@ const validateImageSize = (file: File): boolean => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="sm:max-w-[500px]">
-        <DialogHeader><DialogTitle>Edit Offer Slide</DialogTitle></DialogHeader>
+        <DialogHeader>
+          <DialogTitle>Edit Offer Slide</DialogTitle>
+          <DialogDescription className="text-xs text-muted-foreground">
+            Update offer slide link route and banner image.
+          </DialogDescription>
+        </DialogHeader>
         <div className="space-y-3 py-2">
           <div className="space-y-1">
             <label className="text-sm font-medium">Route (link)</label>

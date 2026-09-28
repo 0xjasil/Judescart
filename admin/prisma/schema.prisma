@@ -301,9 +301,14 @@ model Verification {
 
 model Banner {
   id             String   @id @default(auto()) @map("_id") @db.ObjectId
-  title          String?
-  desktopImage   String
-  mobileImage    String
+  title          String
+  image          String
+  tag            String?
+  offerPrice     String?
+  description    String?
+  badge          String?
+  buttonText     String?
+  buttonLink     String?
   order          Int      @default(0)
   isActive       Boolean  @default(true)
   createdAt      DateTime @default(now())

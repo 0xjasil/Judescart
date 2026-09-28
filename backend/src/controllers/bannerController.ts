@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import { prisma } from '../lib/prisma.js';
-import { uploadToCloudinary } from '../lib/upload.js';
-import cloudinary from '../lib/cloudinary.js';
+import { uploadToCloudinary, safeDeleteImage } from '../lib/upload.js';
 
 const MAX_ACTIVE = 5;
 
@@ -18,12 +17,8 @@ export const getBanners = async (req: Request, res: Response) => {
 
 export const createBanner = async (req: Request, res: Response) => {
     try {
-        const { title, buttonText, buttonLink } = req.body;
+        const { title, buttonText, buttonLink, tag, offerPrice, description, badge } = req.body;
         const files = req.files as { [fieldname: string]: Express.Multer.File[] };
-
-        if (!title || !title.trim()) {
-            return res.status(400).json({ error: "Title is required" });
-        }
 
         if (!files?.image?.[0]) {
             return res.status(400).json({ error: "Banner image is required" });
@@ -42,8 +37,12 @@ export const createBanner = async (req: Request, res: Response) => {
 
         const banner = await prisma.banner.create({
             data: {
-                title: title.trim(),
+                title: title ? title.trim() : "",
                 image: imageUrl,
+                tag: tag?.trim() || null,
+                offerPrice: offerPrice?.trim() || null,
+                description: description?.trim() || null,
+                badge: badge?.trim() || null,
                 buttonText: buttonText?.trim() || null,
                 buttonLink: buttonLink?.trim() || null,
                 order: nextOrder,
@@ -61,7 +60,7 @@ export const createBanner = async (req: Request, res: Response) => {
 export const updateBanner = async (req: Request, res: Response) => {
     try {
         const id = req.params.id as string;
-        const { title, order, isActive, buttonText, buttonLink } = req.body;
+        const { title, order, isActive, buttonText, buttonLink, tag, offerPrice, description, badge } = req.body;
         const files = req.files as { [fieldname: string]: Express.Multer.File[] };
 
         const existingBanner = await prisma.banner.findUnique({ where: { id } });
@@ -78,9 +77,7 @@ export const updateBanner = async (req: Request, res: Response) => {
         let imageUrl = existingBanner.image;
 
         if (files?.image?.[0]) {
-            // Delete old image from Cloudinary
-            const publicId = existingBanner.image.split("/").pop()?.split(".")[0];
-            if (publicId) await (cloudinary as any).uploader.destroy(`stevejon/${publicId}`);
+            await safeDeleteImage(existingBanner.image);
             imageUrl = await uploadToCloudinary(files.image[0].buffer, files.image[0].originalname);
         }
 
@@ -89,6 +86,10 @@ export const updateBanner = async (req: Request, res: Response) => {
             data: {
                 title: title !== undefined ? title.trim() : existingBanner.title,
                 image: imageUrl,
+                tag: tag !== undefined ? (tag.trim() || null) : existingBanner.tag,
+                offerPrice: offerPrice !== undefined ? (offerPrice.trim() || null) : existingBanner.offerPrice,
+                description: description !== undefined ? (description.trim() || null) : existingBanner.description,
+                badge: badge !== undefined ? (badge.trim() || null) : existingBanner.badge,
                 buttonText: buttonText !== undefined ? (buttonText.trim() || null) : existingBanner.buttonText,
                 buttonLink: buttonLink !== undefined ? (buttonLink.trim() || null) : existingBanner.buttonLink,
                 order: order !== undefined ? parseInt(order) : existingBanner.order,
@@ -109,12 +110,11 @@ export const deleteBanner = async (req: Request, res: Response) => {
         const banner = await prisma.banner.findUnique({ where: { id } });
         if (!banner) return res.status(404).json({ error: "Banner not found" });
 
-        const publicId = banner.image.split("/").pop()?.split(".")[0];
-        if (publicId) await (cloudinary as any).uploader.destroy(`stevejon/${publicId}`);
-
+        await safeDeleteImage(banner.image);
         await prisma.banner.delete({ where: { id } });
         res.json({ message: "Banner deleted" });
     } catch (error) {
+        console.error("Delete banner error:", error);
         res.status(500).json({ error: "Failed to delete banner" });
     }
 };

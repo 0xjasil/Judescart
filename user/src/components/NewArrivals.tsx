@@ -180,17 +180,21 @@ const FALLBACK_PRODUCTS: RawProduct[] = [
 
 export default function NewArrivals() {
   const [products, setProducts] = useState<RawProduct[]>(FALLBACK_PRODUCTS);
+  const [categories, setCategories] = useState<{ id: string; name: string }[]>([]);
   const [activeCategory, setActiveCategory] = useState<string>('ALL PRODUCTS');
   const carouselRef = React.useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    let isMounted = true;
+
+    // Fetch live products
     const fetchCatalog = async () => {
       try {
         const res = await fetch(`${getApiUrl()}/products?limit=50`);
         if (res.ok) {
           const json = await res.json();
           const items: RawProduct[] = Array.isArray(json?.data) ? json.data : [];
-          if (items.length > 0) {
+          if (items.length > 0 && isMounted) {
             setProducts(items);
           }
         }
@@ -199,8 +203,36 @@ export default function NewArrivals() {
       }
     };
 
+    // Fetch live categories for tabs
+    const fetchCategories = async () => {
+      try {
+        const res = await fetch(`${getApiUrl()}/categories`);
+        if (res.ok) {
+          const json = await res.json();
+          const list = Array.isArray(json) ? json : (Array.isArray(json?.data) ? json.data : []);
+          if (list.length > 0 && isMounted) {
+            setCategories(list);
+          }
+        }
+      } catch (err) {
+        console.error('Error fetching categories:', err);
+      }
+    };
+
     fetchCatalog();
+    fetchCategories();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
+
+  const categoryTabs = useMemo(() => {
+    if (categories.length > 0) {
+      return ['ALL PRODUCTS', ...categories.map((c) => c.name.toUpperCase())];
+    }
+    return CATEGORY_TABS;
+  }, [categories]);
 
   const scroll = (direction: 'left' | 'right') => {
     if (carouselRef.current) {
@@ -222,7 +254,7 @@ export default function NewArrivals() {
       const catName = p.category?.name?.toUpperCase().trim() || '';
       const prodName = p.name?.toUpperCase().trim() || '';
 
-      if (catName === target) return true;
+      if (catName === target || catName.includes(target) || target.includes(catName)) return true;
 
       // Category match aliases
       if (target === 'ACCESSORIES' && (catName.includes('ELECTR') || catName.includes('TECH') || catName.includes('ACCESS') || prodName.includes('HEADPHONE') || prodName.includes('WATCH') || prodName.includes('AUDIO'))) return true;
@@ -238,44 +270,41 @@ export default function NewArrivals() {
       return matched.slice(0, 12);
     }
 
-    return FALLBACK_PRODUCTS.filter((p) => {
-      const catName = p.category?.name?.toUpperCase().trim() || '';
-      return catName === target;
-    }).slice(0, 12);
+    return products.slice(0, 12);
   }, [products, activeCategory]);
 
   return (
-    <section className="sj-container space-y-4 sm:space-y-5">
+    <section className="sj-container space-y-3 sm:space-y-4">
       {/* =========================================================================
           TANEIRA-INSPIRED SECTION HEADER: CUSTOMER FAVOURITES
          ========================================================================= */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-[#E2E8F0] pb-5">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-3 border-b border-[#E2E8F0] pb-3">
         <div>
-          <div className="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-widest font-bold text-[#DF9F28] mb-1">
+          <div className="inline-flex items-center gap-1 text-[10px] sm:text-[11px] uppercase tracking-widest font-medium text-[#DF9F28] mb-0.5">
             <Sparkles className="w-3.5 h-3.5 text-[#DF9F28]" />
             <span>FEATURED AT JUDESCART</span>
           </div>
-          <h2 className="text-xl sm:text-2xl font-bold text-[#111111] tracking-tight">
+          <h2 className="text-lg sm:text-xl font-semibold text-[#111111] tracking-tight">
             Customer Favourites
           </h2>
-          <p className="text-xs text-[#555555] mt-0.5">
+          <p className="text-xs text-[#555555] mt-0.5 font-normal">
             Discover our highest-rated sartorial pieces, master leathers, and signature craftsmanship.
           </p>
         </div>
 
         {/* Category Pill Filters (Taneira Style Clean Rounded Navigation) & Nav Arrows */}
-        <div className="flex items-center justify-between md:justify-end gap-3">
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
-            {CATEGORY_TABS.map((tab) => {
+        <div className="flex items-center justify-between md:justify-end gap-2.5">
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 no-scrollbar">
+            {categoryTabs.map((tab) => {
               const isActive = activeCategory === tab;
               return (
                 <button
                   key={tab}
                   type="button"
                   onClick={() => setActiveCategory(tab)}
-                  className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-all shrink-0 cursor-pointer focus-visible:ring-2 focus-visible:ring-[#DF9F28] ${
+                  className={`px-3 py-1 rounded-md text-[11px] sm:text-xs font-medium tracking-wide transition-all shrink-0 cursor-pointer focus-visible:ring-2 focus-visible:ring-[#DF9F28] ${
                     isActive
-                      ? 'bg-[#0A192F] text-white shadow-sm border border-[#0A192F]'
+                      ? 'bg-[#0A192F] text-white shadow-2xs border border-[#0A192F]'
                       : 'bg-white text-[#555555] border border-[#E2E8F0] hover:border-[#DF9F28] hover:text-[#111111]'
                   }`}
                 >
@@ -286,22 +315,22 @@ export default function NewArrivals() {
           </div>
 
           {/* Desktop Top Navigation Arrow Controls */}
-          <div className="hidden sm:flex items-center gap-1.5 shrink-0 pl-2">
+          <div className="hidden sm:flex items-center gap-1 shrink-0 pl-1">
             <button
               type="button"
               onClick={() => scroll('left')}
-              className="w-8 h-8 rounded-full bg-white border border-[#E2E8F0] text-[#555555] hover:text-[#111111] hover:border-[#0A192F] hover:bg-slate-100 flex items-center justify-center transition-all shadow-2xs active:scale-95 cursor-pointer"
+              className="w-7 h-7 rounded-full bg-white border border-[#E2E8F0] text-[#555555] hover:text-[#111111] hover:border-[#0A192F] hover:bg-slate-100 flex items-center justify-center transition-all shadow-2xs active:scale-95 cursor-pointer"
               aria-label="Previous customer favourites"
             >
-              <ChevronLeft className="w-4 h-4" />
+              <ChevronLeft className="w-3.5 h-3.5" />
             </button>
             <button
               type="button"
               onClick={() => scroll('right')}
-              className="w-8 h-8 rounded-full bg-white border border-[#E2E8F0] text-[#555555] hover:text-[#111111] hover:border-[#0A192F] hover:bg-slate-100 flex items-center justify-center transition-all shadow-2xs active:scale-95 cursor-pointer"
+              className="w-7 h-7 rounded-full bg-white border border-[#E2E8F0] text-[#555555] hover:text-[#111111] hover:border-[#0A192F] hover:bg-slate-100 flex items-center justify-center transition-all shadow-2xs active:scale-95 cursor-pointer"
               aria-label="Next customer favourites"
             >
-              <ChevronRight className="w-4 h-4" />
+              <ChevronRight className="w-3.5 h-3.5" />
             </button>
           </div>
         </div>
@@ -315,26 +344,26 @@ export default function NewArrivals() {
         <button
           type="button"
           onClick={() => scroll('left')}
-          className="absolute -left-3 sm:-left-4 top-1/2 -translate-y-1/2 z-20 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/95 backdrop-blur-xs text-[#111111] shadow-md hover:shadow-lg border border-[#E2E8F0] flex items-center justify-center hover:bg-[#0A192F] hover:text-white transition-all active:scale-90 cursor-pointer opacity-90 group-hover/carousel:opacity-100"
+          className="absolute -left-2.5 sm:-left-3.5 top-1/2 -translate-y-1/2 z-20 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/95 backdrop-blur-xs text-[#111111] shadow-sm hover:shadow border border-[#E2E8F0] flex items-center justify-center hover:bg-[#0A192F] hover:text-white transition-all active:scale-90 cursor-pointer opacity-90 group-hover/carousel:opacity-100"
           aria-label="Scroll left"
         >
-          <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+          <ChevronLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
         </button>
 
         {/* Floating Right Navigation Button */}
         <button
           type="button"
           onClick={() => scroll('right')}
-          className="absolute -right-3 sm:-right-4 top-1/2 -translate-y-1/2 z-20 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/95 backdrop-blur-xs text-[#111111] shadow-md hover:shadow-lg border border-[#E2E8F0] flex items-center justify-center hover:bg-[#0A192F] hover:text-white transition-all active:scale-90 cursor-pointer opacity-90 group-hover/carousel:opacity-100"
+          className="absolute -right-2.5 sm:-right-3.5 top-1/2 -translate-y-1/2 z-20 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/95 backdrop-blur-xs text-[#111111] shadow-sm hover:shadow border border-[#E2E8F0] flex items-center justify-center hover:bg-[#0A192F] hover:text-white transition-all active:scale-90 cursor-pointer opacity-90 group-hover/carousel:opacity-100"
           aria-label="Scroll right"
         >
-          <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
+          <ChevronRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
         </button>
 
-        {/* Horizontal Carousel Track */}
+        {/* Horizontal Carousel Track - 60-70% footprint with 5 cards desktop */}
         <div
           ref={carouselRef}
-          className="flex overflow-x-auto no-scrollbar scroll-smooth snap-x snap-mandatory gap-3 sm:gap-4 lg:gap-5 pb-2"
+          className="flex overflow-x-auto no-scrollbar scroll-smooth snap-x snap-mandatory gap-2.5 sm:gap-3.5 lg:gap-4 pb-1.5"
         >
           {filteredProducts.map((prod) => {
             const mainVariant = prod.variants?.[0];
@@ -344,7 +373,7 @@ export default function NewArrivals() {
             return (
               <div
                 key={prod.id}
-                className="w-[calc(50%-6px)] sm:w-[calc(33.333%-11px)] lg:w-[calc(25%-15px)] shrink-0 snap-start"
+                className="w-[calc(48%-5px)] sm:w-[calc(32%-8px)] md:w-[calc(24%-10px)] lg:w-[calc(19.5%-12px)] shrink-0 snap-start"
               >
                 <ProductCard
                   id={prod.id}
@@ -371,8 +400,8 @@ export default function NewArrivals() {
       {/* =========================================================================
           TANEIRA-STYLE EDITORIAL SPOTLIGHT & LUCKY DRAW BANNER
          ========================================================================= */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch pt-2">
-        <div className="lg:col-span-8 relative rounded-xl overflow-hidden bg-[#0A192F] text-white p-6 sm:p-8 flex flex-col justify-between min-h-[220px] sm:min-h-[260px] border border-[#E2E8F0] shadow-sm">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-4 items-stretch pt-1">
+        <div className="lg:col-span-8 relative rounded-lg overflow-hidden bg-[#0A192F] text-white p-5 sm:p-6 flex flex-col justify-between min-h-[190px] sm:min-h-[220px] border border-[#E2E8F0] shadow-2xs">
           <Image
             src="/about_atelier.png"
             alt="The Atelier Curation"
@@ -381,68 +410,68 @@ export default function NewArrivals() {
           />
           <div className="absolute inset-0 bg-gradient-to-r from-[#061B3A] via-[#061B3A]/85 to-transparent pointer-events-none" />
 
-          <div className="relative z-10 space-y-2 max-w-lg">
-            <span className="inline-block px-2.5 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider bg-[#DF9F28]/20 text-[#DF9F28] border border-[#DF9F28]/40">
+          <div className="relative z-10 space-y-1.5 max-w-lg">
+            <span className="inline-block px-2 py-0.5 rounded text-[9px] font-medium uppercase tracking-wider bg-[#DF9F28]/20 text-[#DF9F28] border border-[#DF9F28]/40">
               The Artisan Curation
             </span>
-            <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-white tracking-tight leading-snug">
+            <h3 className="text-base sm:text-lg md:text-xl font-semibold text-white tracking-tight leading-snug">
               Masterpiece Weaves &amp; Hand-Finished Silhouettes
             </h3>
-            <p className="text-xs text-slate-300 leading-relaxed max-w-md hidden sm:block">
+            <p className="text-xs text-slate-300 leading-relaxed max-w-md hidden sm:block font-normal">
               Engineered with ethical Italian wool, vegetable-tanned full-grain leathers, and timeless architectural tailoring.
             </p>
           </div>
 
-          <div className="relative z-10 pt-4 flex items-center justify-between">
+          <div className="relative z-10 pt-3 flex items-center justify-between">
             <Link
               href="/product"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#DF9F28] hover:bg-[#C6891E] text-[#111111] font-bold text-xs tracking-wide transition-all shadow-sm active:scale-95 cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-md bg-[#DF9F28] hover:bg-[#C6891E] text-[#111111] font-semibold text-xs tracking-wide transition-all shadow-2xs active:scale-95 cursor-pointer"
             >
               <span>Explore Curated Edit</span>
-              <ArrowRight className="w-3.5 h-3.5 text-[#111111]" />
+              <ArrowRight className="w-3 h-3 text-[#111111]" />
             </Link>
-            <span className="text-[11px] text-slate-300 font-medium hidden md:inline">
+            <span className="text-[10px] sm:text-[11px] text-slate-300 font-normal hidden md:inline">
               Complimentary Lucky Draw ticket included with every purchase
             </span>
           </div>
         </div>
 
-        <div className="lg:col-span-4 rounded-xl bg-gradient-to-br from-[#FEF8EE] to-[#F1F5F9] border border-[#DF9F28]/30 p-6 sm:p-7 flex flex-col justify-between shadow-xs">
-          <div className="space-y-2">
+        <div className="lg:col-span-4 rounded-lg bg-gradient-to-br from-[#FEF8EE] to-[#F1F5F9] border border-[#DF9F28]/30 p-5 sm:p-6 flex flex-col justify-between shadow-2xs">
+          <div className="space-y-1.5">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-[#DF9F28]">
+              <span className="text-[9px] font-medium uppercase tracking-widest text-[#DF9F28]">
                 LUCKY DRAW PERK
               </span>
-              <Compass className="w-4 h-4 text-[#DF9F28]" />
+              <Compass className="w-3.5 h-3.5 text-[#DF9F28]" />
             </div>
-            <h4 className="text-base sm:text-lg font-bold text-[#111111] leading-snug">
+            <h4 className="text-sm sm:text-base font-semibold text-[#111111] leading-snug">
               Weekly Luxury Sweepstakes
             </h4>
-            <p className="text-xs text-[#555555] leading-relaxed">
+            <p className="text-xs text-[#555555] leading-relaxed font-normal">
               Every curated order automatically enters you into the verified weekly lucky draw for bespoke coats, leather duffles, and studio accessories.
             </p>
           </div>
 
-          <div className="pt-4 border-t border-[#E2E8F0]">
+          <div className="pt-3 border-t border-[#E2E8F0]">
             <Link
               href="/lucky-draw"
-              className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#111111] hover:text-[#DF9F28] transition-colors"
+              className="inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wider text-[#111111] hover:text-[#DF9F28] transition-colors"
             >
               <span>View Active Prize Pool</span>
-              <ArrowUpRight className="w-3.5 h-3.5 text-[#DF9F28]" />
+              <ArrowUpRight className="w-3 h-3 text-[#DF9F28]" />
             </Link>
           </div>
         </div>
       </div>
 
       {/* View All CTA Footer */}
-      <div className="pt-2 text-center">
+      <div className="pt-1 text-center">
         <Link
           href="/product"
-          className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg bg-white hover:bg-[#0A192F] hover:text-white text-[#111111] border border-[#E2E8F0] hover:border-[#0A192F] font-bold text-xs uppercase tracking-wider transition-all shadow-xs active:scale-95"
+          className="inline-flex items-center gap-1.5 px-5 py-2 rounded-md bg-white hover:bg-[#0A192F] hover:text-white text-[#111111] border border-[#E2E8F0] hover:border-[#0A192F] font-semibold text-xs uppercase tracking-wider transition-all shadow-2xs active:scale-95"
         >
           <span>Browse All Featured Styles</span>
-          <ArrowRight className="w-3.5 h-3.5" />
+          <ArrowRight className="w-3 h-3" />
         </Link>
       </div>
     </section>

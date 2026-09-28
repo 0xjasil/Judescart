@@ -83,9 +83,15 @@ export const updateProductWithVariants = async (req: Request, res: Response) => 
         let photoUrl = existingProduct.image;
         const mainImageFile = files.find(f => f.fieldname === 'mainImage');
         if (mainImageFile) {
-            // Delete old
-            const publicId = existingProduct.image.split("/").pop()?.split(".")[0];
-            if (publicId) await (cloudinary as any).uploader.destroy(`Deco moja/${publicId}`);
+            // Delete old safely
+            if (existingProduct.image && existingProduct.image.includes('res.cloudinary.com') && process.env.CLOUDINARY_CLOUD_NAME) {
+                const publicId = existingProduct.image.split("/").pop()?.split(".")[0];
+                if (publicId) {
+                    try {
+                        await (cloudinary as any).uploader.destroy(`stevejon/${publicId}`);
+                    } catch (e) {}
+                }
+            }
             photoUrl = await uploadToCloudinary(mainImageFile.buffer, mainImageFile.originalname);
         } else if (data.existingMainImage) {
             photoUrl = data.existingMainImage;
@@ -106,16 +112,30 @@ export const updateProductWithVariants = async (req: Request, res: Response) => 
         const updatedProduct = await prisma.$transaction(async (tx: any) => {
             // Delete marked variants
             if (deletedVariantIds.length > 0) {
-                // Delete their images from Cloudinary first?
                 const variantsToDelete = await tx.productVariant.findMany({
                     where: { id: { in: deletedVariantIds } }
                 });
                 for (const v of variantsToDelete) {
-                    for (const img of v.images) {
-                        const publicId = img.split("/").pop()?.split(".")[0];
-                        if (publicId) await (cloudinary as any).uploader.destroy(`Deco moja/${publicId}`);
+                    for (const img of v.images || []) {
+                        if (img && img.includes('res.cloudinary.com') && process.env.CLOUDINARY_CLOUD_NAME) {
+                            const publicId = img.split("/").pop()?.split(".")[0];
+                            if (publicId) {
+                                try {
+                                    await (cloudinary as any).uploader.destroy(`stevejon/${publicId}`);
+                                } catch (e) {}
+                            }
+                        }
                     }
                 }
+                await tx.variantOption.deleteMany({
+                    where: { productVariantId: { in: deletedVariantIds } }
+                });
+                await tx.cartItem.deleteMany({
+                    where: { productVariantId: { in: deletedVariantIds } }
+                });
+                await tx.wishlistItem.deleteMany({
+                    where: { productVariantId: { in: deletedVariantIds } }
+                });
                 await tx.productVariant.deleteMany({
                     where: { id: { in: deletedVariantIds } }
                 });
@@ -312,44 +332,90 @@ export const deleteProduct = async (req: Request, res: Response) => {
 
         const product = await prisma.product.findUnique({ 
             where: { id: id as string },
-            include: { variants: true }
+            include: { variants: { include: { options: true } } }
         });
         if (!product) {
             return res.status(404).json({ error: "Product not found" });
         }
 
-        // Delete Main Image
-        if (product.image) {
+        // Delete Main Image safely
+        if (product.image && product.image.includes('res.cloudinary.com') && process.env.CLOUDINARY_CLOUD_NAME) {
             const oldPublicId = product.image.split("/").pop()?.split(".")[0];
             if (oldPublicId) {
                 try {
-                    await (cloudinary as any).uploader.destroy(`Deco moja/${oldPublicId}`);
+                    await (cloudinary as any).uploader.destroy(`stevejon/${oldPublicId}`);
                 } catch (e) {
                     console.warn("Failed to delete product image:", e);
                 }
             }
         }
 
-        // Delete Subimages
-        for (const img of product.subimage) {
-            const publicId = img.split("/").pop()?.split(".")[0];
-            if (publicId) await (cloudinary as any).uploader.destroy(`Deco moja/${publicId}`);
-        }
-
-        // Delete Variant Images
-        for (const v of product.variants) {
-            for (const img of v.images) {
+        // Delete Subimages safely
+        for (const img of product.subimage || []) {
+            if (img && img.includes('res.cloudinary.com') && process.env.CLOUDINARY_CLOUD_NAME) {
                 const publicId = img.split("/").pop()?.split(".")[0];
-                if (publicId) await (cloudinary as any).uploader.destroy(`Deco moja/${publicId}`);
+                if (publicId) {
+                    try {
+                        await (cloudinary as any).uploader.destroy(`stevejon/${publicId}`);
+                    } catch (e) {}
+                }
             }
         }
+
+        // Delete Variant Images safely
+        for (const v of product.variants || []) {
+            for (const img of v.images || []) {
+                if (img && img.includes('res.cloudinary.com') && process.env.CLOUDINARY_CLOUD_NAME) {
+                    const publicId = img.split("/").pop()?.split(".")[0];
+                    if (publicId) {
+                        try {
+                            await (cloudinary as any).uploader.destroy(`stevejon/${publicId}`);
+                        } catch (e) {}
+                    }
+                }
+            }
+        }
+
+        // Clean up child relations in MongoDB before deleting parent product
+        const variantIds = (product.variants || []).map(v => v.id);
+        if (variantIds.length > 0) {
+            try {
+                await prisma.variantOption.deleteMany({
+                    where: { productVariantId: { in: variantIds } }
+                });
+            } catch (err) {
+                console.warn("Could not delete variant options:", err);
+            }
+            try {
+                await prisma.cartItem.deleteMany({
+                    where: { productVariantId: { in: variantIds } }
+                });
+            } catch (err) {}
+            try {
+                await prisma.wishlistItem.deleteMany({
+                    where: { productVariantId: { in: variantIds } }
+                });
+            } catch (err) {}
+            try {
+                await prisma.productVariant.deleteMany({
+                    where: { productId: id }
+                });
+            } catch (err) {}
+        }
+        
+        try {
+            await prisma.review.deleteMany({ where: { productId: id } });
+        } catch (err) {}
+        try {
+            await prisma.notification.deleteMany({ where: { productId: id } });
+        } catch (err) {}
 
         await prisma.product.delete({ where: { id: id as string } });
         logActivity('DELETE_PRODUCT', `Permanently deleted product "${product.name}" (ID: ${id}) and variants.`, req);
         res.json({ success: true, message: "Product deleted successfully" });
     } catch (error: any) {
         console.error("Delete product error:", error);
-        res.status(500).json({ error: "Failed to delete product" });
+        res.status(500).json({ error: error.message || "Failed to delete product" });
     }
 };
 

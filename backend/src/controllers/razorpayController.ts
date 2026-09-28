@@ -18,10 +18,15 @@ console.log("Razorpay ENV Check:", {
   secretLength: razorpayKeySecret?.length,
 });
 
-const razorpay = new Razorpay({
-  key_id: razorpayKeyId || "",
-  key_secret: razorpayKeySecret || "",
-});
+function getRazorpayInstance() {
+  if (!razorpayKeyId || !razorpayKeySecret) {
+    throw new Error("Razorpay environment variables RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET are required");
+  }
+  return new Razorpay({
+    key_id: razorpayKeyId,
+    key_secret: razorpayKeySecret,
+  });
+}
 
 function getGatewayErrorMessage(error: any) {
   return (
@@ -103,6 +108,7 @@ export const createRazorpayOrder = async (req: Request, res: Response) => {
       });
     }
 
+    const razorpay = getRazorpayInstance();
     const razorpayOrder = await razorpay.orders.create({
       amount: Math.round(amountData.finalAmount * 100), // amount in paise
       currency: "INR",

@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import { prisma } from '../lib/prisma.js';
-import { uploadToCloudinary } from '../lib/upload.js';
-import cloudinary from '../lib/cloudinary.js';
+import { uploadToCloudinary, safeDeleteImage } from '../lib/upload.js';
 
 export const getOfferSlides = async (req: Request, res: Response) => {
     try {
@@ -49,11 +48,7 @@ export const updateOfferSlide = async (req: Request, res: Response) => {
 
         let photoUrl = existingSlide.image;
         if (file) {
-            // Delete old image
-            if (existingSlide.image) {
-                const publicId = existingSlide.image.split("/").pop()?.split(".")[0];
-                if (publicId) await (cloudinary as any).uploader.destroy(`Deco moja/${publicId}`);
-            }
+            await safeDeleteImage(existingSlide.image);
             photoUrl = await uploadToCloudinary(file.buffer, file.originalname);
         }
 
@@ -80,14 +75,11 @@ export const deleteOfferSlide = async (req: Request, res: Response) => {
         const slide = await prisma.offerSlide.findUnique({ where: { id: id as string } });
         if (!slide) return res.status(404).json({ error: "Slide not found" });
 
-        if (slide.image) {
-            const publicId = slide.image.split("/").pop()?.split(".")[0];
-            if (publicId) await (cloudinary as any).uploader.destroy(`Deco moja/${publicId}`);
-        }
-
+        await safeDeleteImage(slide.image);
         await prisma.offerSlide.delete({ where: { id: id as string } });
         res.json({ message: "Slide deleted" });
     } catch (error) {
+        console.error("Delete offer slide error:", error);
         res.status(500).json({ error: "Failed to delete offer slide" });
     }
 };

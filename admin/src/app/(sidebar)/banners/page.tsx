@@ -13,7 +13,7 @@ import {
   AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction,
 } from "@/components/ui/alert-dialog";
 import {
-  Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose,
+  Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter, DialogClose,
 } from "@/components/ui/dialog";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem,
@@ -35,6 +35,10 @@ type Banner = {
   id: string;
   title: string;
   image: string;
+  tag?: string | null;
+  offerPrice?: string | null;
+  description?: string | null;
+  badge?: string | null;
   buttonText: string | null;
   buttonLink: string | null;
   order: number;
@@ -70,7 +74,7 @@ function DeleteBannerDialog({ open, setOpen, banner, onDeleted }: {
         <AlertDialogHeader>
           <AlertDialogTitle>Delete Banner</AlertDialogTitle>
           <AlertDialogDescription>
-            Permanently delete <strong>&ldquo;{banner.title}&rdquo;</strong>? This cannot be undone.
+            Permanently delete <strong>&ldquo;{banner.title || "this banner"}&rdquo;</strong>? This cannot be undone.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
@@ -129,8 +133,8 @@ function ToggleActiveDialog({ open, setOpen, banner, activeCount, onToggled }: {
               : isBlockedHide
                 ? `You need at least ${MIN_ACTIVE} active banners. Add or activate another before hiding this one.`
                 : nextState
-                  ? `Make "${banner.title}" visible on the homepage?`
-                  : `Hide "${banner.title}" from the homepage?`}
+                  ? (banner.title ? `Make "${banner.title}" visible on the homepage?` : "Make this banner visible on the homepage?")
+                  : (banner.title ? `Hide "${banner.title}" from the homepage?` : "Hide this banner from the homepage?")}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
@@ -152,7 +156,10 @@ function ToggleActiveDialog({ open, setOpen, banner, activeCount, onToggled }: {
 function EditBannerDialog({ open, setOpen, banner, onUpdated }: {
   open: boolean; setOpen: (v: boolean) => void; banner: Banner; onUpdated: () => void;
 }) {
-  const [title, setTitle] = useState(banner.title);
+  const [title, setTitle] = useState(banner.title || "");
+  const [tag, setTag] = useState(banner.tag || "");
+  const [offerPrice, setOfferPrice] = useState(banner.offerPrice || "");
+  const [description, setDescription] = useState(banner.description || "");
   const [buttonText, setButtonText] = useState(banner.buttonText || "");
   const [buttonLink, setButtonLink] = useState(banner.buttonLink || "");
   const [preview, setPreview] = useState<string>(banner.image);
@@ -168,11 +175,13 @@ function EditBannerDialog({ open, setOpen, banner, onUpdated }: {
   };
 
   const handleSave = async () => {
-    if (!title.trim()) { toast.error("Title is required"); return; }
     setLoading(true);
     try {
       const formData = new FormData();
       formData.append("title", title.trim());
+      formData.append("tag", tag.trim());
+      formData.append("offerPrice", offerPrice.trim());
+      formData.append("description", description.trim());
       formData.append("buttonText", buttonText.trim());
       formData.append("buttonLink", buttonLink.trim());
       if (file) formData.append("image", file);
@@ -186,8 +195,13 @@ function EditBannerDialog({ open, setOpen, banner, onUpdated }: {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="sm:max-w-[520px]">
-        <DialogHeader><DialogTitle>Edit Banner</DialogTitle></DialogHeader>
+      <DialogContent className="sm:max-w-[540px] max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>Edit Banner</DialogTitle>
+          <DialogDescription className="text-xs text-muted-foreground">
+            Update hero banner details, CTA button, and image settings.
+          </DialogDescription>
+        </DialogHeader>
         <div className="space-y-4 py-2">
 
           {/* Image Upload */}
@@ -196,10 +210,10 @@ function EditBannerDialog({ open, setOpen, banner, onUpdated }: {
             <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleFile} />
             <div
               onClick={() => fileRef.current?.click()}
-              className="relative border-2 border-dashed border-border rounded-xl cursor-pointer overflow-hidden hover:border-primary transition-colors"
+              className="relative border-2 border-dashed border-border rounded-xl cursor-pointer overflow-hidden hover:border-primary transition-colors bg-slate-900/40"
               style={{ height: 160 }}
             >
-              <Image src={preview} alt="Preview" fill className="object-cover" />
+              <Image src={preview} alt="Preview" fill unoptimized className="object-contain" />
               <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center opacity-0 hover:opacity-100 transition-opacity gap-1">
                 <ImageIcon className="w-6 h-6 text-white" />
                 <span className="text-white text-xs font-medium">Click to change image</span>
@@ -209,8 +223,25 @@ function EditBannerDialog({ open, setOpen, banner, onUpdated }: {
 
           {/* Title */}
           <div className="space-y-1.5">
-            <Label>Title <span className="text-destructive">*</span></Label>
-            <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g. Summer Collection 2025" />
+            <Label className="text-xs">Title (Optional)</Label>
+            <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g. Signature Tailoring & Outerwear" />
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label className="text-xs">Category Tag (Optional)</Label>
+              <Input value={tag} onChange={(e) => setTag(e.target.value)} placeholder="e.g. AUTUMN / WINTER COLLECTION" />
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-xs">Offer Price / Subtitle (Optional)</Label>
+              <Input value={offerPrice} onChange={(e) => setOfferPrice(e.target.value)} placeholder="e.g. Starting from ₹4,299* or Up to 40% OFF" />
+            </div>
+          </div>
+
+          {/* Description */}
+          <div className="space-y-1.5">
+            <Label className="text-xs">Description (Optional)</Label>
+            <Input value={description} onChange={(e) => setDescription(e.target.value)} placeholder="e.g. Precision-tailored wool overshirts, blazers..." />
           </div>
 
           {/* Optional Button */}
@@ -219,11 +250,11 @@ function EditBannerDialog({ open, setOpen, banner, onUpdated }: {
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
                 <Label className="text-xs">Button Text</Label>
-                <Input value={buttonText} onChange={(e) => setButtonText(e.target.value)} placeholder="e.g. EXPLORE NOW" />
+                <Input value={buttonText} onChange={(e) => setButtonText(e.target.value)} placeholder="e.g. Shop Collection" />
               </div>
               <div className="space-y-1.5">
                 <Label className="text-xs">Button Link</Label>
-                <Input value={buttonLink} onChange={(e) => setButtonLink(e.target.value)} placeholder="e.g. /products" />
+                <Input value={buttonLink} onChange={(e) => setButtonLink(e.target.value)} placeholder="e.g. /product" />
               </div>
             </div>
           </div>
@@ -281,6 +312,9 @@ export default function AdminBannersPage() {
   const [currentPage, setCurrentPage] = useState(1);
 
   const [title, setTitle] = useState("");
+  const [tag, setTag] = useState("");
+  const [offerPrice, setOfferPrice] = useState("");
+  const [description, setDescription] = useState("");
   const [buttonText, setButtonText] = useState("");
   const [buttonLink, setButtonLink] = useState("");
   const [preview, setPreview] = useState<string | null>(null);
@@ -315,7 +349,6 @@ export default function AdminBannersPage() {
   };
 
   const handleAdd = async () => {
-    if (!title.trim()) { toast.error("Title is required"); return; }
     if (!file) { toast.error("Please select a banner image"); return; }
     if (activeCount >= MAX_ACTIVE) {
       toast.error(`Maximum ${MAX_ACTIVE} banners active. Hide one first.`); return;
@@ -324,6 +357,9 @@ export default function AdminBannersPage() {
     try {
       const formData = new FormData();
       formData.append("title", title.trim());
+      formData.append("tag", tag.trim());
+      formData.append("offerPrice", offerPrice.trim());
+      formData.append("description", description.trim());
       formData.append("buttonText", buttonText.trim());
       formData.append("buttonLink", buttonLink.trim());
       formData.append("image", file);
@@ -333,7 +369,7 @@ export default function AdminBannersPage() {
         throw new Error(err.error || "Failed");
       }
       toast.success("Banner added successfully");
-      setTitle(""); setButtonText(""); setButtonLink("");
+      setTitle(""); setTag(""); setOfferPrice(""); setDescription(""); setButtonText(""); setButtonLink("");
       setFile(null); setPreview(null);
       fetchBanners();
     } catch (err: unknown) {
@@ -391,7 +427,7 @@ export default function AdminBannersPage() {
             <CardHeader>
               <CardTitle>Add New Banner</CardTitle>
               <CardDescription>
-                Upload a single responsive image with a title and optional call-to-action button
+                Upload an image banner. All text fields and CTA button are optional.
                 {activeCount >= MAX_ACTIVE && (
                   <span className="ml-2 text-destructive font-medium">— Active limit reached ({MAX_ACTIVE}). Hide one first.</span>
                 )}
@@ -410,7 +446,7 @@ export default function AdminBannersPage() {
                 >
                   {preview ? (
                     <div className="relative w-full h-full">
-                      <Image src={preview} alt="Preview" fill className="object-cover" />
+                      <Image src={preview} alt="Preview" fill unoptimized className="object-cover" />
                       <div className="absolute inset-0 bg-black/30 flex flex-col items-center justify-center opacity-0 hover:opacity-100 transition-opacity gap-2">
                         <ImageIcon className="w-6 h-6 text-white" />
                         <span className="text-white text-xs font-semibold">Click to change image</span>
@@ -430,12 +466,42 @@ export default function AdminBannersPage() {
 
               {/* Title */}
               <div className="space-y-1.5">
-                <Label>Title <span className="text-destructive">*</span></Label>
+                <Label className="text-xs">Title (Optional)</Label>
                 <Input
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  placeholder="e.g. Summer Collection 2025"
+                  placeholder="e.g. Signature Tailoring & Outerwear"
                   className="max-w-lg"
+                />
+              </div>
+
+              {/* Tag & Offer Price / Subtitle */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-w-lg">
+                <div className="space-y-1.5">
+                  <Label className="text-xs">Category Tag (Optional)</Label>
+                  <Input
+                    value={tag}
+                    onChange={(e) => setTag(e.target.value)}
+                    placeholder="e.g. AUTUMN / WINTER COLLECTION"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs">Offer Price / Subtitle (Optional)</Label>
+                  <Input
+                    value={offerPrice}
+                    onChange={(e) => setOfferPrice(e.target.value)}
+                    placeholder="e.g. Starting from ₹4,299* or Up to 40% OFF"
+                  />
+                </div>
+              </div>
+
+              {/* Description */}
+              <div className="space-y-1.5 max-w-lg">
+                <Label className="text-xs">Description (Optional)</Label>
+                <Input
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="e.g. Precision-tailored wool overshirts, blazers..."
                 />
               </div>
 
@@ -470,7 +536,7 @@ export default function AdminBannersPage() {
 
               <Button
                 onClick={handleAdd}
-                disabled={uploading || !file || !title.trim() || activeCount >= MAX_ACTIVE}
+                disabled={uploading || !file || activeCount >= MAX_ACTIVE}
                 className="min-w-[140px]"
               >
                 {uploading ? "Uploading..." : "Add Banner"}
@@ -529,12 +595,14 @@ export default function AdminBannersPage() {
                         <div key={banner.id} className="flex items-center gap-4 border border-border rounded-xl p-3 bg-card hover:bg-muted/30 transition-colors">
                           {/* Thumbnail */}
                           <div className="relative rounded-lg overflow-hidden flex-shrink-0 bg-muted border border-border" style={{ width: 120, height: 64 }}>
-                            <Image src={banner.image} alt={banner.title} fill className="object-cover" />
+                            <Image src={banner.image} alt={banner.title || "Banner"} fill unoptimized className="object-cover" />
                           </div>
 
                           {/* Info */}
                           <div className="flex-1 min-w-0 space-y-0.5">
-                            <p className="text-sm font-semibold truncate">{banner.title}</p>
+                            <p className="text-sm font-semibold truncate">
+                              {banner.title || <span className="text-muted-foreground italic font-normal">Image Only Banner</span>}
+                            </p>
                             {banner.buttonText ? (
                               <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                                 <LinkIcon className="w-3 h-3 shrink-0" />

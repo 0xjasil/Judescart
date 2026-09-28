@@ -37,6 +37,7 @@ import SearchModal from './SearchModal';
 import CurrencyModal, { CURRENCIES, Currency } from './CurrencyModal';
 import AccountDrawer from './AccountDrawer';
 import AuthModal from './AuthModal';
+import { getApiUrl } from '@/lib/api';
 
 export interface NavCategory {
   id: string;
@@ -243,8 +244,51 @@ export default function Navbar() {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authModalMode, setAuthModalMode] = useState<'signin' | 'signup'>('signin');
   const [selectedCurrency, setSelectedCurrency] = useState<Currency>(CURRENCIES[0]);
+  const [navCategories, setNavCategories] = useState<NavCategory[]>(NAVIGATION_CATEGORIES);
   const [activeCategoryId, setActiveCategoryId] = useState<string | null>(null);
   const [mobileExpandedCat, setMobileExpandedCat] = useState<string | null>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+    const fetchNavCategories = async () => {
+      try {
+        const res = await fetch(`${getApiUrl()}/categories`);
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data) && data.length > 0 && isMounted) {
+            const mapped: NavCategory[] = data.map((cat: any) => ({
+              id: cat.id,
+              label: cat.name,
+              href: `/product?category=${encodeURIComponent(cat.name)}`,
+              icon: Shirt,
+              popular: false,
+              directoryTitle: `${cat.name.toUpperCase()} DIRECTORY`,
+              directorySubtitle: `Explore ${cat.name} Collection`,
+              items: (cat.subcategories || []).map((sub: any) => ({
+                title: sub.name,
+                href: `/product?category=${encodeURIComponent(cat.name)}&subcategory=${encodeURIComponent(sub.name)}`,
+              })),
+              featured: {
+                badge: 'Department',
+                title: `${cat.name} Collection`,
+                description: `Discover styles in our ${cat.name} catalog.`,
+                price: `${cat._count?.products || 0} Products`,
+                image: cat.image || '/cat_apparel_1778670103427.png',
+                href: `/product?category=${encodeURIComponent(cat.name)}`,
+              },
+            }));
+            setNavCategories([NAVIGATION_CATEGORIES[0], ...mapped]);
+          }
+        }
+      } catch (err) {
+        console.warn('Nav categories fetch failed, using fallback:', err);
+      }
+    };
+    fetchNavCategories();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const [isVisible, setIsVisible] = useState(true);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -400,7 +444,7 @@ export default function Navbar() {
     }
   };
 
-  const activeCategoryData = NAVIGATION_CATEGORIES.find((c) => c.id === activeCategoryId);
+  const activeCategoryData = navCategories.find((c) => c.id === activeCategoryId);
 
   return (
     <>
@@ -742,7 +786,7 @@ export default function Navbar() {
               
               {/* Category Nav Items */}
               <div className="flex items-center space-x-1 xl:space-x-2">
-                {NAVIGATION_CATEGORIES.map((cat) => {
+                {navCategories.map((cat) => {
                   const Icon = cat.icon;
                   const isActive = activeCategoryId === cat.id;
 
@@ -751,9 +795,9 @@ export default function Navbar() {
                       <Link
                         href={cat.href}
                         onMouseEnter={() => handleCategoryMouseEnter(cat.id)}
-                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-150 select-none group ${
+                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-150 select-none group ${
                           isActive
-                            ? 'bg-[#DF9F28] text-[#111111] font-bold shadow-xs hover:bg-[#C6891E]'
+                            ? 'bg-[#DF9F28] text-[#111111] font-semibold shadow-xs hover:bg-[#C6891E]'
                             : 'text-slate-200 hover:text-white hover:bg-white/10'
                         }`}
                       >
@@ -762,7 +806,7 @@ export default function Navbar() {
                         </span>
                         <span>{cat.label}</span>
                         {cat.popular && (
-                          <span className="text-[9px] px-1.5 py-0.5 rounded-full font-bold uppercase tracking-wider bg-[#DF9F28] text-[#111111]">
+                          <span className="text-[9px] px-1.5 py-0.5 rounded-full font-semibold uppercase tracking-wider bg-[#DF9F28] text-[#111111]">
                             Popular
                           </span>
                         )}
@@ -946,7 +990,7 @@ export default function Navbar() {
                   Departments & Categories
                 </p>
 
-                {NAVIGATION_CATEGORIES.map((cat) => {
+                {navCategories.map((cat) => {
                   const Icon = cat.icon;
                   const isExpanded = mobileExpandedCat === cat.id;
 

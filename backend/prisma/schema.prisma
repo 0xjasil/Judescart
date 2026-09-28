@@ -303,6 +303,10 @@ model Banner {
   id             String   @id @default(auto()) @map("_id") @db.ObjectId
   title          String
   image          String
+  tag            String?
+  offerPrice     String?
+  description    String?
+  badge          String?
   buttonText     String?
   buttonLink     String?
   order          Int      @default(0)

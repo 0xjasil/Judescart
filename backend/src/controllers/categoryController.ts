@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import { prisma } from '../lib/prisma.js';
-import { uploadToCloudinary } from '../lib/upload.js';
-import cloudinary from '../lib/cloudinary.js';
+import { uploadToCloudinary, safeDeleteImage } from '../lib/upload.js';
 
 export const getCategories = async (req: Request, res: Response) => {
     try {
@@ -51,11 +50,8 @@ export const updateCategory = async (req: Request, res: Response) => {
 
         let photoUrl: string | undefined;
         if (file) {
+            await safeDeleteImage(existing.image);
             photoUrl = await uploadToCloudinary(file.buffer, file.originalname);
-            if (existing.image) {
-                const publicId = existing.image.split("/").pop()?.split(".")[0];
-                if (publicId) await (cloudinary as any).uploader.destroy(`Deco moja/${publicId}`);
-            }
         }
 
         const updated = await prisma.category.update({
@@ -68,6 +64,7 @@ export const updateCategory = async (req: Request, res: Response) => {
 
         res.json({ success: true, data: updated, message: "Category updated successfully" });
     } catch (error: any) {
+        console.error("Error updating category:", error);
         res.status(500).json({ error: error.message || "Failed to update category" });
     }
 };
@@ -78,14 +75,11 @@ export const deleteCategory = async (req: Request, res: Response) => {
         const category = await prisma.category.findUnique({ where: { id: id as string } });
         if (!category) return res.status(404).json({ error: "Category not found" });
 
-        if (category.image) {
-            const publicId = category.image.split("/").pop()?.split(".")[0];
-            if (publicId) await (cloudinary as any).uploader.destroy(`Deco moja/${publicId}`);
-        }
-
+        await safeDeleteImage(category.image);
         await prisma.category.delete({ where: { id: id as string } });
         res.json({ success: true, message: "Category deleted successfully" });
-    } catch (error) {
-        res.status(500).json({ error: "Failed to delete category" });
+    } catch (error: any) {
+        console.error("Error deleting category:", error);
+        res.status(500).json({ error: error.message || "Failed to delete category" });
     }
 };

@@ -108,20 +108,25 @@ export default function RecentlyViewed() {
       .then((r) => r.json())
       .then((res) => {
         if (res.data && Array.isArray(res.data) && res.data.length > 0) {
-          const formatted: Product[] = res.data.slice(0, 4).map((p: any, idx: number) => ({
-            id: p.id,
-            name: p.name,
-            description: p.description,
-            category: p.category?.name || 'Apparel',
-            brand: 'JudesCart',
-            price: Number(p.price) || 2999,
-            originalPrice: p.price ? Math.round(Number(p.price) * 1.2) : 3599,
-            image: p.images?.[0] || p.image || DEFAULT_RECOMMENDED[idx % DEFAULT_RECOMMENDED.length].image,
-            rating: 4.8 + (idx % 3) * 0.1,
-            reviewsCount: 50 + idx * 25,
-            isCustomerFavorite: idx % 2 === 0,
-            isNewArrival: idx % 2 === 1,
-          }));
+          const formatted: Product[] = res.data.slice(0, 4).map((p: any, idx: number) => {
+            const firstVariant = p.variants?.[0];
+            const priceVal = Number(firstVariant?.offerPrice || firstVariant?.price || p.price || 2999);
+            const origPriceVal = Number(firstVariant?.price || p.originalPrice || Math.round(priceVal * 1.2));
+            return {
+              id: p.id,
+              name: p.name,
+              description: p.description,
+              category: p.category?.name || 'Apparel',
+              brand: p.brand?.name || 'JudesCart',
+              price: priceVal,
+              originalPrice: origPriceVal,
+              image: p.image || p.images?.[0] || DEFAULT_RECOMMENDED[idx % DEFAULT_RECOMMENDED.length].image,
+              rating: 4.8 + (idx % 3) * 0.1,
+              reviewsCount: 50 + idx * 25,
+              isCustomerFavorite: idx % 2 === 0,
+              isNewArrival: idx % 2 === 1,
+            };
+          });
           setProducts(formatted);
         }
       })
@@ -132,26 +137,26 @@ export default function RecentlyViewed() {
 
   return (
     <section className="sj-container">
-      <div className="space-y-4 sm:space-y-5">
+      <div className="space-y-3 sm:space-y-4">
         {/* Section Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#E2E8F0] pb-4">
-          <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-lg bg-[#FEF8EE] text-[#DF9F28] border border-[#DF9F28]/30">
-              <History className="w-4 h-4 text-[#DF9F28]" />
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-b border-[#E2E8F0] pb-3">
+          <div className="flex items-center gap-2">
+            <div className="p-1.5 rounded-md bg-[#FEF8EE] text-[#DF9F28] border border-[#DF9F28]/30">
+              <History className="w-3.5 h-3.5 text-[#DF9F28]" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="text-xl sm:text-2xl font-bold text-[#111111] tracking-tight">
+                <h3 className="text-lg sm:text-xl font-semibold text-[#111111] tracking-tight">
                   Recently Viewed &amp; Recommended
                 </h3>
                 {hasRecent && (
-                  <span className="hidden sm:inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-[#FEF8EE] text-[#DF9F28] border border-[#DF9F28]/30">
+                  <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-medium bg-[#FEF8EE] text-[#DF9F28] border border-[#DF9F28]/30">
                     <Sparkles className="w-3 h-3 text-[#DF9F28]" />
                     Personalized
                   </span>
                 )}
               </div>
-              <p className="text-xs text-[#555555] mt-0.5">
+              <p className="text-xs text-[#555555] mt-0.5 font-normal">
                 Curated suggestions based on your taste and catalog bestsellers
               </p>
             </div>
@@ -159,7 +164,7 @@ export default function RecentlyViewed() {
 
           <Link
             href="/product"
-            className="text-xs font-semibold text-[#DF9F28] hover:text-[#C6891E] inline-flex items-center gap-1.5 transition-colors self-start sm:self-auto focus-visible:outline-none"
+            className="text-xs font-medium text-[#DF9F28] hover:text-[#C6891E] inline-flex items-center gap-1 transition-colors self-start sm:self-auto focus-visible:outline-none"
           >
             <span>Browse entire catalog</span>
             <ArrowRight className="w-3.5 h-3.5" />
@@ -167,7 +172,7 @@ export default function RecentlyViewed() {
         </div>
 
         {/* Products Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3.5 lg:gap-4">
           {products.map((prod) => (
             <ProductCard
               key={prod.id}

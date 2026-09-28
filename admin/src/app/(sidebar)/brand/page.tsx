@@ -4,16 +4,20 @@ import { Brand } from "@prisma/client";
 import { brandColumns } from "@/components/brand/brand-columns";
 
 export default async function BrandPage() {
-  // Fetch all brands from your API
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/brands`, {
-    cache: "no-store",
-  });
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+  let brands: Brand[] = [];
 
-  if (!res.ok) {
-    throw new Error("Failed to fetch brands");
+  try {
+    const res = await fetch(`${apiUrl}/brands`, {
+      cache: "no-store",
+    });
+
+    if (res.ok) {
+      brands = await res.json();
+    }
+  } catch (err) {
+    console.error("Failed to fetch brands:", err);
   }
-
-  const brands: Brand[] = await res.json();
 
   return (
     <div className="flex flex-1 flex-col">

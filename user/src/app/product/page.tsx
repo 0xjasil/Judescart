@@ -241,6 +241,8 @@ function ProductContent() {
   useEffect(() => {
     if (selectedCategoryParam) {
       setSelectedCategories([selectedCategoryParam]);
+    } else {
+      setSelectedCategories([]);
     }
   }, [selectedCategoryParam]);
 
@@ -249,8 +251,9 @@ function ProductContent() {
     fetch(`${getApiUrl()}/categories`)
       .then((r) => r.json())
       .then((res) => {
-        if (res.data && Array.isArray(res.data)) {
-          setCategoriesList(res.data);
+        const list = Array.isArray(res) ? res : (Array.isArray(res?.data) ? res.data : []);
+        if (list.length > 0) {
+          setCategoriesList(list);
         }
       })
       .catch(() => {
@@ -271,19 +274,24 @@ function ProductContent() {
       .then((r) => r.json())
       .then((res) => {
         if (res.data && Array.isArray(res.data) && res.data.length > 0) {
-          const mapped: ProductSummary[] = res.data.map((p: any) => ({
-            id: p.id,
-            name: p.name,
-            category: p.category?.name || 'Apparel',
-            brand: 'JudesCart',
-            price: Number(p.price) || 2999,
-            originalPrice: p.price ? Math.round(Number(p.price) * 1.2) : 3599,
-            image: p.images?.[0] || p.image || '/prod_overshirt_1778670536589.png',
-            subimage: p.images && p.images.length > 0 ? p.images : ['/prod_overshirt_1778670536589.png', '/cat_apparel_1778670103427.png'],
-            description: p.description || 'Crafted with premium natural materials and master tailoring techniques.',
-            isNewArrival: p.isNewArrival || false,
-            isCustomerFavorite: p.isCustomerFavorite || false,
-          }));
+          const mapped: ProductSummary[] = res.data.map((p: any) => {
+            const firstVariant = p.variants?.[0];
+            const priceVal = Number(firstVariant?.offerPrice || firstVariant?.price || p.price || 2999);
+            const origPriceVal = Number(firstVariant?.price || p.originalPrice || Math.round(priceVal * 1.2));
+            return {
+              id: p.id,
+              name: p.name,
+              category: p.category?.name || 'Apparel',
+              brand: p.brand?.name || 'JudesCart',
+              price: priceVal,
+              originalPrice: origPriceVal,
+              image: p.image || p.images?.[0] || '/prod_overshirt_1778670536589.png',
+              subimage: p.subimage && p.subimage.length > 0 ? p.subimage : (p.images && p.images.length > 0 ? p.images : ['/prod_overshirt_1778670536589.png', '/cat_apparel_1778670103427.png']),
+              description: p.description || 'Crafted with premium natural materials and master tailoring techniques.',
+              isNewArrival: p.isNewArrival || false,
+              isCustomerFavorite: p.isCustomerFavorite || false,
+            };
+          });
           setAllProducts(mapped);
         }
       })
@@ -535,6 +543,7 @@ function ProductContent() {
                           src={img}
                           alt={`${selectedProduct.name} thumbnail ${idx + 1}`}
                           fill
+                          unoptimized
                           sizes="80px"
                           className="object-cover"
                         />
@@ -553,6 +562,7 @@ function ProductContent() {
                       alt={`${selectedProduct.name} full view`}
                       fill
                       priority
+                      unoptimized
                       sizes="(max-width: 1024px) 100vw, 55vw"
                       className={`object-cover transition-transform duration-300 ${
                         isZoomed ? 'scale-125' : 'scale-100'
@@ -993,6 +1003,7 @@ function ProductContent() {
                         src={selectedProduct.image}
                         alt={selectedProduct.name}
                         fill
+                        unoptimized
                         className="object-cover group-hover:scale-105 transition-transform"
                       />
                     </div>
@@ -1033,6 +1044,7 @@ function ProductContent() {
                         src={bundleAddon1.image}
                         alt={bundleAddon1.name}
                         fill
+                        unoptimized
                         className="object-cover group-hover:scale-105 transition-transform"
                       />
                     </div>
@@ -1073,6 +1085,7 @@ function ProductContent() {
                         src={bundleAddon2.image}
                         alt={bundleAddon2.name}
                         fill
+                        unoptimized
                         className="object-cover group-hover:scale-105 transition-transform"
                       />
                     </div>
@@ -1136,18 +1149,18 @@ function ProductContent() {
           {/* ========================================================================= */}
           {/* RELATED & RECOMMENDED PRODUCTS SECTION                                    */}
           {/* ========================================================================= */}
-          <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16">
-            <div className="space-y-6">
-              <div className="text-center space-y-1">
-                <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#DF9F28]">
+          <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10">
+            <div className="space-y-4">
+              <div className="text-center space-y-0.5">
+                <span className="text-[10px] sm:text-[11px] font-medium uppercase tracking-[0.2em] text-[#DF9F28]">
                   Curated For You
                 </span>
-                <h2 className="font-sans text-2xl sm:text-3xl font-extrabold text-[#111111]">
+                <h2 className="font-sans text-xl sm:text-2xl font-semibold text-[#111111]">
                   Related &amp; Recommended Products
                 </h2>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 pt-4">
+              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3.5 lg:gap-4 pt-2">
                 {allProducts
                   .filter((p) => String(p.id) !== String(selectedProduct.id))
                   .slice(0, 4)
@@ -1364,14 +1377,14 @@ function ProductContent() {
               {/* Products Catalog Cards Grid */}
               <div className="lg:col-span-9">
                 {filteredProducts.length === 0 ? (
-                  <div className="py-20 text-center bg-white rounded-xl border border-slate-200 p-8 space-y-4">
-                    <div className="w-16 h-16 rounded-full bg-[#FEF8EE] text-[#DF9F28] flex items-center justify-center mx-auto">
-                      <ShoppingBag className="w-8 h-8" />
+                  <div className="py-16 text-center bg-white rounded-lg border border-slate-200 p-6 space-y-3">
+                    <div className="w-12 h-12 rounded-full bg-[#FEF8EE] text-[#DF9F28] flex items-center justify-center mx-auto">
+                      <ShoppingBag className="w-6 h-6" />
                     </div>
-                    <h3 className="font-sans text-xl font-bold text-[#111111]">
+                    <h3 className="font-sans text-lg font-semibold text-[#111111]">
                       No products matched your criteria
                     </h3>
-                    <p className="text-xs text-[#555555] max-w-sm mx-auto">
+                    <p className="text-xs text-[#555555] max-w-sm mx-auto font-normal">
                       Try clearing filters or search terms to discover more items in our luxury catalog.
                     </p>
                     <button
@@ -1380,13 +1393,13 @@ function ProductContent() {
                         setSelectedPriceRanges([]);
                         router.push('/product');
                       }}
-                      className="px-6 py-2.5 rounded-full bg-[#DF9F28] hover:bg-[#C6891E] text-[#111111] text-xs font-bold tracking-wider uppercase transition-all shadow-md"
+                      className="px-5 py-2 rounded-md bg-[#DF9F28] hover:bg-[#C6891E] text-[#111111] text-xs font-semibold tracking-wider uppercase transition-all shadow-2xs cursor-pointer"
                     >
                       Clear All Filters
                     </button>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                  <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2.5 sm:gap-3.5 lg:gap-4">
                     {filteredProducts.map((prod) => (
                       <ProductCard
                         key={prod.id}

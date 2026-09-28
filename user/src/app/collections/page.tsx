@@ -85,6 +85,7 @@ export default function CollectionsPage() {
                     src={cat.image || '/cat_apparel_1778670103427.png'}
                     alt={cat.name}
                     fill
+                    unoptimized
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                     className="object-cover object-center transition-transform duration-700 group-hover:scale-105"
                   />

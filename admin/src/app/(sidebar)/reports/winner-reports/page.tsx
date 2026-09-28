@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { exportWinnersPDF, WinnerSummary } from "@/components/admin/analytics/analytic-pdf";
 import AdminLoader from "@/components/admin/AdminLoader";
 import { IconDownload, IconSearch } from "@tabler/icons-react";
@@ -64,7 +64,12 @@ function ShowcaseDialog({ open, setOpen, winner, onSaved }: {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="sm:max-w-[440px]">
-        <DialogHeader><DialogTitle>Set Winner Showcase</DialogTitle></DialogHeader>
+        <DialogHeader>
+          <DialogTitle>Set Winner Showcase</DialogTitle>
+          <DialogDescription className="text-xs text-muted-foreground">
+            Upload a photo and story for this campaign winner.
+          </DialogDescription>
+        </DialogHeader>
         <div className="space-y-4 py-2">
           {/* Image upload */}
           <div className="space-y-1.5">

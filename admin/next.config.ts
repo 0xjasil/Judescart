@@ -23,6 +23,18 @@ const nextConfig: NextConfig = {
         hostname: "images.pexels.com",
         pathname: "/**", // allow all images from Pexels
       },
+      {
+        protocol: "http",
+        hostname: "localhost",
+        port: "5000",
+        pathname: "/**",
+      },
+      {
+        protocol: "http",
+        hostname: "127.0.0.1",
+        port: "5000",
+        pathname: "/**",
+      },
     ],
   },
   experimental: {

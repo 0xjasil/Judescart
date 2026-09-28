@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
+import path from 'path';
 import { toNodeHandler } from 'better-auth/node';
 import { webAuth, adminAuth } from "./lib/auth.js";
 import orderRoutes from './routes/orderRoutes.js';
@@ -42,13 +43,22 @@ const allowedOrigins = [
     process.env.ADMIN_URL
 ].filter(Boolean) as string[];
 
+const isLocalOrigin = (origin: string) => {
+    try {
+        const url = new URL(origin);
+        return url.hostname === 'localhost' || url.hostname === '127.0.0.1';
+    } catch {
+        return false;
+    }
+};
+
 app.use(cors({
     origin: (origin, callback) => {
-        if (!origin || allowedOrigins.includes(origin)) {
+        if (!origin || isLocalOrigin(origin) || allowedOrigins.includes(origin)) {
             callback(null, true);
         } else {
             console.warn(`⚠️ Blocked by CORS: Origin is "${origin}"`);
-            callback(new Error('Not allowed by CORS'));
+            callback(null, false);
         }
     },
     credentials: true
@@ -57,8 +67,8 @@ app.use(morgan('dev'));
 
 
 // Better Auth handlers must be mounted before express.json()
-app.all("/api/auth-web/*splat", toNodeHandler(webAuth));
-app.all("/api/auth-admin/*splat", toNodeHandler(adminAuth));
+app.all(/^\/api\/auth-web(\/.*)?$/, toNodeHandler(webAuth));
+app.all(/^\/api\/auth-admin(\/.*)?$/, toNodeHandler(adminAuth));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -66,6 +76,9 @@ app.use(express.urlencoded({ extended: true }));
 app.get('/health', (req, res) => {
     res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
+
+// Serve uploaded media locally
+app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
 // Routes
 app.use('/api/orders', orderRoutes);

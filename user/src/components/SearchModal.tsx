@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Search, X, ArrowRight, TrendingUp, Sparkles, Tag, Package, ChevronRight } from 'lucide-react';
+import { getApiUrl } from '@/lib/api';
 
 interface SearchModalProps {
   isOpen: boolean;
@@ -111,22 +112,41 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, onClose]);
 
-  // Fetch real products or fallback
+  // Fetch real products and categories
   useEffect(() => {
-    async function loadProducts() {
+    async function loadData() {
       try {
-        const res = await fetch('/api/products');
-        if (res.ok) {
-          const data = await res.json();
-          if (Array.isArray(data) && data.length > 0) {
-            setProducts(data);
+        const [prodRes, catRes] = await Promise.all([
+          fetch(`${getApiUrl()}/products?limit=50`),
+          fetch(`${getApiUrl()}/categories`),
+        ]);
+
+        if (prodRes.ok) {
+          const json = await prodRes.json();
+          const rawItems = Array.isArray(json?.data) ? json.data : (Array.isArray(json) ? json : []);
+          if (rawItems.length > 0) {
+            const mapped = rawItems.map((p: any) => {
+              const firstVariant = p.variants?.[0];
+              const priceVal = Number(firstVariant?.offerPrice || firstVariant?.price || p.price || 2999);
+              const origPriceVal = Number(firstVariant?.price || p.originalPrice || Math.round(priceVal * 1.2));
+              return {
+                id: p.id,
+                name: p.name,
+                category: p.category?.name || 'Apparel',
+                price: priceVal,
+                originalPrice: origPriceVal,
+                image: p.image || p.images?.[0] || '/prod_overshirt_1778670536589.png',
+                badge: p.isCustomerFavorite ? 'Popular' : (p.isNewArrival ? 'New' : undefined),
+              };
+            });
+            setProducts(mapped);
           }
         }
       } catch (e) {
         // Fallback to SAMPLE_PRODUCTS
       }
     }
-    loadProducts();
+    loadData();
   }, []);
 
   const filteredProducts = products.filter((p) => {
