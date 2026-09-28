@@ -379,7 +379,7 @@ export default function Hero() {
             onClick={handleSecondaryClick}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
-            className="hidden lg:flex lg:col-span-4 xl:col-span-4 relative rounded-xl sm:rounded-2xl overflow-hidden bg-[#0A192F] border border-[#E2E8F0] shadow-sm hover:shadow-md transition-all duration-300 group cursor-pointer lg:h-[440px] xl:h-[460px] flex-col justify-between"
+            className="hidden lg:flex lg:col-span-4 xl:col-span-4 relative rounded-xl sm:rounded-2xl overflow-hidden bg-[#0A192F] border border-[#E2E8F0] shadow-sm hover:shadow-md transition-all duration-300 group cursor-pointer h-full min-h-[260px] flex-col justify-between"
             title="Click to bring this banner into the main spotlight"
           >
             <AnimatePresence mode="wait">
@@ -399,7 +399,7 @@ export default function Hero() {
                   unoptimized
                   onError={() => handleImageError(spot2Banner.id)}
                   sizes="(max-width: 1024px) 100vw, 30vw"
-                  className="object-contain object-center transition-transform duration-700 ease-out group-hover:scale-105"
+                  className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
                 />
 
                 {/* Top-to-Bottom Midnight Navy Gradient - only when text is present */}
