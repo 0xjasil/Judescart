@@ -824,7 +824,7 @@ export default function ZendropIntegrationPage() {
                                 item
                               )
                             }
-                            disabled={isItemActioning}
+                            disabled={Boolean(isItemActioning)}
                             className="flex-1 bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white border border-rose-500/30 font-bold gap-1.5 h-10 rounded-xl text-xs transition-all"
                           >
                             {isItemActioning ? (
@@ -844,7 +844,7 @@ export default function ZendropIntegrationPage() {
                                 item
                               )
                             }
-                            disabled={isItemActioning}
+                            disabled={Boolean(isItemActioning)}
                             className="flex-1 bg-amber-500 hover:bg-amber-600 text-black font-extrabold gap-1.5 h-10 rounded-xl text-xs shadow-sm transition-all"
                           >
                             {isItemActioning ? (
@@ -1388,9 +1388,10 @@ export default function ZendropIntegrationPage() {
                     size="sm"
                     onClick={() => {
                       const id = "dbProductId" in selectedProductDetails && selectedProductDetails.dbProductId ? selectedProductDetails.dbProductId : ("id" in selectedProductDetails ? selectedProductDetails.id : selectedProductDetails.zendropId);
+                      const isItemImp = "isImported" in selectedProductDetails ? selectedProductDetails.isImported : true;
                       handleToggleProductPermission(
                         id,
-                        selectedProductDetails.isImported !== undefined ? selectedProductDetails.isImported : true,
+                        isItemImp,
                         selectedProductDetails.isPermitted,
                         "wholesalePrice" in selectedProductDetails ? (selectedProductDetails as ZendropCatalogItem) : undefined
                       );
