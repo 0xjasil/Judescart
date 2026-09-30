@@ -596,15 +596,27 @@ export default function ZendropIntegrationPage() {
       {/* Main Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
         <TabsList className="bg-muted/70 p-1.5 rounded-2xl grid grid-cols-3 max-w-lg border border-border/40">
-          <TabsTrigger value="catalog" className="rounded-xl text-xs sm:text-sm font-bold gap-2 data-[state=active]:bg-background data-[state=active]:shadow-sm">
+          <TabsTrigger
+            value="catalog"
+            onClick={() => setActiveTab("catalog")}
+            className="rounded-xl text-xs sm:text-sm font-bold gap-2 data-[state=active]:bg-background data-[state=active]:shadow-sm cursor-pointer"
+          >
             <Package className="h-4 w-4 text-amber-500" />
             <span>Catalog Explorer ({catalog.length})</span>
           </TabsTrigger>
-          <TabsTrigger value="imported" className="rounded-xl text-xs sm:text-sm font-bold gap-2 data-[state=active]:bg-background data-[state=active]:shadow-sm">
+          <TabsTrigger
+            value="imported"
+            onClick={() => setActiveTab("imported")}
+            className="rounded-xl text-xs sm:text-sm font-bold gap-2 data-[state=active]:bg-background data-[state=active]:shadow-sm cursor-pointer"
+          >
             <Boxes className="h-4 w-4 text-emerald-500" />
             <span>Showcased ({importedProducts.length})</span>
           </TabsTrigger>
-          <TabsTrigger value="settings" className="rounded-xl text-xs sm:text-sm font-bold gap-2 data-[state=active]:bg-background data-[state=active]:shadow-sm">
+          <TabsTrigger
+            value="settings"
+            onClick={() => setActiveTab("settings")}
+            className="rounded-xl text-xs sm:text-sm font-bold gap-2 data-[state=active]:bg-background data-[state=active]:shadow-sm cursor-pointer"
+          >
             <Key className="h-4 w-4 text-blue-500" />
             <span>Pricing &amp; API</span>
           </TabsTrigger>
@@ -973,6 +985,21 @@ export default function ZendropIntegrationPage() {
                                   <Info className="h-4 w-4" />
                                 </Button>
 
+                                <a
+                                  href={`http://localhost:3000/product?id=${p.id}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                >
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="h-8 w-8 p-0 rounded-lg text-amber-500 hover:text-amber-600 hover:bg-amber-500/10"
+                                    title="View live on customer storefront"
+                                  >
+                                    <Store className="h-4 w-4" />
+                                  </Button>
+                                </a>
+
                                 <Button
                                   variant="outline"
                                   size="sm"
@@ -985,9 +1012,14 @@ export default function ZendropIntegrationPage() {
                                   <span className="hidden sm:inline">Sync</span>
                                 </Button>
 
-                                <Link href="/products">
-                                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-lg" title="View product in store catalog">
-                                    <ExternalLink className="h-3.5 w-3.5 text-muted-foreground" />
+                                <Link href={`/products/edit-product/${p.id}`}>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="h-8 w-8 p-0 rounded-lg text-muted-foreground hover:text-foreground"
+                                    title="Edit product in admin catalog"
+                                  >
+                                    <ExternalLink className="h-3.5 w-3.5" />
                                   </Button>
                                 </Link>
 
@@ -1002,11 +1034,11 @@ export default function ZendropIntegrationPage() {
                                   {deletingId === p.id ? (
                                     <RefreshCw className="h-3.5 w-3.5 animate-spin" />
                                   ) : (
-                                  <Trash2 className="h-3.5 w-3.5" />
-                                )}
-                              </Button>
-                            </div>
-                          </td>
+                                    <Trash2 className="h-3.5 w-3.5" />
+                                  )}
+                                </Button>
+                              </div>
+                            </td>
                         </tr>
                         );
                       })}
@@ -1348,33 +1380,69 @@ export default function ZendropIntegrationPage() {
               )}
 
               {/* Modal Actions */}
-              <div className="flex items-center justify-end gap-2 pt-2 border-t">
-                <Button variant="outline" size="sm" onClick={() => setIsDetailsOpen(false)} className="rounded-xl">
-                  Close
-                </Button>
-                {"isPermitted" in selectedProductDetails && (
-                  <Button
-                    size="sm"
-                    onClick={() => {
-                      const id = "dbProductId" in selectedProductDetails && selectedProductDetails.dbProductId ? selectedProductDetails.dbProductId : ("id" in selectedProductDetails ? selectedProductDetails.id : selectedProductDetails.zendropId);
-                      const isItemImp = "isImported" in selectedProductDetails ? selectedProductDetails.isImported : true;
-                      handleToggleProductPermission(
-                        id,
-                        isItemImp,
-                        selectedProductDetails.isPermitted,
-                        "wholesalePrice" in selectedProductDetails ? (selectedProductDetails as ZendropCatalogItem) : undefined
-                      );
-                      setIsDetailsOpen(false);
-                    }}
-                    className={`rounded-xl font-bold text-xs ${
-                      selectedProductDetails.isPermitted
-                        ? "bg-rose-500 hover:bg-rose-600 text-white"
-                        : "bg-amber-500 hover:bg-amber-600 text-black"
-                    }`}
-                  >
-                    {selectedProductDetails.isPermitted ? "Revoke Showcasing Permission" : "Grant Showcasing Permission"}
+              <div className="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-border/40">
+                <div className="flex items-center gap-2">
+                  {("dbProductId" in selectedProductDetails && selectedProductDetails.dbProductId || "id" in selectedProductDetails && selectedProductDetails.id) && (
+                    <a
+                      href={`http://localhost:3000/product?id=${("dbProductId" in selectedProductDetails && selectedProductDetails.dbProductId) || ("id" in selectedProductDetails && selectedProductDetails.id)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="rounded-xl gap-1.5 text-xs text-amber-500 border-amber-500/30 hover:bg-amber-500/10 font-semibold"
+                      >
+                        <Store className="h-3.5 w-3.5" />
+                        <span>View on Storefront</span>
+                      </Button>
+                    </a>
+                  )}
+
+                  {("dbProductId" in selectedProductDetails && selectedProductDetails.dbProductId || "id" in selectedProductDetails && selectedProductDetails.id) && (
+                    <Link
+                      href={`/products/edit-product/${("dbProductId" in selectedProductDetails && selectedProductDetails.dbProductId) || ("id" in selectedProductDetails && selectedProductDetails.id)}`}
+                    >
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="rounded-xl gap-1.5 text-xs font-semibold"
+                      >
+                        <ExternalLink className="h-3.5 w-3.5" />
+                        <span>Edit Product</span>
+                      </Button>
+                    </Link>
+                  )}
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <Button variant="outline" size="sm" onClick={() => setIsDetailsOpen(false)} className="rounded-xl text-xs">
+                    Close
                   </Button>
-                )}
+                  {"isPermitted" in selectedProductDetails && (
+                    <Button
+                      size="sm"
+                      onClick={() => {
+                        const id = "dbProductId" in selectedProductDetails && selectedProductDetails.dbProductId ? selectedProductDetails.dbProductId : ("id" in selectedProductDetails ? selectedProductDetails.id : selectedProductDetails.zendropId);
+                        const isItemImp = "isImported" in selectedProductDetails ? selectedProductDetails.isImported : true;
+                        handleToggleProductPermission(
+                          id,
+                          isItemImp,
+                          selectedProductDetails.isPermitted,
+                          "wholesalePrice" in selectedProductDetails ? (selectedProductDetails as ZendropCatalogItem) : undefined
+                        );
+                        setIsDetailsOpen(false);
+                      }}
+                      className={`rounded-xl font-bold text-xs ${
+                        selectedProductDetails.isPermitted
+                          ? "bg-rose-500 hover:bg-rose-600 text-white"
+                          : "bg-amber-500 hover:bg-amber-600 text-black"
+                      }`}
+                    >
+                      {selectedProductDetails.isPermitted ? "Revoke Showcasing Permission" : "Grant Showcasing Permission"}
+                    </Button>
+                  )}
+                </div>
               </div>
             </div>
           )}

@@ -519,7 +519,7 @@ export const getZendropCatalog = async (req: Request, res: Response) => {
         if (match && match[1]) {
           dbProductsByZendropId.set(match[1].trim(), {
             id: p.id,
-            isPermitted: p.isPermitted !== false,
+            isPermitted: p.isPermitted === true,
           });
         }
       }
@@ -795,7 +795,7 @@ export const getImportedProducts = async (req: Request, res: Response) => {
         profitPercent: wholesaleCost > 0 ? Math.round(((displayPrice - wholesaleCost) / wholesaleCost) * 100) : 35,
         totalStock,
         variantsCount: p.variants.length,
-        isPermitted: p.isPermitted !== false,
+        isPermitted: p.isPermitted === true,
         variants: p.variants.map(v => ({
           id: v.id,
           sku: v.sku,
