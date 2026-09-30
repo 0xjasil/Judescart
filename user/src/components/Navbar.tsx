@@ -256,11 +256,21 @@ export default function Navbar() {
         if (res.ok) {
           const data = await res.json();
           if (Array.isArray(data) && data.length > 0 && isMounted) {
+            const getIconForCategory = (name: string) => {
+              const lower = (name || '').toLowerCase();
+              if (lower.includes('elect') || lower.includes('audio') || lower.includes('headphone')) return Headphones;
+              if (lower.includes('foot') || lower.includes('shoe')) return Footprints;
+              if (lower.includes('leather') || lower.includes('bag') || lower.includes('briefcase')) return Briefcase;
+              if (lower.includes('home') || lower.includes('living') || lower.includes('decor')) return Home;
+              if (lower.includes('beauty') || lower.includes('access') || lower.includes('jewel')) return Sparkles;
+              return Shirt;
+            };
+
             const mapped: NavCategory[] = data.map((cat: any) => ({
               id: cat.id,
               label: cat.name,
               href: `/product?category=${encodeURIComponent(cat.name)}`,
-              icon: Shirt,
+              icon: getIconForCategory(cat.name),
               popular: false,
               directoryTitle: `${cat.name.toUpperCase()} DIRECTORY`,
               directorySubtitle: `Explore ${cat.name} Collection`,
@@ -782,37 +792,37 @@ export default function Navbar() {
           onMouseLeave={handleMouseLeave}
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between h-12">
+            <div className="flex items-center justify-between h-12 gap-3 xl:gap-6">
               
-              {/* Category Nav Items */}
-              <div className="flex items-center space-x-1 xl:space-x-2">
+              {/* Category Nav Items - Clean Single-line row */}
+              <div className="flex items-center gap-1 xl:gap-1.5 min-w-0 overflow-x-auto no-scrollbar py-1">
                 {navCategories.map((cat) => {
                   const Icon = cat.icon;
                   const isActive = activeCategoryId === cat.id;
 
                   return (
-                    <div key={cat.id} className="relative py-1">
+                    <div key={cat.id} className="relative shrink-0">
                       <Link
                         href={cat.href}
                         onMouseEnter={() => handleCategoryMouseEnter(cat.id)}
-                        className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm font-semibold transition-all duration-150 select-none group ${
+                        className={`flex items-center gap-1.5 px-2.5 xl:px-3 py-1.5 rounded-lg text-xs xl:text-[13px] font-semibold whitespace-nowrap transition-all duration-150 select-none group leading-none ${
                           isActive
                             ? 'bg-[#DF9F28] text-[#111111] font-bold shadow-xs hover:bg-[#C6891E]'
                             : 'text-slate-200 hover:text-white hover:bg-white/10'
                         }`}
                       >
-                        <span className={isActive ? 'text-[#111111]' : 'text-[#DF9F28]'}>
-                          <Icon className="w-4 h-4" />
+                        <span className={`shrink-0 ${isActive ? 'text-[#111111]' : 'text-[#DF9F28]'}`}>
+                          <Icon className="w-3.5 h-3.5" />
                         </span>
-                        <span>{cat.label}</span>
+                        <span className="whitespace-nowrap">{cat.label}</span>
                         {cat.popular && (
-                          <span className="text-[13px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider bg-[#DF9F28] text-[#111111]">
+                          <span className="text-[10px] px-1.5 py-0.5 rounded-full font-bold uppercase tracking-wider bg-[#DF9F28] text-[#111111] leading-none shrink-0">
                             Popular
                           </span>
                         )}
                         <ChevronDown
-                          className={`w-3.5 h-3.5 transition-transform duration-200 ${
-                            isActive ? 'rotate-180 text-[#111111]' : 'text-slate-300 group-hover:text-white'
+                          className={`w-3 h-3 shrink-0 transition-transform duration-200 ${
+                            isActive ? 'rotate-180 text-[#111111]' : 'text-slate-400 group-hover:text-white'
                           }`}
                         />
                       </Link>
@@ -821,14 +831,14 @@ export default function Navbar() {
                 })}
               </div>
 
-              {/* Right Trust & Guarantee Badges */}
-              <div className="hidden xl:flex items-center gap-4 text-[13px] font-semibold text-slate-200">
-                <span className="flex items-center gap-1.5 text-emerald-400 font-semibold">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              {/* Right Trust & Guarantee Badges - Fixed Layout & Line Height */}
+              <div className="hidden xl:flex items-center gap-3 shrink-0 text-xs font-semibold text-slate-200 pl-4 border-l border-white/15 leading-none h-6">
+                <span className="inline-flex items-center gap-1.5 text-emerald-400 font-semibold tracking-wide whitespace-nowrap">
+                  <span className="w-2 h-2 min-w-[8px] min-h-[8px] max-w-[8px] max-h-[8px] rounded-full bg-emerald-400 animate-pulse shrink-0 inline-block" />
                   Free Delivery over ₹999
                 </span>
-                <span className="text-slate-500">•</span>
-                <Link href="/faq" className="text-slate-200 hover:text-[#DF9F28] transition-colors">
+                <span className="text-slate-500 select-none leading-none">•</span>
+                <Link href="/faq" className="text-slate-200 hover:text-[#DF9F28] transition-colors whitespace-nowrap inline-block leading-none">
                   7-Day Easy Returns
                 </Link>
               </div>
