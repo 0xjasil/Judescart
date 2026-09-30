@@ -333,21 +333,23 @@ export default function NewArrivals() {
 
     const target = activeCategory.toUpperCase().trim();
     return products.filter((p) => {
-      const catName = p.category?.name?.toUpperCase().trim() || '';
-      const prodName = p.name?.toUpperCase().trim() || '';
+      const catName = (p.category?.name || '').toUpperCase().trim();
+      const prodName = (p.name || '').toUpperCase().trim();
 
-      if (catName === target || catName.includes(target) || target.includes(catName)) return true;
+      if (catName && (catName === target || catName.includes(target) || target.includes(catName))) {
+        return true;
+      }
 
-      // Dynamic category matching aliases
-      if (target.includes('TOP') && (catName.includes('TOP') || prodName.includes('SHIRT') || prodName.includes('SWEATER') || prodName.includes('TEE') || prodName.includes('HOODIE') || prodName.includes('T-SHIRT'))) return true;
-      if (target.includes('BOTTOM') && (catName.includes('BOTTOM') || prodName.includes('PANT') || prodName.includes('SKIRT') || prodName.includes('SHORT') || prodName.includes('JEAN') || prodName.includes('TROUSER'))) return true;
-      if (target.includes('DRESS') && (catName.includes('DRESS') || prodName.includes('DRESS') || prodName.includes('GOWN') || prodName.includes('KURTA') || prodName.includes('PARTY'))) return true;
-      if (target.includes('OUTER') && (catName.includes('OUTER') || prodName.includes('COAT') || prodName.includes('JACKET') || prodName.includes('RAIN') || prodName.includes('BLAZER') || prodName.includes('PUFFER'))) return true;
-      if (target.includes('ACCESS') && (catName.includes('ELECTR') || catName.includes('TECH') || catName.includes('ACCESS') || prodName.includes('HEADPHONE') || prodName.includes('WATCH') || prodName.includes('AUDIO') || prodName.includes('WALLET'))) return true;
-      if (target.includes('APPAR') && (catName.includes('APPAR') || catName.includes('CLOTH') || catName.includes('TAILOR') || catName.includes('FASHION') || catName.includes('TOP') || catName.includes('BOTTOM') || catName.includes('DRESS') || prodName.includes('JACKET') || prodName.includes('OVERSHIRT') || prodName.includes('BLAZER') || prodName.includes('TROUSER'))) return true;
-      if (target.includes('LEATHER') && (catName.includes('LEATHER') || catName.includes('BAG') || prodName.includes('LEATHER') || prodName.includes('BRIEFCASE') || prodName.includes('WEEKENDER') || prodName.includes('WALLET') || prodName.includes('DUFFLE'))) return true;
-      if (target.includes('FOOT') && (catName.includes('FOOT') || catName.includes('SHOE') || prodName.includes('OXFORD') || prodName.includes('BOOT') || prodName.includes('SNEAKER') || prodName.includes('LOAFER'))) return true;
-      if (target.includes('HOME') && (catName.includes('HOME') || catName.includes('LIVING') || prodName.includes('BLANKET') || prodName.includes('DIFFUSER') || prodName.includes('CASHMERE') || prodName.includes('DECOR'))) return true;
+      // Dynamic category matching aliases based on product name if category wasn't assigned
+      if (target.includes('TOP') && (prodName.includes('SHIRT') || prodName.includes('SWEATER') || prodName.includes('TEE') || prodName.includes('HOODIE') || prodName.includes('T-SHIRT') || prodName.includes('POLO'))) return true;
+      if (target.includes('BOTTOM') && (prodName.includes('PANT') || prodName.includes('SKIRT') || prodName.includes('SHORT') || prodName.includes('JEAN') || prodName.includes('TROUSER') || prodName.includes('CARGO'))) return true;
+      if (target.includes('DRESS') && (prodName.includes('DRESS') || prodName.includes('GOWN') || prodName.includes('KURTA') || prodName.includes('PARTY'))) return true;
+      if (target.includes('OUTER') && (prodName.includes('COAT') || prodName.includes('JACKET') || prodName.includes('RAIN') || prodName.includes('BLAZER') || prodName.includes('PUFFER'))) return true;
+      if (target.includes('ACCESS') && (prodName.includes('HEADPHONE') || prodName.includes('WATCH') || prodName.includes('AUDIO') || prodName.includes('WALLET') || prodName.includes('BELT') || prodName.includes('SPEAKER'))) return true;
+      if (target.includes('APPAR') && (prodName.includes('JACKET') || prodName.includes('OVERSHIRT') || prodName.includes('BLAZER') || prodName.includes('TROUSER') || prodName.includes('SUIT') || prodName.includes('COAT'))) return true;
+      if (target.includes('LEATHER') && (prodName.includes('LEATHER') || prodName.includes('BRIEFCASE') || prodName.includes('WEEKENDER') || prodName.includes('WALLET') || prodName.includes('DUFFLE') || prodName.includes('BAG'))) return true;
+      if (target.includes('FOOT') && (prodName.includes('OXFORD') || prodName.includes('BOOT') || prodName.includes('SNEAKER') || prodName.includes('LOAFER') || prodName.includes('SHOE'))) return true;
+      if (target.includes('HOME') && (prodName.includes('BLANKET') || prodName.includes('DIFFUSER') || prodName.includes('CASHMERE') || prodName.includes('DECOR') || prodName.includes('THROW') || prodName.includes('PILLOW'))) return true;
 
       return false;
     });
@@ -362,43 +364,22 @@ export default function NewArrivals() {
       {/* =========================================================================
           TANEIRA-INSPIRED SECTION HEADER: CUSTOMER FAVOURITES
          ========================================================================= */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-3 border-b border-[#E2E8F0] pb-3">
-        <div>
-          <div className="inline-flex items-center gap-1.5 text-[13px] uppercase tracking-widest font-medium text-[#946000] mb-0.5">
-            <span>FEATURED AT JUDESCART</span>
-          </div>
-          <h2 className="text-xl sm:text-2xl font-semibold text-[#111111] tracking-tight">
-            Customer Favourites
-          </h2>
-          <p className="text-sm sm:text-base text-[#475569] mt-0.5 font-normal leading-relaxed">
-            Discover our highest-rated sartorial pieces, master leathers, and signature craftsmanship.
-          </p>
-        </div>
-
-        {/* Category Pill Filters (Taneira Style Clean Rounded Navigation) & Nav Arrows */}
-        <div className="flex items-center justify-between md:justify-end gap-2.5">
-          <div className="flex items-center gap-2 overflow-x-auto pb-0.5 no-scrollbar">
-            {categoryTabs.map((tab) => {
-              const isActive = activeCategory === tab;
-              return (
-                <button
-                  key={tab}
-                  type="button"
-                  onClick={() => setActiveCategory(tab)}
-                  className={`min-h-[44px] px-3.5 py-2 rounded-lg text-[13px] sm:text-sm font-medium tracking-wide transition-all shrink-0 cursor-pointer focus-visible:ring-2 focus-visible:ring-[#DF9F28] ${
-                    isActive
-                      ? 'bg-[#0A192F] text-white shadow-xs border border-[#0A192F]'
-                      : 'bg-white text-[#374151] border border-[#E2E8F0] hover:border-[#DF9F28] hover:text-[#111111]'
-                  }`}
-                >
-                  {tab}
-                </button>
-              );
-            })}
+      <div className="space-y-3 border-b border-[#E2E8F0] pb-3">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
+          <div>
+            <div className="inline-flex items-center gap-1.5 text-[13px] uppercase tracking-widest font-medium text-[#946000] mb-0.5">
+              <span>FEATURED AT JUDESCART</span>
+            </div>
+            <h2 className="text-xl sm:text-2xl font-semibold text-[#111111] tracking-tight">
+              Customer Favourites
+            </h2>
+            <p className="text-sm sm:text-base text-[#475569] mt-0.5 font-normal leading-relaxed max-w-2xl">
+              Discover our highest-rated sartorial pieces, master leathers, and signature craftsmanship.
+            </p>
           </div>
 
-          {/* Desktop Top Navigation Arrow Controls - 44px tap targets */}
-          <div className="hidden sm:flex items-center gap-1.5 shrink-0 pl-1">
+          {/* Top Navigation Arrow Controls - 44px tap targets */}
+          <div className="hidden sm:flex items-center gap-1.5 shrink-0">
             <button
               type="button"
               onClick={() => scroll('left')}
@@ -416,6 +397,27 @@ export default function NewArrivals() {
               <ChevronRight className="w-5 h-5" />
             </button>
           </div>
+        </div>
+
+        {/* Category Pill Filters (Taneira Style Clean Rounded Navigation) */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
+          {categoryTabs.map((tab) => {
+            const isActive = activeCategory === tab;
+            return (
+              <button
+                key={tab}
+                type="button"
+                onClick={() => setActiveCategory(tab)}
+                className={`min-h-[40px] px-4 py-2 rounded-lg text-[13px] sm:text-sm font-medium tracking-wide transition-all shrink-0 cursor-pointer focus-visible:ring-2 focus-visible:ring-[#DF9F28] ${
+                  isActive
+                    ? 'bg-[#0A192F] text-white shadow-xs border border-[#0A192F]'
+                    : 'bg-white text-[#374151] border border-[#E2E8F0] hover:border-[#DF9F28] hover:text-[#111111]'
+                }`}
+              >
+                {tab}
+              </button>
+            );
+          })}
         </div>
       </div>
 
