@@ -500,30 +500,30 @@ export default function NewArrivals() {
         </div>
       ) : (
         <div className="relative group/carousel">
-          {/* Floating Left Navigation Button - 44px tap target */}
+          {/* Floating Left Navigation Button - Desktop only */}
           <button
             type="button"
             onClick={() => scroll('left')}
-            className="absolute -left-3 sm:-left-4 top-1/2 -translate-y-1/2 z-20 min-w-[44px] min-h-[44px] w-11 h-11 rounded-full bg-white/95 backdrop-blur-xs text-[#111111] shadow-md hover:shadow-lg border border-[#E2E8F0] flex items-center justify-center hover:bg-[#0A192F] hover:text-white transition-all active:scale-90 cursor-pointer opacity-90 group-hover/carousel:opacity-100"
+            className="hidden md:flex absolute -left-3 lg:-left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/95 backdrop-blur-xs text-[#111111] shadow-md hover:shadow-lg border border-[#E2E8F0] items-center justify-center hover:bg-[#0A192F] hover:text-white transition-all active:scale-90 cursor-pointer opacity-90 group-hover/carousel:opacity-100"
             aria-label="Scroll left"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
 
-          {/* Floating Right Navigation Button - 44px tap target */}
+          {/* Floating Right Navigation Button - Desktop only */}
           <button
             type="button"
             onClick={() => scroll('right')}
-            className="absolute -right-3 sm:-right-4 top-1/2 -translate-y-1/2 z-20 min-w-[44px] min-h-[44px] w-11 h-11 rounded-full bg-white/95 backdrop-blur-xs text-[#111111] shadow-md hover:shadow-lg border border-[#E2E8F0] flex items-center justify-center hover:bg-[#0A192F] hover:text-white transition-all active:scale-90 cursor-pointer opacity-90 group-hover/carousel:opacity-100"
+            className="hidden md:flex absolute -right-3 lg:-right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/95 backdrop-blur-xs text-[#111111] shadow-md hover:shadow-lg border border-[#E2E8F0] items-center justify-center hover:bg-[#0A192F] hover:text-white transition-all active:scale-90 cursor-pointer opacity-90 group-hover/carousel:opacity-100"
             aria-label="Scroll right"
           >
             <ChevronRight className="w-5 h-5" />
           </button>
 
-          {/* Horizontal Carousel Track - 60-70% footprint with 5 cards desktop */}
+          {/* Horizontal Carousel Track - Taneira-Style Fluid Touch Swiping */}
           <div
             ref={carouselRef}
-            className="flex overflow-x-auto no-scrollbar scroll-smooth snap-x snap-mandatory gap-2.5 sm:gap-3.5 lg:gap-4 pb-1.5"
+            className="flex overflow-x-auto no-scrollbar scroll-smooth snap-x snap-mandatory gap-2.5 sm:gap-3.5 lg:gap-4 px-0.5 pb-2 pt-0.5"
           >
             {filteredProducts.map((prod) => {
               const mainVariant = prod.variants?.[0];
@@ -533,7 +533,7 @@ export default function NewArrivals() {
               return (
                 <div
                   key={prod.id}
-                  className="w-[calc(48%-5px)] sm:w-[calc(32%-8px)] md:w-[calc(24%-10px)] lg:w-[calc(19.5%-12px)] shrink-0 snap-start"
+                  className="w-[165px] xs:w-[175px] sm:w-[210px] md:w-[220px] lg:w-[calc(20%-13px)] shrink-0 snap-start"
                 >
                   <ProductCard
                     id={prod.id}

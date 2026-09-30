@@ -138,28 +138,28 @@ export default function ProductCard({
         {/* Badges */}
         <div className="absolute top-2 left-2 z-10 pointer-events-none flex flex-col gap-1">
           {hasDiscount ? (
-            <span className="inline-flex items-center px-2 py-0.5 rounded text-[13px] font-medium bg-[#0A192F] text-white shadow-xs">
+            <span className="inline-flex items-center px-1.5 sm:px-2 py-0.5 rounded text-[10px] sm:text-xs font-bold uppercase tracking-wider bg-[#0A192F] text-white shadow-xs">
               {discountPercent}% OFF
             </span>
           ) : isCustomerFavorite ? (
-            <span className="inline-flex items-center px-2 py-0.5 rounded text-[13px] font-medium bg-[#DF9F28] text-[#111111] shadow-xs">
+            <span className="inline-flex items-center px-1.5 sm:px-2 py-0.5 rounded text-[10px] sm:text-xs font-bold uppercase tracking-wider bg-[#DF9F28] text-[#111111] shadow-xs">
               Bestseller
             </span>
           ) : isNewArrival ? (
-            <span className="inline-flex items-center px-2 py-0.5 rounded text-[13px] font-medium bg-[#0A192F] text-white shadow-xs">
+            <span className="inline-flex items-center px-1.5 sm:px-2 py-0.5 rounded text-[10px] sm:text-xs font-bold uppercase tracking-wider bg-[#0A192F] text-white shadow-xs">
               New
             </span>
           ) : null}
         </div>
 
-        {/* Wishlist Button - 44px mobile touch target */}
+        {/* Wishlist Button - Perfectly proportioned circular button */}
         <button
           type="button"
           onClick={handleWishlistToggle}
           aria-label={isFavorited ? 'Remove from wishlist' : 'Add to wishlist'}
-          className="absolute top-2 right-2 z-10 min-w-[44px] min-h-[44px] w-11 h-11 rounded-lg bg-white/95 backdrop-blur-xs border border-[#E2E8F0] flex items-center justify-center text-[#374151] hover:text-rose-600 hover:bg-white transition-all active:scale-95 cursor-pointer shadow-xs"
+          className="absolute top-2 right-2 z-10 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white/90 backdrop-blur-xs border border-[#E2E8F0] flex items-center justify-center text-[#374151] hover:text-rose-600 hover:bg-white transition-all active:scale-90 cursor-pointer shadow-xs"
         >
-          <Heart className={`w-4 h-4 transition-colors ${isFavorited ? 'fill-rose-600 text-rose-600' : ''}`} />
+          <Heart className={`w-3.5 h-3.5 sm:w-4 sm:h-4 transition-colors ${isFavorited ? 'fill-rose-600 text-rose-600' : ''}`} />
         </button>
 
         {/* Desktop Quick Action Floating Bar */}
@@ -178,7 +178,7 @@ export default function ProductCard({
               type="button"
               onClick={handleAddToCart}
               disabled={isAdded}
-              className={`flex-1 h-10 px-3 rounded-lg text-[13px] font-medium tracking-wide transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-xs ${
+              className={`flex-1 h-9 px-2.5 rounded-lg text-xs font-semibold tracking-wide transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-xs ${
                 isAdded
                   ? 'bg-emerald-600 text-white'
                   : 'bg-[#0A192F] hover:bg-[#DF9F28] hover:text-[#111111] text-white'
@@ -186,12 +186,12 @@ export default function ProductCard({
             >
               {isAdded ? (
                 <>
-                  <Check className="w-4 h-4" />
+                  <Check className="w-3.5 h-3.5" />
                   <span>Added</span>
                 </>
               ) : (
                 <>
-                  <ShoppingBag className="w-4 h-4" />
+                  <ShoppingBag className="w-3.5 h-3.5" />
                   <span>Add to Bag</span>
                 </>
               )}
@@ -201,54 +201,54 @@ export default function ProductCard({
       </div>
 
       {/* Card Information Body - Compact & Clean */}
-      <div className="p-3 sm:p-3.5 flex-1 flex flex-col justify-between space-y-1.5">
+      <div className="p-2.5 sm:p-3 flex-1 flex flex-col justify-between space-y-1.5 bg-white">
         <div className="space-y-1">
           {/* Category & Rating Row */}
-          <div className="flex items-center justify-between text-xs">
-            <span className="text-[13px] uppercase tracking-wider font-medium text-[#946000]">
+          <div className="flex items-center justify-between text-xs gap-1">
+            <span className="text-[11px] sm:text-xs uppercase tracking-wider font-semibold text-[#946000] truncate max-w-[70%]">
               {category}
             </span>
-            <div className="flex items-center gap-1 text-[#374151]">
-              <Star className="w-3.5 h-3.5 fill-[#DF9F28] text-[#DF9F28]" />
-              <span className="text-[13px] font-medium text-[#111111]">{rating.toFixed(1)}</span>
+            <div className="flex items-center gap-1 text-[#374151] shrink-0">
+              <Star className="w-3 h-3 fill-[#DF9F28] text-[#DF9F28]" />
+              <span className="text-[11px] sm:text-xs font-bold text-[#111111]">{rating.toFixed(1)}</span>
             </div>
           </div>
 
-          {/* Product Title (WCAG 2.1 AA minimum 15px) */}
+          {/* Product Title */}
           <Link href={`/product?id=${encodeURIComponent(String(id))}`} className="block group-hover:text-[#946000] transition-colors focus-visible:outline-none">
-            <h3 className="text-[15px] sm:text-base font-medium text-[#111111] leading-snug line-clamp-2">
+            <h3 className="text-xs sm:text-sm font-medium text-[#111111] leading-snug line-clamp-2 min-h-[2rem] sm:min-h-[2.5rem]">
               {name}
             </h3>
           </Link>
         </div>
 
-        {/* Price & Mobile Actions (WCAG 2.1 AA minimum 16px for price) */}
-        <div className="pt-2 border-t border-[#F1F5F9] flex items-center justify-between">
-          <div className="flex items-baseline gap-1.5">
-            <span className="text-base sm:text-[17px] font-semibold text-[#111111]">
+        {/* Price & Mobile Actions */}
+        <div className="pt-1.5 border-t border-[#F1F5F9] flex items-center justify-between gap-1">
+          <div className="flex flex-wrap items-baseline gap-1">
+            <span className="text-xs sm:text-[15px] font-bold text-[#111111]">
               ₹{price.toLocaleString('en-IN')}
             </span>
             {hasDiscount && (
-              <span className="text-[13px] text-[#4B5563] font-normal line-through">
+              <span className="text-[10px] sm:text-xs text-[#64748B] font-normal line-through">
                 ₹{originalPrice.toLocaleString('en-IN')}
               </span>
             )}
           </div>
 
-          {/* Mobile Quick Add - 44px tap target */}
-          <div className="sm:hidden">
+          {/* Mobile Quick Add */}
+          <div className="sm:hidden shrink-0">
             <button
               type="button"
               onClick={handleAddToCart}
               disabled={isAdded}
               aria-label="Add to bag"
-              className={`min-w-[44px] min-h-[44px] p-2.5 rounded-lg text-sm font-semibold transition-all flex items-center justify-center ${
+              className={`w-8 h-8 rounded-lg text-xs font-semibold transition-all flex items-center justify-center shadow-xs cursor-pointer active:scale-90 ${
                 isAdded
                   ? 'bg-emerald-600 text-white'
                   : 'bg-[#0A192F] text-white active:bg-[#DF9F28] active:text-[#111111]'
               }`}
             >
-              {isAdded ? <Check className="w-4 h-4" /> : <ShoppingBag className="w-4 h-4" />}
+              {isAdded ? <Check className="w-3.5 h-3.5" /> : <ShoppingBag className="w-3.5 h-3.5" />}
             </button>
           </div>
         </div>
