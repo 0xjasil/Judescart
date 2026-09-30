@@ -309,12 +309,29 @@ export default function NewArrivals() {
   }, [offerSlides.length]);
 
   const categoryTabs = useMemo(() => {
+    // Collect all category names that have products or are active in DB
+    const productCategories = new Set<string>();
+    products.forEach((p) => {
+      const catName = p.category?.name?.toUpperCase().trim();
+      if (catName) {
+        productCategories.add(catName);
+      }
+    });
+
     if (categories.length > 0) {
-      const dbCatNames = Array.from(new Set(categories.map((c) => c.name.toUpperCase())));
-      return ['ALL PRODUCTS', ...dbCatNames];
+      categories.forEach((c) => {
+        if (c.name) {
+          productCategories.add(c.name.toUpperCase().trim());
+        }
+      });
     }
+
+    if (productCategories.size > 0) {
+      return ['ALL PRODUCTS', ...Array.from(productCategories)];
+    }
+
     return CATEGORY_TABS;
-  }, [categories]);
+  }, [categories, products]);
 
   const scroll = (direction: 'left' | 'right') => {
     if (carouselRef.current) {
@@ -335,21 +352,21 @@ export default function NewArrivals() {
     return products.filter((p) => {
       const catName = (p.category?.name || '').toUpperCase().trim();
       const prodName = (p.name || '').toUpperCase().trim();
+      const desc = (p.description || '').toUpperCase().trim();
 
       if (catName && (catName === target || catName.includes(target) || target.includes(catName))) {
         return true;
       }
 
-      // Dynamic category matching aliases based on product name if category wasn't assigned
-      if (target.includes('TOP') && (prodName.includes('SHIRT') || prodName.includes('SWEATER') || prodName.includes('TEE') || prodName.includes('HOODIE') || prodName.includes('T-SHIRT') || prodName.includes('POLO'))) return true;
-      if (target.includes('BOTTOM') && (prodName.includes('PANT') || prodName.includes('SKIRT') || prodName.includes('SHORT') || prodName.includes('JEAN') || prodName.includes('TROUSER') || prodName.includes('CARGO'))) return true;
-      if (target.includes('DRESS') && (prodName.includes('DRESS') || prodName.includes('GOWN') || prodName.includes('KURTA') || prodName.includes('PARTY'))) return true;
-      if (target.includes('OUTER') && (prodName.includes('COAT') || prodName.includes('JACKET') || prodName.includes('RAIN') || prodName.includes('BLAZER') || prodName.includes('PUFFER'))) return true;
-      if (target.includes('ACCESS') && (prodName.includes('HEADPHONE') || prodName.includes('WATCH') || prodName.includes('AUDIO') || prodName.includes('WALLET') || prodName.includes('BELT') || prodName.includes('SPEAKER'))) return true;
-      if (target.includes('APPAR') && (prodName.includes('JACKET') || prodName.includes('OVERSHIRT') || prodName.includes('BLAZER') || prodName.includes('TROUSER') || prodName.includes('SUIT') || prodName.includes('COAT'))) return true;
-      if (target.includes('LEATHER') && (prodName.includes('LEATHER') || prodName.includes('BRIEFCASE') || prodName.includes('WEEKENDER') || prodName.includes('WALLET') || prodName.includes('DUFFLE') || prodName.includes('BAG'))) return true;
-      if (target.includes('FOOT') && (prodName.includes('OXFORD') || prodName.includes('BOOT') || prodName.includes('SNEAKER') || prodName.includes('LOAFER') || prodName.includes('SHOE'))) return true;
-      if (target.includes('HOME') && (prodName.includes('BLANKET') || prodName.includes('DIFFUSER') || prodName.includes('CASHMERE') || prodName.includes('DECOR') || prodName.includes('THROW') || prodName.includes('PILLOW'))) return true;
+      // Dynamic category matching aliases
+      if (target === 'APPAREL' && (catName.includes('APPAR') || catName.includes('TOP') || catName.includes('OUTER') || catName.includes('DRESS') || prodName.includes('BLAZER') || prodName.includes('JACKET') || prodName.includes('SHIRT') || prodName.includes('TROUSER') || prodName.includes('SUIT') || prodName.includes('SWEATER') || prodName.includes('DRESS') || prodName.includes('PANT') || prodName.includes('SKIRT'))) return true;
+      if (target === 'LEATHER GOODS' && (catName.includes('LEATHER') || prodName.includes('LEATHER') || prodName.includes('BRIEFCASE') || prodName.includes('DUFFLE') || prodName.includes('WEEKENDER') || prodName.includes('BAG') || prodName.includes('WALLET'))) return true;
+      if (target === 'ACCESSORIES' && (catName.includes('ACCESS') || prodName.includes('WATCH') || prodName.includes('HEADPHONE') || prodName.includes('CHRONO') || prodName.includes('SILK') || prodName.includes('TIE') || prodName.includes('BELT'))) return true;
+      if (target === 'FOOTWEAR' && (catName.includes('FOOT') || prodName.includes('OXFORD') || prodName.includes('BOOT') || prodName.includes('SHOE') || prodName.includes('SNEAKER') || prodName.includes('LOAFER'))) return true;
+      if (target === 'HOME LIVING' && (catName.includes('HOME') || prodName.includes('CASHMERE') || prodName.includes('DIFFUSER') || prodName.includes('BLANKET') || prodName.includes('THROW') || prodName.includes('CANDLE'))) return true;
+      if (target === 'TOPS' && (catName.includes('TOP') || prodName.includes('SHIRT') || prodName.includes('TEE') || prodName.includes('HOODIE') || prodName.includes('POLO') || prodName.includes('SWEATER') || prodName.includes('T-SHIRT'))) return true;
+      if (target === 'DRESSES' && (catName.includes('DRESS') || prodName.includes('DRESS') || prodName.includes('GOWN') || prodName.includes('KURTA') || prodName.includes('PARTY'))) return true;
+      if (target === 'OUTERWEAR' && (catName.includes('OUTER') || prodName.includes('COAT') || prodName.includes('JACKET') || prodName.includes('BLAZER') || prodName.includes('RAINCOAT') || prodName.includes('PUFFER') || prodName.includes('OVERSHIRT'))) return true;
 
       return false;
     });

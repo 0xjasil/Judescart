@@ -334,7 +334,7 @@ function ProductContent() {
   useEffect(() => {
     let isMounted = true;
     setCatalogLoading(true);
-    fetch(`${getApiUrl()}/products?limit=50`)
+    fetch(`${getApiUrl()}/products?limit=100`)
       .then((r) => r.json())
       .then((res) => {
         if (res.data && Array.isArray(res.data) && res.data.length > 0) {

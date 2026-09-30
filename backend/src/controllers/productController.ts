@@ -648,9 +648,9 @@ export const getProducts = async (req: Request, res: Response) => {
                 hasPreviousPage: skip > 0,
             }
         });
-    } catch (error) {
+    } catch (error: any) {
         console.error('Failed to fetch products:', error);
-        res.status(500).json({ error: "Failed to fetch products" });
+        res.status(500).json({ error: error?.message || "Failed to fetch products" });
     }
 };
 
