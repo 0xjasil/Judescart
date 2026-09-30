@@ -158,69 +158,69 @@ export default function LuckyDrawPoster() {
         <div className="grid grid-cols-1 lg:grid-cols-12 items-center">
           
           {/* Left Text & Countdown */}
-          <div className="lg:col-span-7 p-6 sm:p-10 lg:p-12 space-y-5">
+          <div className="lg:col-span-7 p-4 sm:p-8 lg:p-12 space-y-3 sm:space-y-5">
             <div className="flex items-center gap-2">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[#DF9F28]/20 border border-[#DF9F28]/40 text-[#DF9F28] text-[13px] font-bold uppercase tracking-wider">
-                <Trophy className="w-4 h-4 text-[#DF9F28]" />
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-md bg-[#DF9F28]/20 border border-[#DF9F28]/40 text-[#DF9F28] text-xs sm:text-[13px] font-bold uppercase tracking-wider">
+                <Trophy className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#DF9F28]" />
                 <span>Live Weekly Sweepstakes</span>
               </div>
               {total > 1 && (
-                <span className="text-xs font-semibold text-slate-300 bg-black/40 px-2.5 py-0.5 rounded border border-white/10">
+                <span className="text-[11px] sm:text-xs font-semibold text-slate-300 bg-black/40 px-2 py-0.5 rounded border border-white/10">
                   Campaign {(currentIndex % total) + 1} / {total}
                 </span>
               )}
             </div>
 
-            <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white tracking-tight leading-tight">
+            <h2 className="text-lg sm:text-2xl lg:text-3xl font-bold text-white tracking-tight leading-tight">
               {activeCampaign.name}
             </h2>
 
-            <p className="text-sm sm:text-base text-slate-200 max-w-lg leading-relaxed font-normal">
+            <p className="text-xs sm:text-base text-slate-200 max-w-lg leading-relaxed font-normal">
               Every verified customer order automatically generates lucky draw tickets. Discover fine tailoring and enter transparent weekly prize drawings.
             </p>
 
             {/* Countdown Box */}
-            <div className="space-y-2 pt-1">
-              <div className="text-[13px] font-bold text-[#DF9F28] uppercase tracking-wider flex items-center gap-1.5">
-                <Clock className="w-4 h-4 text-[#DF9F28]" />
+            <div className="space-y-1.5 sm:space-y-2 pt-0.5">
+              <div className="text-xs sm:text-[13px] font-bold text-[#DF9F28] uppercase tracking-wider flex items-center gap-1.5">
+                <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#DF9F28]" />
                 <span>Next Live Draw Countdown</span>
               </div>
-              <div className="grid grid-cols-4 gap-2 max-w-xs text-center font-mono">
-                <div className="bg-[#061B3A] border border-white/10 rounded-lg p-2.5">
-                  <span className="block text-xl sm:text-2xl font-bold text-white leading-none">
+              <div className="grid grid-cols-4 gap-1.5 sm:gap-2 max-w-xs text-center font-mono">
+                <div className="bg-[#061B3A] border border-white/10 rounded-lg p-1.5 sm:p-2.5">
+                  <span className="block text-base sm:text-2xl font-bold text-white leading-none">
                     {isMounted ? pad(timeLeft.days) : '03'}
                   </span>
-                  <span className="text-[13px] text-slate-200 font-sans font-semibold uppercase mt-1.5 block">Days</span>
+                  <span className="text-[10px] sm:text-[13px] text-slate-200 font-sans font-semibold uppercase mt-1 sm:mt-1.5 block">Days</span>
                 </div>
-                <div className="bg-[#061B3A] border border-white/10 rounded-lg p-2.5">
-                  <span className="block text-xl sm:text-2xl font-bold text-white leading-none">
+                <div className="bg-[#061B3A] border border-white/10 rounded-lg p-1.5 sm:p-2.5">
+                  <span className="block text-base sm:text-2xl font-bold text-white leading-none">
                     {isMounted ? pad(timeLeft.hours) : '14'}
                   </span>
-                  <span className="text-[13px] text-slate-200 font-sans font-semibold uppercase mt-1.5 block">Hours</span>
+                  <span className="text-[10px] sm:text-[13px] text-slate-200 font-sans font-semibold uppercase mt-1 sm:mt-1.5 block">Hours</span>
                 </div>
-                <div className="bg-[#061B3A] border border-white/10 rounded-lg p-2.5">
-                  <span className="block text-xl sm:text-2xl font-bold text-white leading-none">
+                <div className="bg-[#061B3A] border border-white/10 rounded-lg p-1.5 sm:p-2.5">
+                  <span className="block text-base sm:text-2xl font-bold text-white leading-none">
                     {isMounted ? pad(timeLeft.minutes) : '22'}
                   </span>
-                  <span className="text-[13px] text-slate-200 font-sans font-semibold uppercase mt-1.5 block">Mins</span>
+                  <span className="text-[10px] sm:text-[13px] text-slate-200 font-sans font-semibold uppercase mt-1 sm:mt-1.5 block">Mins</span>
                 </div>
-                <div className="bg-[#061B3A] border border-[#DF9F28]/30 rounded-lg p-2.5">
-                  <span className="block text-xl sm:text-2xl font-bold text-[#DF9F28] leading-none">
+                <div className="bg-[#061B3A] border border-[#DF9F28]/30 rounded-lg p-1.5 sm:p-2.5">
+                  <span className="block text-base sm:text-2xl font-bold text-[#DF9F28] leading-none">
                     {isMounted ? pad(timeLeft.seconds) : '45'}
                   </span>
-                  <span className="text-[13px] text-[#DF9F28] font-sans font-semibold uppercase mt-1.5 block">Secs</span>
+                  <span className="text-[10px] sm:text-[13px] text-[#DF9F28] font-sans font-semibold uppercase mt-1 sm:mt-1.5 block">Secs</span>
                 </div>
               </div>
             </div>
 
             {/* Primary CTA */}
-            <div className="pt-2 flex flex-wrap items-center gap-4">
+            <div className="pt-1 flex flex-wrap items-center gap-3">
               <Link
                 href="/lucky-draw"
-                className="inline-flex items-center gap-2 min-h-[44px] px-6 py-3 rounded-lg bg-[#DF9F28] hover:bg-[#C6891E] text-[#111111] font-bold text-sm sm:text-base tracking-wide transition-all shadow-sm active:scale-95 focus-visible:ring-2 focus-visible:ring-[#DF9F28]"
+                className="inline-flex items-center gap-1.5 min-h-[38px] sm:min-h-[44px] px-4 py-2 sm:px-6 sm:py-3 rounded-lg bg-[#DF9F28] hover:bg-[#C6891E] text-[#111111] font-bold text-xs sm:text-base tracking-wide transition-all shadow-sm active:scale-95 focus-visible:ring-2 focus-visible:ring-[#DF9F28]"
               >
                 <span>View Lucky Draw Details</span>
-                <ArrowRight className="w-4 h-4 text-[#111111]" />
+                <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#111111]" />
               </Link>
 
               {total > 1 && (
@@ -230,10 +230,10 @@ export default function LuckyDrawPoster() {
                       key={idx}
                       onClick={() => setCurrentIndex(idx)}
                       aria-label={`Select campaign ${idx + 1}`}
-                      className={`h-2 rounded-full transition-all cursor-pointer ${
+                      className={`h-1.5 sm:h-2 rounded-full transition-all cursor-pointer ${
                         idx === (currentIndex % total)
-                          ? 'w-6 bg-[#DF9F28]'
-                          : 'w-2 bg-white/40 hover:bg-white/80'
+                          ? 'w-5 sm:w-6 bg-[#DF9F28]'
+                          : 'w-1.5 sm:w-2 bg-white/40 hover:bg-white/80'
                       }`}
                     />
                   ))}
@@ -243,7 +243,7 @@ export default function LuckyDrawPoster() {
           </div>
 
           {/* Right Prize Image Showcase */}
-          <div className="lg:col-span-5 relative aspect-square lg:aspect-auto min-h-[320px] lg:h-full bg-[#061B3A] border-t lg:border-t-0 lg:border-l border-white/10 overflow-hidden">
+          <div className="lg:col-span-5 relative aspect-square lg:aspect-auto min-h-[200px] xs:min-h-[220px] sm:min-h-[280px] lg:h-full bg-[#061B3A] border-t lg:border-t-0 lg:border-l border-white/10 overflow-hidden">
             <Image
               src={prizeImageSrc}
               alt={activeCampaign.prizeName || 'Featured Prize'}
@@ -253,12 +253,12 @@ export default function LuckyDrawPoster() {
               sizes="(max-width: 1024px) 100vw, 40vw"
               className="object-cover hover:scale-105 transition-transform duration-700"
             />
-            <div className="absolute inset-x-4 bottom-4 p-3.5 rounded-xl bg-[#061B3A]/90 backdrop-blur-md border border-white/10 text-white">
-              <span className="text-[13px] uppercase font-bold text-[#DF9F28] tracking-wider flex items-center gap-1.5">
+            <div className="absolute inset-x-3 bottom-3 sm:inset-x-4 sm:bottom-4 p-2.5 sm:p-3.5 rounded-xl bg-[#061B3A]/90 backdrop-blur-md border border-white/10 text-white">
+              <span className="text-xs sm:text-[13px] uppercase font-bold text-[#DF9F28] tracking-wider flex items-center gap-1.5">
                 <Gift className="w-3.5 h-3.5" />
                 <span>Featured Prize ({activeCampaign.winnerCount || 1} Winner{(activeCampaign.winnerCount || 1) > 1 ? 's' : ''})</span>
               </span>
-              <p className="font-bold text-sm sm:text-base text-white line-clamp-1 mt-0.5">
+              <p className="font-bold text-xs sm:text-base text-white line-clamp-1 mt-0.5">
                 {activeCampaign.prizeName}
               </p>
             </div>

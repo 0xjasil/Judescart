@@ -78,55 +78,55 @@ export default function BenefitsSection() {
         <div className="grid grid-cols-1 lg:grid-cols-12 items-center">
           
           {/* Left Text & Value Props */}
-          <div className="lg:col-span-7 p-6 sm:p-10 lg:p-12 flex flex-col justify-center space-y-5">
-            <div className="inline-flex items-center gap-2 text-[13px] uppercase tracking-wider font-bold text-[#946000]">
-              <Sparkles className="w-4 h-4 text-[#946000]" />
+          <div className="lg:col-span-7 p-4 sm:p-8 lg:p-12 flex flex-col justify-center space-y-3 sm:space-y-5">
+            <div className="inline-flex items-center gap-1.5 text-xs sm:text-[13px] uppercase tracking-wider font-bold text-[#946000]">
+              <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#946000]" />
               <span>{tag}</span>
             </div>
 
-            <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold leading-tight text-[#111111] tracking-tight">
+            <h2 className="text-lg sm:text-2xl lg:text-3xl font-bold leading-tight text-[#111111] tracking-tight">
               {title}
             </h2>
 
-            <p className="text-base sm:text-lg text-[#334155] leading-relaxed font-normal max-w-xl">
+            <p className="text-xs sm:text-base text-[#334155] leading-relaxed font-normal max-w-xl">
               {description}
             </p>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-[#F1F5F9] text-[#334155]">
-              <div className="p-4 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0]">
-                <h4 className="font-bold text-[#111111] uppercase tracking-wide text-sm sm:text-[15px] flex items-center gap-2">
-                  <ShieldCheck className="w-4 h-4 text-[#946000]" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-4 pt-2.5 sm:pt-4 border-t border-[#F1F5F9] text-[#334155]">
+              <div className="p-3 sm:p-4 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0]">
+                <h4 className="font-bold text-[#111111] uppercase tracking-wide text-xs sm:text-[15px] flex items-center gap-1.5 sm:gap-2">
+                  <ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#946000]" />
                   <span>{benefit1Title}</span>
                 </h4>
-                <p className="text-sm sm:text-base text-[#334155] mt-1.5 leading-relaxed">
+                <p className="text-xs sm:text-sm text-[#334155] mt-1 sm:mt-1.5 leading-relaxed">
                   {benefit1Desc}
                 </p>
               </div>
 
-              <div className="p-4 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0]">
-                <h4 className="font-bold text-[#111111] uppercase tracking-wide text-sm sm:text-[15px] flex items-center gap-2">
-                  <Leaf className="w-4 h-4 text-[#946000]" />
+              <div className="p-3 sm:p-4 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0]">
+                <h4 className="font-bold text-[#111111] uppercase tracking-wide text-xs sm:text-[15px] flex items-center gap-1.5 sm:gap-2">
+                  <Leaf className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#946000]" />
                   <span>{benefit2Title}</span>
                 </h4>
-                <p className="text-sm sm:text-base text-[#334155] mt-1.5 leading-relaxed">
+                <p className="text-xs sm:text-sm text-[#334155] mt-1 sm:mt-1.5 leading-relaxed">
                   {benefit2Desc}
                 </p>
               </div>
             </div>
 
-            <div className="pt-2">
+            <div className="pt-1">
               <Link
                 href={buttonLink || '/product'}
-                className="inline-flex items-center gap-2 min-h-[44px] text-sm sm:text-base font-bold uppercase tracking-wider text-[#111111] hover:text-[#946000] transition-colors group focus-visible:outline-none"
+                className="inline-flex items-center gap-1.5 min-h-[38px] sm:min-h-[44px] text-xs sm:text-sm font-bold uppercase tracking-wider text-[#111111] hover:text-[#946000] transition-colors group focus-visible:outline-none"
               >
                 <span>{buttonText}</span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform text-[#946000]" />
+                <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 group-hover:translate-x-1 transition-transform text-[#946000]" />
               </Link>
             </div>
           </div>
 
           {/* Right Visual Showcase Banner */}
-          <div className="lg:col-span-5 relative aspect-square lg:aspect-auto min-h-[340px] lg:h-full bg-slate-100 border-t lg:border-t-0 lg:border-l border-[#E2E8F0] overflow-hidden">
+          <div className="lg:col-span-5 relative aspect-square lg:aspect-auto min-h-[200px] xs:min-h-[220px] sm:min-h-[280px] lg:h-full bg-slate-100 border-t lg:border-t-0 lg:border-l border-[#E2E8F0] overflow-hidden">
             <Image
               src={imageSrc}
               alt={title || 'Brand Craftsmanship Showcase'}
