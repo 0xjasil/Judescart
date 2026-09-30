@@ -555,7 +555,7 @@ export default function NewArrivals() {
          ========================================================================= */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-4 items-stretch pt-1">
         {offerSlides.length > 0 ? (
-          <div className="lg:col-span-8 relative rounded-lg overflow-hidden bg-[#0A192F] text-white p-5 sm:p-6 flex flex-col justify-between min-h-[190px] sm:min-h-[220px] border border-[#E2E8F0] shadow-xs group">
+          <div className="lg:col-span-8 relative rounded-lg overflow-hidden bg-[#0A192F] text-white p-3 sm:p-5 flex flex-col justify-between min-h-[150px] sm:min-h-[200px] border border-[#E2E8F0] shadow-xs group">
             <Image
               src={offerSlides[currentSlideIdx % offerSlides.length].image}
               alt="Exclusive Offer"
@@ -565,32 +565,29 @@ export default function NewArrivals() {
             />
             <div className="absolute inset-0 bg-gradient-to-r from-[#061B3A]/90 via-[#061B3A]/60 to-transparent pointer-events-none" />
 
-            <div className="relative z-10 space-y-2 max-w-lg">
-              <div className="flex items-center gap-2">
-                <span className="inline-block px-3 py-1 rounded text-[13px] font-bold uppercase tracking-wider bg-[#DF9F28]/20 text-[#DF9F28] border border-[#DF9F28]/40">
+            <div className="relative z-10 space-y-1.5 max-w-lg">
+              <div className="flex items-center gap-1.5">
+                <span className="inline-block px-2 py-0.5 rounded text-[10px] sm:text-[13px] font-bold uppercase tracking-wider bg-[#DF9F28]/20 text-[#DF9F28] border border-[#DF9F28]/40">
                   Featured Promotion
                 </span>
                 {offerSlides.length > 1 && (
-                  <span className="text-xs font-semibold text-slate-300 bg-black/40 px-2 py-0.5 rounded">
+                  <span className="text-[10px] sm:text-xs font-semibold text-slate-300 bg-black/40 px-1.5 py-0.5 rounded">
                     {((currentSlideIdx % offerSlides.length) + 1)} / {offerSlides.length}
                   </span>
                 )}
               </div>
-              <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-white tracking-tight leading-snug">
+              <h3 className="text-sm sm:text-lg md:text-2xl font-bold text-white tracking-tight leading-snug">
                 Exclusive Seasonal Curation &amp; Limited Offers
               </h3>
-              <p className="text-sm sm:text-base text-slate-200 leading-relaxed max-w-md hidden sm:block font-normal">
-                Discover curated luxury arrivals with complimentary lucky draw entries on every qualified purchase.
-              </p>
             </div>
 
-            <div className="relative z-10 pt-3 flex items-center justify-between">
+            <div className="relative z-10 pt-2 flex items-center justify-between">
               <Link
                 href={offerSlides[currentSlideIdx % offerSlides.length].route || "/product"}
-                className="inline-flex items-center gap-2 min-h-[44px] px-5 py-2.5 rounded-lg bg-[#DF9F28] hover:bg-[#C6891E] text-[#111111] font-bold text-sm tracking-wide transition-all shadow-xs active:scale-95 cursor-pointer"
+                className="inline-flex items-center gap-1.5 min-h-[36px] sm:min-h-[44px] px-3 py-1.5 sm:px-5 sm:py-2.5 rounded-lg bg-[#DF9F28] hover:bg-[#C6891E] text-[#111111] font-bold text-xs sm:text-sm tracking-wide transition-all shadow-xs active:scale-95 cursor-pointer"
               >
                 <span>Claim Offer Now</span>
-                <ArrowRight className="w-4 h-4 text-[#111111]" />
+                <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#111111]" />
               </Link>
 
               {offerSlides.length > 1 && (
@@ -612,7 +609,7 @@ export default function NewArrivals() {
             </div>
           </div>
         ) : (
-          <div className="lg:col-span-8 relative rounded-lg overflow-hidden bg-[#0A192F] text-white p-5 sm:p-6 flex flex-col justify-between min-h-[190px] sm:min-h-[220px] border border-[#E2E8F0] shadow-xs">
+          <div className="lg:col-span-8 relative rounded-lg overflow-hidden bg-[#0A192F] text-white p-3 sm:p-5 flex flex-col justify-between min-h-[150px] sm:min-h-[200px] border border-[#E2E8F0] shadow-xs">
             <Image
               src="/about_atelier.png"
               alt="The Artisan Curation"
@@ -621,25 +618,22 @@ export default function NewArrivals() {
             />
             <div className="absolute inset-0 bg-gradient-to-r from-[#061B3A] via-[#061B3A]/85 to-transparent pointer-events-none" />
 
-            <div className="relative z-10 space-y-2 max-w-lg">
-              <span className="inline-block px-3 py-1 rounded text-[13px] font-bold uppercase tracking-wider bg-[#DF9F28]/20 text-[#DF9F28] border border-[#DF9F28]/40">
+            <div className="relative z-10 space-y-1.5 max-w-lg">
+              <span className="inline-block px-2 py-0.5 rounded text-[10px] sm:text-[13px] font-bold uppercase tracking-wider bg-[#DF9F28]/20 text-[#DF9F28] border border-[#DF9F28]/40">
                 The Artisan Curation
               </span>
-              <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-white tracking-tight leading-snug">
+              <h3 className="text-sm sm:text-lg md:text-2xl font-bold text-white tracking-tight leading-snug">
                 Masterpiece Weaves &amp; Hand-Finished Silhouettes
               </h3>
-              <p className="text-sm sm:text-base text-slate-200 leading-relaxed max-w-md hidden sm:block font-normal">
-                Engineered with ethical Italian wool, vegetable-tanned full-grain leathers, and timeless architectural tailoring.
-              </p>
             </div>
 
-            <div className="relative z-10 pt-3 flex items-center justify-between">
+            <div className="relative z-10 pt-2 flex items-center justify-between">
               <Link
                 href="/product"
-                className="inline-flex items-center gap-2 min-h-[44px] px-5 py-2.5 rounded-lg bg-[#DF9F28] hover:bg-[#C6891E] text-[#111111] font-bold text-sm tracking-wide transition-all shadow-xs active:scale-95 cursor-pointer"
+                className="inline-flex items-center gap-1.5 min-h-[36px] sm:min-h-[44px] px-3 py-1.5 sm:px-5 sm:py-2.5 rounded-lg bg-[#DF9F28] hover:bg-[#C6891E] text-[#111111] font-bold text-xs sm:text-sm tracking-wide transition-all shadow-xs active:scale-95 cursor-pointer"
               >
                 <span>Explore Curated Edit</span>
-                <ArrowRight className="w-4 h-4 text-[#111111]" />
+                <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#111111]" />
               </Link>
               <span className="text-[13px] text-slate-200 font-medium hidden md:inline">
                 Complimentary Lucky Draw ticket included with every purchase
@@ -648,29 +642,29 @@ export default function NewArrivals() {
           </div>
         )}
 
-        <div className="lg:col-span-4 rounded-lg bg-gradient-to-br from-[#FEF8EE] to-[#F1F5F9] border border-[#DF9F28]/30 p-5 sm:p-6 flex flex-col justify-between shadow-xs">
-          <div className="space-y-2">
+        <div className="lg:col-span-4 rounded-lg bg-gradient-to-br from-[#FEF8EE] to-[#F1F5F9] border border-[#DF9F28]/30 p-3 sm:p-5 flex flex-col justify-between shadow-xs">
+          <div className="space-y-1.5">
             <div className="flex items-center justify-between">
-              <span className="text-[13px] font-bold uppercase tracking-widest text-[#946000]">
+              <span className="text-[10px] sm:text-[13px] font-bold uppercase tracking-widest text-[#946000]">
                 LUCKY DRAW PERK
               </span>
-              <Compass className="w-4 h-4 text-[#946000]" />
+              <Compass className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#946000]" />
             </div>
-            <h4 className="text-base sm:text-lg font-bold text-[#111111] leading-snug">
+            <h4 className="text-sm sm:text-base lg:text-lg font-bold text-[#111111] leading-snug">
               Weekly Luxury Sweepstakes
             </h4>
-            <p className="text-base text-[#334155] leading-relaxed font-normal">
+            <p className="text-xs sm:text-sm text-[#334155] leading-relaxed font-normal hidden sm:block">
               Every curated order automatically enters you into the verified weekly lucky draw for bespoke coats, leather duffles, and studio accessories.
             </p>
           </div>
 
-          <div className="pt-3 border-t border-[#E2E8F0]">
+          <div className="pt-2 sm:pt-3 border-t border-[#E2E8F0]">
             <Link
               href="/lucky-draw"
-              className="inline-flex items-center gap-1.5 min-h-[44px] text-sm font-bold uppercase tracking-wider text-[#111111] hover:text-[#946000] transition-colors"
+              className="inline-flex items-center gap-1.5 min-h-[36px] sm:min-h-[44px] text-xs sm:text-sm font-bold uppercase tracking-wider text-[#111111] hover:text-[#946000] transition-colors"
             >
               <span>View Active Prize Pool</span>
-              <ArrowUpRight className="w-4 h-4 text-[#946000]" />
+              <ArrowUpRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#946000]" />
             </Link>
           </div>
         </div>
