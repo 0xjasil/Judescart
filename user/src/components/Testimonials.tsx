@@ -31,14 +31,14 @@ export default function Testimonials() {
   return (
     <section className="py-16 md:py-24 bg-white border-t border-slate-200/80">
       <div className="sj-container">
-        <div className="text-center max-w-2xl mx-auto mb-12 space-y-2">
-          <span className="text-xs font-bold tracking-[0.2em] uppercase text-[#DF9F28]">
+        <div className="text-center max-w-2xl mx-auto mb-12 space-y-2.5">
+          <span className="text-[13px] font-bold tracking-[0.18em] uppercase text-[#946000]">
             CLIENT SATISFACTION
           </span>
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-sans font-extrabold text-[#111111] tracking-tight">
             Voices of Refinement
           </h2>
-          <p className="text-xs sm:text-sm text-[#555555]">
+          <p className="text-sm sm:text-base text-[#334155] leading-relaxed">
             Real stories from our discerning community of patrons across the country.
           </p>
         </div>
@@ -47,7 +47,7 @@ export default function Testimonials() {
           {REVIEWS.map((review, idx) => (
             <div
               key={idx}
-              className="bg-[#F8FAFC] rounded-lg border border-slate-200/80 p-6 sm:p-8 flex flex-col justify-between hover:border-[#DF9F28]/40 hover:shadow-md transition-all group"
+              className="bg-[#F8FAFC] rounded-xl border border-slate-200/80 p-6 sm:p-8 flex flex-col justify-between hover:border-[#DF9F28]/40 hover:shadow-md transition-all group"
             >
               <div>
                 <div className="flex items-center justify-between mb-4">
@@ -56,27 +56,27 @@ export default function Testimonials() {
                       <Star key={i} className="w-4 h-4 fill-[#DF9F28]" />
                     ))}
                   </div>
-                  <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-2.5 py-0.5 rounded-md border border-emerald-100">
-                    <ShieldCheck className="w-3 h-3" />
+                  <span className="inline-flex items-center gap-1 text-[13px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-100/90 px-2.5 py-1 rounded-md border border-emerald-300/60">
+                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-700" />
                     {review.tag}
                   </span>
                 </div>
 
-                <p className="text-xs sm:text-sm text-[#555555] leading-relaxed font-normal italic">
+                <p className="text-sm sm:text-base text-[#334155] leading-relaxed font-normal italic">
                   &ldquo;{review.quote}&rdquo;
                 </p>
               </div>
 
               <div className="mt-6 pt-4 border-t border-slate-200/60 flex items-center justify-between">
                 <div>
-                  <h4 className="text-xs font-bold text-[#111111] uppercase tracking-wider">
+                  <h4 className="text-sm sm:text-[15px] font-bold text-[#111111] uppercase tracking-wider">
                     {review.author}
                   </h4>
-                  <span className="text-[11px] text-[#888888] font-medium">
+                  <span className="text-[13px] text-[#475569] font-medium">
                     {review.location}
                   </span>
                 </div>
-                <Quote className="w-5 h-5 text-slate-300 group-hover:text-[#DF9F28] transition-colors" />
+                <Quote className="w-5 h-5 text-slate-400 group-hover:text-[#DF9F28] transition-colors" />
               </div>
             </div>
           ))}

@@ -52,11 +52,42 @@ export const deleteAttribute = async (req: Request, res: Response) => {
 
 export const createAttributeValue = async (req: Request, res: Response) => {
     try {
-        const { attributeId, value } = req.body;
-        const attrValue = await prisma.attributeValue.create({ data: { attributeId, value } });
+        const attributeId = (req.params.attributeId || req.body.attributeId) as string;
+        const { value } = req.body;
+        if (!attributeId || !value?.trim()) {
+            return res.status(400).json({ error: "attributeId and value are required" });
+        }
+
+        const existing = await prisma.attributeValue.findFirst({
+            where: {
+                attributeId,
+                value: { equals: value.trim(), mode: "insensitive" }
+            }
+        });
+        if (existing) return res.status(400).json({ error: "Value already exists for this attribute" });
+
+        const attrValue = await prisma.attributeValue.create({
+            data: { attributeId, value: value.trim() }
+        });
         res.status(201).json(attrValue);
     } catch (e) {
         res.status(500).json({ error: "Failed to create attribute value" });
+    }
+};
+
+export const updateAttributeValue = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        const { value } = req.body;
+        if (!value?.trim()) return res.status(400).json({ error: "Value is required" });
+
+        const attrValue = await prisma.attributeValue.update({
+            where: { id: id as string },
+            data: { value: value.trim() }
+        });
+        res.json(attrValue);
+    } catch (e) {
+        res.status(500).json({ error: "Failed to update attribute value" });
     }
 };
 
@@ -72,3 +103,4 @@ export const deleteAttributeValue = async (req: Request, res: Response) => {
         res.status(500).json({ error: "Failed to delete value" });
     }
 };
+

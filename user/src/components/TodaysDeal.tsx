@@ -73,8 +73,8 @@ export default function TodaysDeal() {
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-sans font-extrabold tracking-tight uppercase text-[#111111] mb-4">
             Today&apos;s Deal
           </h2>
-          <p className="text-[#555555] text-xs md:text-sm tracking-[0.15em] uppercase mb-10">
-            Grab the chance, <span className="text-[#DF9F28] font-bold">Get 50% OFF.</span>
+          <p className="text-[#374151] text-sm md:text-base tracking-wider uppercase mb-10 font-medium">
+            Grab the chance, <span className="text-[#946000] font-bold">Get 50% OFF.</span>
           </p>
 
           {/* Countdown digits */}
@@ -83,7 +83,7 @@ export default function TodaysDeal() {
               <span className="text-4xl md:text-5xl lg:text-6xl font-sans font-extrabold text-[#0A192F] tracking-tight tabular-nums min-w-[3rem] md:min-w-[4rem]">
                 {timeLeft.hours}
               </span>
-              <span className="text-[0.65rem] md:text-xs tracking-[0.2em] font-medium text-[#888888] uppercase mt-2">Hours</span>
+              <span className="text-[13px] tracking-wider font-semibold text-[#4B5563] uppercase mt-2">Hours</span>
             </div>
             
             <span className="text-2xl md:text-3xl font-light text-[#0A192F]/30 -mt-6">:</span>
@@ -92,20 +92,20 @@ export default function TodaysDeal() {
               <span className="text-4xl md:text-5xl lg:text-6xl font-sans font-extrabold text-[#0A192F] tracking-tight tabular-nums min-w-[3rem] md:min-w-[4rem]">
                 {timeLeft.minutes}
               </span>
-              <span className="text-[0.65rem] md:text-xs tracking-[0.2em] font-medium text-[#888888] uppercase mt-2">Minutes</span>
+              <span className="text-[13px] tracking-wider font-semibold text-[#4B5563] uppercase mt-2">Minutes</span>
             </div>
 
             <span className="text-2xl md:text-3xl font-light text-[#0A192F]/30 -mt-6">:</span>
 
             <div className="flex flex-col items-center">
-              <span className="text-4xl md:text-5xl lg:text-6xl font-sans font-extrabold text-[#DF9F28] tracking-tight tabular-nums min-w-[3rem] md:min-w-[4rem]">
+              <span className="text-4xl md:text-5xl lg:text-6xl font-sans font-extrabold text-[#946000] tracking-tight tabular-nums min-w-[3rem] md:min-w-[4rem]">
                 {timeLeft.seconds}
               </span>
-              <span className="text-[0.65rem] md:text-xs tracking-[0.2em] font-medium text-[#DF9F28] uppercase mt-2">Seconds</span>
+              <span className="text-[13px] tracking-wider font-semibold text-[#946000] uppercase mt-2">Seconds</span>
             </div>
           </div>
 
-          <Link href="/product" className="bg-[#DF9F28] hover:bg-[#C6891E] text-[#111111] font-bold text-xs tracking-[0.2em] uppercase px-8 py-3.5 rounded-lg inline-flex items-center gap-2.5 transition-all duration-200 shadow-sm active:scale-95 group cursor-pointer focus-visible:ring-2 focus-visible:ring-[#DF9F28]">
+          <Link href="/product" className="min-h-[44px] bg-[#DF9F28] hover:bg-[#C6891E] text-[#111111] font-bold text-sm tracking-wider uppercase px-8 py-3.5 rounded-lg inline-flex items-center gap-2.5 transition-all duration-200 shadow-sm active:scale-95 group cursor-pointer focus-visible:ring-2 focus-visible:ring-[#DF9F28]">
             Shop Now
             <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1 text-[#111111]" />
           </Link>
@@ -123,10 +123,10 @@ export default function TodaysDeal() {
               priority
             />
             {/* Subtle overlay gradient */}
-            <div className="absolute inset-0 bg-gradient-to-t from-[#061B3A]/80 via-transparent to-transparent opacity-85 group-hover:opacity-100 transition-opacity duration-300"></div>
+            <div className="absolute inset-0 bg-gradient-to-t from-[#061B3A]/90 via-transparent to-transparent opacity-90 group-hover:opacity-100 transition-opacity duration-300"></div>
             {/* Link at the bottom */}
-            <div className="absolute bottom-6 left-0 right-0 text-center z-10">
-              <span className="text-white text-[0.65rem] md:text-xs tracking-[0.2em] uppercase font-semibold underline underline-offset-4 decoration-white/70 group-hover:decoration-white transition-all">
+            <div className="absolute bottom-6 left-0 right-0 px-4 text-center z-10">
+              <span className="text-white text-[15px] md:text-base font-bold underline underline-offset-4 decoration-white/70 group-hover:decoration-white transition-all line-clamp-2">
                 {prod.name}
               </span>
             </div>

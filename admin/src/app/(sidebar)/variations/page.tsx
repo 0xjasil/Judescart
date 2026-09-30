@@ -1,6 +1,18 @@
 import VariationsPage from "@/components/variations/VariationsPage";
 
-export default function Page() {
+export default async function Page() {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+  let initialAttributes = [];
+
+  try {
+    const res = await fetch(`${apiUrl}/attributes`, { cache: "no-store" });
+    if (res.ok) {
+      initialAttributes = await res.json();
+    }
+  } catch (err) {
+    console.error("Failed to fetch initial attributes:", err);
+  }
+
   return (
     <div className="flex flex-1 flex-col">
       <div className="@container/main flex flex-1 flex-col gap-2">
@@ -11,11 +23,12 @@ export default function Page() {
               <p className="text-muted-foreground">Manage attributes and values</p>
             </div>
           </div>
-          <VariationsPage />
+          <VariationsPage initialData={Array.isArray(initialAttributes) ? initialAttributes : []} />
         </div>
       </div>
     </div>
   );
 }
+
 
 

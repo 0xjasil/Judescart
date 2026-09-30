@@ -112,20 +112,20 @@ export default function Categories() {
       {/* Section Header */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2 border-b border-[#E2E8F0] pb-3">
         <div>
-          <span className="text-[10px] sm:text-[11px] uppercase tracking-wider font-medium text-[#DF9F28]">
+          <span className="text-[13px] uppercase tracking-wider font-medium text-[#946000]">
             All Departments
           </span>
-          <h2 className="text-lg sm:text-xl font-semibold text-[#111111] tracking-tight mt-0.5">
+          <h2 className="text-xl sm:text-2xl font-semibold text-[#111111] tracking-tight mt-0.5">
             Shop by Department
           </h2>
         </div>
 
         <Link
           href="/product"
-          className="text-xs font-medium uppercase tracking-wider text-[#DF9F28] hover:text-[#C6891E] flex items-center gap-1 transition-colors focus-visible:outline-none"
+          className="text-sm font-medium uppercase tracking-wider text-[#946000] hover:text-[#C6891E] flex items-center gap-1.5 transition-colors focus-visible:outline-none py-1 min-h-[44px]"
         >
           <span>View All Products</span>
-          <ArrowRight className="w-3.5 h-3.5" />
+          <ArrowRight className="w-4 h-4" />
         </Link>
       </div>
 
@@ -144,7 +144,7 @@ export default function Categories() {
             <Link
               key={cat.id}
               href={`/product?category=${encodeURIComponent(cat.name)}`}
-              className="group relative aspect-[4/3] rounded-lg overflow-hidden bg-slate-900 border border-[#E2E8F0] shadow-2xs flex flex-col justify-end p-3 sm:p-4 transition-all duration-300 hover:shadow-sm hover:border-[#DF9F28] focus-visible:ring-2 focus-visible:ring-[#DF9F28]"
+              className="group relative aspect-[4/3] rounded-lg overflow-hidden bg-slate-900 border border-[#E2E8F0] shadow-xs flex flex-col justify-end p-3.5 sm:p-4 transition-all duration-300 hover:shadow-md hover:border-[#DF9F28] focus-visible:ring-2 focus-visible:ring-[#DF9F28]"
             >
               {/* Category Background Image */}
               <Image
@@ -162,11 +162,11 @@ export default function Categories() {
 
               {/* Bottom Card Information */}
               <div className="relative z-10 text-white space-y-0.5">
-                <span className="text-[9px] sm:text-[10px] uppercase tracking-wider text-[#DF9F28] font-medium block">
+                <span className="text-[13px] uppercase tracking-wider text-[#DF9F28] font-medium block">
                   {countLabel}
                 </span>
                 
-                <h3 className="text-xs sm:text-sm md:text-base font-semibold text-white leading-tight line-clamp-1">
+                <h3 className="text-sm sm:text-base md:text-lg font-medium text-white leading-tight line-clamp-1">
                   {cat.name}
                 </h3>
               </div>

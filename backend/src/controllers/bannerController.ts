@@ -4,9 +4,18 @@ import { uploadToCloudinary, safeDeleteImage } from '../lib/upload.js';
 
 const MAX_ACTIVE = 5;
 
+const SYSTEM_CONFIG_TAGS = ['BRAND_BENEFIT_CONFIG', 'ZENDROP_INTEGRATION_CONFIG'];
+
 export const getBanners = async (req: Request, res: Response) => {
     try {
         const banners = await prisma.banner.findMany({
+            where: {
+                NOT: {
+                    tag: {
+                        in: SYSTEM_CONFIG_TAGS
+                    }
+                }
+            },
             orderBy: { order: 'asc' }
         });
         res.json(banners);
@@ -24,15 +33,33 @@ export const createBanner = async (req: Request, res: Response) => {
             return res.status(400).json({ error: "Banner image is required" });
         }
 
-        // Check active count
-        const activeCount = await prisma.banner.count({ where: { isActive: true } });
+        // Check active count (excluding system config tags)
+        const activeCount = await prisma.banner.count({
+            where: {
+                isActive: true,
+                NOT: {
+                    tag: {
+                        in: SYSTEM_CONFIG_TAGS
+                    }
+                }
+            }
+        });
         if (activeCount >= MAX_ACTIVE) {
             return res.status(400).json({ error: `Maximum ${MAX_ACTIVE} active banners allowed. Hide one first.` });
         }
 
         const imageUrl = await uploadToCloudinary(files.image[0].buffer, files.image[0].originalname);
 
-        const lastBanner = await prisma.banner.findFirst({ orderBy: { order: 'desc' } });
+        const lastBanner = await prisma.banner.findFirst({
+            where: {
+                NOT: {
+                    tag: {
+                        in: SYSTEM_CONFIG_TAGS
+                    }
+                }
+            },
+            orderBy: { order: 'desc' }
+        });
         const nextOrder = lastBanner ? lastBanner.order + 1 : 0;
 
         const banner = await prisma.banner.create({
@@ -66,9 +93,18 @@ export const updateBanner = async (req: Request, res: Response) => {
         const existingBanner = await prisma.banner.findUnique({ where: { id } });
         if (!existingBanner) return res.status(404).json({ error: "Banner not found" });
 
-        // Check max active when activating
+        // Check max active when activating (excluding system config tags)
         if (isActive === 'true' && !existingBanner.isActive) {
-            const activeCount = await prisma.banner.count({ where: { isActive: true } });
+            const activeCount = await prisma.banner.count({
+                where: {
+                    isActive: true,
+                    NOT: {
+                        tag: {
+                            in: SYSTEM_CONFIG_TAGS
+                        }
+                    }
+                }
+            });
             if (activeCount >= MAX_ACTIVE) {
                 return res.status(400).json({ error: `Maximum ${MAX_ACTIVE} active banners. Hide one first.` });
             }

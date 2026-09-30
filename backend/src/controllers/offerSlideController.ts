@@ -4,7 +4,13 @@ import { uploadToCloudinary, safeDeleteImage } from '../lib/upload.js';
 
 export const getOfferSlides = async (req: Request, res: Response) => {
     try {
+        const { activeOnly } = req.query;
+        const whereClause: any = {};
+        if (activeOnly === 'true') {
+            whereClause.isActive = true;
+        }
         const slides = await prisma.offerSlide.findMany({
+            where: whereClause,
             orderBy: { order: 'asc' }
         });
         res.json(slides);
@@ -12,6 +18,7 @@ export const getOfferSlides = async (req: Request, res: Response) => {
         res.status(500).json({ error: "Failed to fetch offer slides" });
     }
 };
+
 
 export const createOfferSlide = async (req: Request, res: Response) => {
     try {

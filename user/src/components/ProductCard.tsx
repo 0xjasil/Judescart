@@ -138,47 +138,47 @@ export default function ProductCard({
         {/* Badges */}
         <div className="absolute top-2 left-2 z-10 pointer-events-none flex flex-col gap-1">
           {hasDiscount ? (
-            <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-medium bg-[#0A192F] text-white shadow-xs">
+            <span className="inline-flex items-center px-2 py-0.5 rounded text-[13px] font-medium bg-[#0A192F] text-white shadow-xs">
               {discountPercent}% OFF
             </span>
           ) : isCustomerFavorite ? (
-            <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-medium bg-[#DF9F28] text-[#111111] shadow-xs">
+            <span className="inline-flex items-center px-2 py-0.5 rounded text-[13px] font-medium bg-[#DF9F28] text-[#111111] shadow-xs">
               Bestseller
             </span>
           ) : isNewArrival ? (
-            <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-medium bg-[#0A192F] text-white shadow-xs">
+            <span className="inline-flex items-center px-2 py-0.5 rounded text-[13px] font-medium bg-[#0A192F] text-white shadow-xs">
               New
             </span>
           ) : null}
         </div>
 
-        {/* Wishlist Button */}
+        {/* Wishlist Button - 44px mobile touch target */}
         <button
           type="button"
           onClick={handleWishlistToggle}
           aria-label={isFavorited ? 'Remove from wishlist' : 'Add to wishlist'}
-          className="absolute top-2 right-2 z-10 w-6 h-6 rounded-md bg-white/90 backdrop-blur-xs border border-[#E2E8F0] flex items-center justify-center text-[#555555] hover:text-rose-600 hover:bg-white transition-all active:scale-95 cursor-pointer shadow-2xs"
+          className="absolute top-2 right-2 z-10 min-w-[44px] min-h-[44px] w-11 h-11 rounded-lg bg-white/95 backdrop-blur-xs border border-[#E2E8F0] flex items-center justify-center text-[#374151] hover:text-rose-600 hover:bg-white transition-all active:scale-95 cursor-pointer shadow-xs"
         >
-          <Heart className={`w-3 h-3 transition-colors ${isFavorited ? 'fill-rose-600 text-rose-600' : ''}`} />
+          <Heart className={`w-4 h-4 transition-colors ${isFavorited ? 'fill-rose-600 text-rose-600' : ''}`} />
         </button>
 
         {/* Desktop Quick Action Floating Bar */}
         <div className="absolute inset-x-2 bottom-2 z-20 transition-all duration-200 transform translate-y-2 opacity-0 pointer-events-none group-hover:translate-y-0 group-hover:opacity-100 group-hover:pointer-events-auto hidden sm:block">
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1.5">
             <button
               type="button"
               onClick={handleQuickView}
               aria-label="Quick View"
               title="Quick View"
-              className="w-6 h-6 rounded bg-white text-[#555555] hover:text-[#111111] border border-[#E2E8F0] shadow-2xs flex items-center justify-center cursor-pointer transition-colors"
+              className="w-9 h-9 rounded-lg bg-white text-[#374151] hover:text-[#111111] border border-[#E2E8F0] shadow-xs flex items-center justify-center cursor-pointer transition-colors"
             >
-              <Eye className="w-3 h-3" />
+              <Eye className="w-4 h-4" />
             </button>
             <button
               type="button"
               onClick={handleAddToCart}
               disabled={isAdded}
-              className={`flex-1 h-6 px-2 rounded text-[10px] font-medium tracking-wide transition-all flex items-center justify-center gap-1 cursor-pointer shadow-2xs ${
+              className={`flex-1 h-10 px-3 rounded-lg text-[13px] font-medium tracking-wide transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-xs ${
                 isAdded
                   ? 'bg-emerald-600 text-white'
                   : 'bg-[#0A192F] hover:bg-[#DF9F28] hover:text-[#111111] text-white'
@@ -186,12 +186,12 @@ export default function ProductCard({
             >
               {isAdded ? (
                 <>
-                  <Check className="w-3 h-3" />
+                  <Check className="w-4 h-4" />
                   <span>Added</span>
                 </>
               ) : (
                 <>
-                  <ShoppingBag className="w-3 h-3" />
+                  <ShoppingBag className="w-4 h-4" />
                   <span>Add to Bag</span>
                 </>
               )}
@@ -201,54 +201,54 @@ export default function ProductCard({
       </div>
 
       {/* Card Information Body - Compact & Clean */}
-      <div className="p-2 sm:p-2.5 flex-1 flex flex-col justify-between space-y-1">
-        <div className="space-y-0.5">
+      <div className="p-3 sm:p-3.5 flex-1 flex flex-col justify-between space-y-1.5">
+        <div className="space-y-1">
           {/* Category & Rating Row */}
           <div className="flex items-center justify-between text-xs">
-            <span className="text-[9px] uppercase tracking-wider font-medium text-[#DF9F28]">
+            <span className="text-[13px] uppercase tracking-wider font-medium text-[#946000]">
               {category}
             </span>
-            <div className="flex items-center gap-0.5 text-[#555555]">
-              <Star className="w-2.5 h-2.5 fill-[#DF9F28] text-[#DF9F28]" />
-              <span className="text-[10px] font-medium text-[#333333]">{rating.toFixed(1)}</span>
+            <div className="flex items-center gap-1 text-[#374151]">
+              <Star className="w-3.5 h-3.5 fill-[#DF9F28] text-[#DF9F28]" />
+              <span className="text-[13px] font-medium text-[#111111]">{rating.toFixed(1)}</span>
             </div>
           </div>
 
-          {/* Product Title */}
-          <Link href={`/product?id=${encodeURIComponent(String(id))}`} className="block group-hover:text-[#DF9F28] transition-colors focus-visible:outline-none">
-            <h3 className="text-xs sm:text-[13px] font-medium text-[#111111] leading-snug line-clamp-1">
+          {/* Product Title (WCAG 2.1 AA minimum 15px) */}
+          <Link href={`/product?id=${encodeURIComponent(String(id))}`} className="block group-hover:text-[#946000] transition-colors focus-visible:outline-none">
+            <h3 className="text-[15px] sm:text-base font-medium text-[#111111] leading-snug line-clamp-2">
               {name}
             </h3>
           </Link>
         </div>
 
-        {/* Price & Mobile Actions */}
-        <div className="pt-1 border-t border-[#F1F5F9] flex items-center justify-between">
-          <div className="flex items-baseline gap-1">
-            <span className="text-xs sm:text-[13px] font-semibold text-[#111111]">
+        {/* Price & Mobile Actions (WCAG 2.1 AA minimum 16px for price) */}
+        <div className="pt-2 border-t border-[#F1F5F9] flex items-center justify-between">
+          <div className="flex items-baseline gap-1.5">
+            <span className="text-base sm:text-[17px] font-semibold text-[#111111]">
               ₹{price.toLocaleString('en-IN')}
             </span>
             {hasDiscount && (
-              <span className="text-[10px] text-[#888888] font-normal line-through">
+              <span className="text-[13px] text-[#4B5563] font-normal line-through">
                 ₹{originalPrice.toLocaleString('en-IN')}
               </span>
             )}
           </div>
 
-          {/* Mobile Quick Add */}
+          {/* Mobile Quick Add - 44px tap target */}
           <div className="sm:hidden">
             <button
               type="button"
               onClick={handleAddToCart}
               disabled={isAdded}
               aria-label="Add to bag"
-              className={`p-1 rounded text-xs font-medium transition-all ${
+              className={`min-w-[44px] min-h-[44px] p-2.5 rounded-lg text-sm font-semibold transition-all flex items-center justify-center ${
                 isAdded
                   ? 'bg-emerald-600 text-white'
                   : 'bg-[#0A192F] text-white active:bg-[#DF9F28] active:text-[#111111]'
               }`}
             >
-              {isAdded ? <Check className="w-3 h-3" /> : <ShoppingBag className="w-3 h-3" />}
+              {isAdded ? <Check className="w-4 h-4" /> : <ShoppingBag className="w-4 h-4" />}
             </button>
           </div>
         </div>

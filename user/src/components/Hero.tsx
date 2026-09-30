@@ -119,7 +119,7 @@ function HeroSkeleton() {
 }
 
 export default function Hero() {
-  const [banners, setBanners] = useState<BannerSlide[]>(DEFAULT_BANNERS);
+  const [banners, setBanners] = useState<BannerSlide[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [isHovered, setIsHovered] = useState(false);
@@ -141,8 +141,8 @@ export default function Hero() {
 
         if (res.ok) {
           const data = await res.json();
-          if (Array.isArray(data) && data.length > 0 && isMounted) {
-            const activeBanners = data.filter((b: any) => b.isActive !== false);
+          if (Array.isArray(data) && isMounted) {
+            const activeBanners = data.filter((b: any) => b.isActive !== false && !b.tag?.includes('CONFIG'));
             if (activeBanners.length > 0) {
               const mapped: BannerSlide[] = activeBanners.map((b: any, idx: number) => ({
                 id: b.id || `banner-${idx}`,
@@ -151,17 +151,22 @@ export default function Hero() {
                 offerPrice: b.offerPrice || undefined,
                 description: b.description || '',
                 buttonText: b.buttonText || '',
-                buttonLink: b.buttonLink || '/product',
-                image: b.image || '/banners/Banner.jpg',
+                buttonLink: b.buttonLink || '',
+                image: b.image || '',
                 badge: b.badge || '',
               }));
               setBanners(mapped);
+            } else {
+              setBanners(DEFAULT_BANNERS);
             }
           }
+        } else if (isMounted) {
+          setBanners(DEFAULT_BANNERS);
         }
       } catch (err: any) {
         if (err.name !== 'AbortError') {
           console.warn('Hero banner fetch failed, using fallback banners:', err.message || err);
+          if (isMounted) setBanners(DEFAULT_BANNERS);
         }
       } finally {
         if (isMounted) {
@@ -181,10 +186,12 @@ export default function Hero() {
 
   // Next / Previous rotation
   const nextSlide = useCallback(() => {
+    if (total <= 1) return;
     setCurrentIndex((prev) => (prev + 1) % total);
   }, [total]);
 
   const prevSlide = useCallback(() => {
+    if (total <= 1) return;
     setCurrentIndex((prev) => (prev - 1 + total) % total);
   }, [total]);
 
@@ -230,14 +237,18 @@ export default function Hero() {
     return <HeroSkeleton />;
   }
 
+  if (banners.length === 0) {
+    return null;
+  }
+
   // Pair logic: Spot 1 shows banners[currentIndex], Spot 2 shows banners[(currentIndex + 1) % total]
-  const spot1Banner = banners[currentIndex] || DEFAULT_BANNERS[0];
+  const spot1Banner = banners[currentIndex % total];
   const spot2Index = (currentIndex + 1) % total;
-  const spot2Banner = banners[spot2Index] || DEFAULT_BANNERS[1];
+  const spot2Banner = banners[spot2Index];
   const hasMultiple = total > 1;
 
-  const spot1ImageSrc = failedImages[spot1Banner.id] ? '/banners/Banner.jpg' : spot1Banner.image;
-  const spot2ImageSrc = failedImages[spot2Banner.id] ? '/banners/banner5.jpg' : spot2Banner.image;
+  const spot1ImageSrc = failedImages[spot1Banner.id] ? '/banners/Banner.jpg' : (spot1Banner.image || '/banners/Banner.jpg');
+  const spot2ImageSrc = failedImages[spot2Banner.id] ? '/banners/banner5.jpg' : (spot2Banner.image || '/banners/banner5.jpg');
 
   const hasSpot1Text = Boolean(spot1Banner.title || spot1Banner.tag || spot1Banner.offerPrice || spot1Banner.description || spot1Banner.buttonText);
   const hasSpot2Text = Boolean(spot2Banner.title || spot2Banner.offerPrice || spot2Banner.badge || spot2Banner.buttonText);
@@ -325,25 +336,25 @@ export default function Hero() {
                 <div className="relative z-10 p-5 sm:p-7 md:p-9 lg:p-11 flex flex-col justify-between h-full max-w-xl space-y-3 sm:space-y-4">
                   <div className="space-y-1.5 sm:space-y-2">
                     {spot1Banner.tag && (
-                      <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-[#DF9F28] inline-block px-2.5 py-0.5 rounded-md bg-[#061B3A]/80 backdrop-blur-md border border-[#DF9F28]/30">
+                      <span className="text-[13px] font-medium uppercase tracking-wider text-[#DF9F28] inline-block px-3 py-1 rounded-md bg-[#061B3A]/80 backdrop-blur-md border border-[#DF9F28]/30">
                         {spot1Banner.tag}
                       </span>
                     )}
 
                     {spot1Banner.title && (
-                      <h1 className="text-lg xs:text-xl sm:text-2xl md:text-[26px] lg:text-[28px] font-bold text-white tracking-tight leading-snug line-clamp-2">
+                      <h1 className="text-[clamp(1.25rem,2.2vw+0.5rem,1.875rem)] font-semibold text-white tracking-tight leading-snug line-clamp-2">
                         {spot1Banner.title}
                       </h1>
                     )}
 
                     {spot1Banner.offerPrice && (
-                      <p className="text-xs sm:text-sm md:text-base font-bold text-[#DF9F28] tracking-tight pt-0.5">
+                      <p className="text-sm sm:text-base md:text-lg font-semibold text-[#DF9F28] tracking-tight pt-0.5">
                         {spot1Banner.offerPrice}
                       </p>
                     )}
 
                     {spot1Banner.description && (
-                      <p className="text-xs sm:text-xs md:text-sm text-slate-200 font-normal leading-relaxed line-clamp-2 max-w-xs sm:max-w-md pt-0.5">
+                      <p className="text-sm sm:text-base text-slate-200 font-normal leading-relaxed line-clamp-2 max-w-xs sm:max-w-md pt-0.5">
                         {spot1Banner.description}
                       </p>
                     )}
@@ -354,15 +365,11 @@ export default function Hero() {
                     <div className="pt-1 sm:pt-2 flex flex-col items-start gap-1.5 sm:gap-2">
                       <Link
                         href={spot1Banner.buttonLink || '/product'}
-                        className="px-5 py-2.5 sm:px-6 sm:py-3 bg-[#DF9F28] hover:bg-[#C6891E] text-[#111111] font-bold text-xs sm:text-sm tracking-wide rounded-lg shadow-md transition-all duration-200 inline-flex items-center gap-2 group/btn cursor-pointer active:scale-95 focus-visible:ring-2 focus-visible:ring-[#DF9F28]"
+                        className="min-h-[44px] px-6 py-3 bg-[#DF9F28] hover:bg-[#C6891E] text-[#111111] font-medium text-sm sm:text-base tracking-wide rounded-lg shadow-md transition-all duration-200 inline-flex items-center gap-2 group/btn cursor-pointer active:scale-95 focus-visible:ring-2 focus-visible:ring-[#DF9F28]"
                       >
                         <span>{spot1Banner.buttonText}</span>
                         <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover/btn:translate-x-1 text-[#111111]" />
                       </Link>
-
-                      <span className="text-[10px] sm:text-[11px] text-slate-300 font-medium">
-                        Complimentary Lucky Draw ticket included with every order
-                      </span>
                     </div>
                   )}
                 </div>
@@ -409,12 +416,14 @@ export default function Hero() {
 
                 {/* Top Status Badge */}
                 <div className="relative z-10 flex items-center justify-between">
-                  <span className="inline-block px-2.5 py-0.5 rounded-md text-[10px] font-semibold uppercase tracking-wider bg-white/20 text-white border border-white/30 backdrop-blur-xs">
-                    {spot2Banner.badge || 'UP NEXT'}
-                  </span>
-                  <span className="text-[10px] font-semibold text-slate-200 uppercase tracking-wider flex items-center gap-1 group-hover:text-[#DF9F28] transition-colors">
+                  {spot2Banner.badge ? (
+                    <span className="inline-block px-3 py-0.5 rounded-md text-[13px] font-bold uppercase tracking-wider bg-white/20 text-white border border-white/30 backdrop-blur-xs">
+                      {spot2Banner.badge}
+                    </span>
+                  ) : <div />}
+                  <span className="text-[13px] font-semibold text-slate-200 uppercase tracking-wider flex items-center gap-1 group-hover:text-[#DF9F28] transition-colors">
                     <span>Up Next</span>
-                    <ArrowUpRight className="w-3.5 h-3.5" />
+                    <ArrowUpRight className="w-4 h-4" />
                   </span>
                 </div>
 
@@ -422,23 +431,23 @@ export default function Hero() {
                 {hasSpot2Text && (
                   <div className="relative z-10 space-y-2 pt-6">
                     {spot2Banner.offerPrice && (
-                      <span className="text-sm font-bold text-[#DF9F28] uppercase tracking-wide block">
+                      <span className="text-base font-bold text-[#DF9F28] uppercase tracking-wide block">
                         {spot2Banner.offerPrice}
                       </span>
                     )}
 
                     {spot2Banner.title && (
-                      <h2 className="text-base sm:text-lg font-bold text-white tracking-tight leading-snug line-clamp-2">
+                      <h2 className="text-lg sm:text-xl font-bold text-white tracking-tight leading-snug line-clamp-2">
                         {spot2Banner.title}
                       </h2>
                     )}
 
                     {spot2Banner.buttonText && (
                       <div className="pt-2 flex items-center justify-between border-t border-white/20">
-                        <span className="text-xs font-semibold uppercase tracking-wider text-white group-hover:text-[#DF9F28] transition-colors">
+                        <span className="text-sm font-semibold uppercase tracking-wider text-white group-hover:text-[#DF9F28] transition-colors">
                           {spot2Banner.buttonText}
                         </span>
-                        <div className="w-8 h-8 rounded-full bg-[#DF9F28] text-[#111111] flex items-center justify-center shadow-xs group-hover:bg-[#C6891E] transition-colors">
+                        <div className="w-9 h-9 rounded-full bg-[#DF9F28] text-[#111111] flex items-center justify-center shadow-xs group-hover:bg-[#C6891E] transition-colors">
                           <ArrowRight className="w-4 h-4" />
                         </div>
                       </div>

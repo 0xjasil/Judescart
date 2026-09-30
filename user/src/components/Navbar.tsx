@@ -459,21 +459,21 @@ export default function Navbar() {
         {/* ======================================================== */}
         <div className="md:hidden">
           {/* Top Bar: Hamburger | Centered Brand | Wishlist & Cart */}
-          <div className="flex items-center justify-between h-14 px-3.5 sm:px-4">
-            {/* Left: Hamburger Toggle */}
+          <div className="flex items-center justify-between h-15 px-3.5 sm:px-4">
+            {/* Left: Hamburger Toggle - 44px touch target */}
             <button
               type="button"
               onClick={() => setIsMobileMenuOpen(true)}
-              className="p-2 -ml-1 text-[#111111] hover:text-[#DF9F28] active:scale-95 transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-[#DF9F28] rounded-lg"
+              className="min-w-[44px] min-h-[44px] p-2.5 -ml-1 text-[#111111] hover:text-[#946000] active:scale-95 transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-[#DF9F28] rounded-lg flex items-center justify-center"
               aria-label="Toggle navigation menu"
             >
-              <Menu className="w-5 h-5 stroke-[2]" />
+              <Menu className="w-6 h-6 stroke-[2]" />
             </button>
 
             {/* Center: Brand Logo & Subtitle (Taneira/Tata luxury feel) */}
             <Link
               href="/"
-              className="flex flex-col items-center justify-center -mr-1 group focus-visible:outline-none"
+              className="flex flex-col items-center justify-center -mr-1 group focus-visible:outline-none py-1"
               aria-label="JudesCart Home"
             >
               <div className="flex items-center gap-1.5">
@@ -487,22 +487,22 @@ export default function Navbar() {
                     priority
                   />
                 </div>
-                <span className="text-[17px] font-extrabold tracking-tight text-[#111111] group-hover:text-[#DF9F28] transition-colors leading-none">
-                  Judes<span className="text-[#DF9F28]">Cart</span>
+                <span className="text-lg font-bold tracking-tight text-[#111111] group-hover:text-[#946000] transition-colors leading-none">
+                  Judes<span className="text-[#946000]">Cart</span>
                 </span>
               </div>
-              <span className="text-[8px] tracking-[0.24em] font-semibold text-[#888888] uppercase mt-0.5">
+              <span className="text-[13px] tracking-wider font-semibold text-[#4B5563] uppercase mt-0.5">
                 Shop More. Live Better.
               </span>
             </Link>
 
-            {/* Right: Symbol Actions (Currency | User | Wishlist | Cart) */}
-            <div className="flex items-center gap-0.5 sm:gap-1">
+            {/* Right: Symbol Actions (Currency | User | Wishlist | Cart) - 44px touch targets */}
+            <div className="flex items-center gap-1">
               {/* Currency Symbol */}
               <button
                 type="button"
                 onClick={() => setIsCurrencyModalOpen(true)}
-                className="flex items-center justify-center min-w-[28px] h-7 px-1.5 rounded-lg bg-white border border-[#E2E8F0] text-[11px] font-bold text-[#111111] hover:border-[#DF9F28] transition-colors cursor-pointer select-none active:scale-95"
+                className="flex items-center justify-center min-w-[44px] min-h-[44px] px-2 rounded-lg bg-white border border-[#E2E8F0] text-base font-bold text-[#111111] hover:border-[#DF9F28] transition-colors cursor-pointer select-none active:scale-95"
                 title={`Currency: ${selectedCurrency.code}`}
                 aria-label="Change Currency"
               >
@@ -520,26 +520,26 @@ export default function Navbar() {
                     setIsAuthModalOpen(true);
                   }
                 }}
-                className="relative p-1.5 text-[#111111] hover:text-[#DF9F28] active:scale-95 transition-all rounded-lg"
+                className="relative min-w-[44px] min-h-[44px] p-2.5 text-[#111111] hover:text-[#946000] active:scale-95 transition-all rounded-lg flex items-center justify-center"
                 aria-label="Account"
                 title={session?.user ? 'My Account' : 'Sign In'}
               >
                 <User className="w-5 h-5 stroke-[1.8]" />
                 {session?.user && (
-                  <span className="absolute 1 top-1.5 right-1 w-2 h-2 bg-[#22C55E] rounded-full ring-2 ring-white" />
+                  <span className="absolute top-2 right-2 w-2.5 h-2.5 bg-[#22C55E] rounded-full ring-2 ring-white" />
                 )}
               </button>
 
               {/* Wishlist Symbol */}
               <Link
                 href="/wishlist"
-                className="relative p-1.5 text-[#111111] hover:text-[#DF9F28] active:scale-95 transition-all rounded-lg"
+                className="relative min-w-[44px] min-h-[44px] p-2.5 text-[#111111] hover:text-[#946000] active:scale-95 transition-all rounded-lg flex items-center justify-center"
                 aria-label="Wishlist"
                 title="Wishlist"
               >
                 <Heart className="w-5 h-5 stroke-[1.8]" />
                 {totalWishlistItems > 0 && (
-                  <span className="absolute top-0.5 -right-0.5 min-w-[15px] h-[15px] bg-[#E53E3E] text-white text-[9px] font-bold rounded-full flex items-center justify-center px-0.5 shadow-xs">
+                  <span className="absolute top-1 right-1 min-w-[20px] h-[20px] bg-[#E53E3E] text-white text-[13px] font-bold rounded-full flex items-center justify-center px-1 shadow-xs">
                     {totalWishlistItems}
                   </span>
                 )}
@@ -549,13 +549,13 @@ export default function Navbar() {
               <button
                 type="button"
                 onClick={() => openDrawer()}
-                className="relative p-1.5 text-[#111111] hover:text-[#DF9F28] active:scale-95 transition-all cursor-pointer rounded-lg"
+                className="relative min-w-[44px] min-h-[44px] p-2.5 text-[#111111] hover:text-[#946000] active:scale-95 transition-all cursor-pointer rounded-lg flex items-center justify-center"
                 aria-label="Shopping Cart"
                 title="Cart"
               >
                 <ShoppingBag className="w-5 h-5 stroke-[1.8]" />
                 {totalItems > 0 && (
-                  <span className="absolute top-0.5 -right-0.5 min-w-[15px] h-[15px] bg-[#DF9F28] text-[#111111] text-[9px] font-bold rounded-full flex items-center justify-center px-0.5 shadow-xs">
+                  <span className="absolute top-1 right-1 min-w-[20px] h-[20px] bg-[#DF9F28] text-[#111111] text-[13px] font-bold rounded-full flex items-center justify-center px-1 shadow-xs">
                     {totalItems}
                   </span>
                 )}
@@ -567,11 +567,11 @@ export default function Navbar() {
           <div className="px-3.5 pb-2.5 pt-0.5">
             <div
               onClick={() => setIsSearchModalOpen(true)}
-              className="flex items-center justify-between w-full h-10 px-3.5 bg-white rounded-full border border-[#E2E8F0] shadow-2xs cursor-pointer group active:scale-[0.99] transition-all hover:border-[#DF9F28]"
+              className="flex items-center justify-between w-full h-11 px-4 bg-white rounded-full border border-[#E2E8F0] shadow-2xs cursor-pointer group active:scale-[0.99] transition-all hover:border-[#DF9F28]"
             >
               <div className="flex items-center gap-2.5 flex-1 min-w-0 pr-2">
-                <Search className="w-4 h-4 text-[#888888] shrink-0 group-hover:text-[#DF9F28] transition-colors" />
-                <span className="text-xs text-[#666666] font-normal truncate select-none transition-all duration-300">
+                <Search className="w-4 h-4 text-[#4B5563] shrink-0 group-hover:text-[#946000] transition-colors" />
+                <span className="text-sm text-[#374151] font-medium truncate select-none transition-all duration-300">
                   {SEARCH_SUGGESTIONS[placeholderIndex]}
                 </span>
               </div>
@@ -582,11 +582,11 @@ export default function Navbar() {
                     e.stopPropagation();
                     setIsSearchModalOpen(true);
                   }}
-                  className="p-1 text-[#888888] hover:text-[#DF9F28] transition-colors cursor-pointer"
+                  className="min-w-[44px] min-h-[44px] p-2 text-[#4B5563] hover:text-[#946000] transition-colors cursor-pointer flex items-center justify-center"
                   title="Visual Search / Upload Image"
                   aria-label="Visual Search"
                 >
-                  <Camera className="w-4 h-4" />
+                  <Camera className="w-5 h-5" />
                 </button>
               </div>
             </div>
@@ -597,12 +597,12 @@ export default function Navbar() {
         {/* 2. DESKTOP HEADER (md and up)                           */}
         {/* ======================================================== */}
         <div className="hidden md:block max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-18 sm:h-20 gap-3 sm:gap-6">
+          <div className="flex items-center justify-between h-20 gap-4 sm:gap-6">
             
             {/* Left: Logo */}
             <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
               <Link href="/" className="group flex items-center shrink-0 pr-1 focus-visible:outline-none" aria-label="JudesCart Home">
-                <div className="relative w-9 h-9 sm:w-10 sm:h-10 shrink-0">
+                <div className="relative w-10 h-10 shrink-0">
                   <Image
                     src="/logo-icon.webp"
                     alt="JudesCart Logo"
@@ -613,10 +613,10 @@ export default function Navbar() {
                   />
                 </div>
                 <div className="flex flex-col ml-2.5">
-                  <span className="text-xl sm:text-[22px] font-bold tracking-tight text-[#111111] group-hover:text-[#DF9F28] transition-colors leading-none">
-                    Judes<span className="text-[#DF9F28]">Cart</span>
+                  <span className="text-xl sm:text-2xl font-bold tracking-tight text-[#111111] group-hover:text-[#946000] transition-colors leading-none">
+                    Judes<span className="text-[#946000]">Cart</span>
                   </span>
-                  <span className="text-[10px] tracking-[0.22em] font-semibold text-[#888888] uppercase mt-0.5">
+                  <span className="text-[13px] tracking-wider font-semibold text-[#4B5563] uppercase mt-0.5">
                     Shop More. Live Better.
                   </span>
                 </div>
@@ -628,16 +628,16 @@ export default function Navbar() {
                   onClick={() => setIsSearchModalOpen(true)} 
                   className="w-full relative cursor-pointer"
                 >
-                  <div className="w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-xs text-[#555555] bg-white hover:bg-white hover:text-[#111111] border border-[#E2E8F0] shadow-2xs transition-all duration-150 group">
+                  <div className="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm text-[#374151] bg-white hover:bg-white hover:text-[#111111] border border-[#E2E8F0] shadow-xs transition-all duration-150 group">
                     <div className="flex items-center gap-2.5 flex-1 min-w-0">
-                      <Search className="w-4 h-4 text-[#DF9F28] group-hover:scale-110 transition-transform shrink-0" />
-                      <span className="text-xs text-[#555555] font-medium truncate">
+                      <Search className="w-4 h-4 text-[#946000] group-hover:scale-110 transition-transform shrink-0" />
+                      <span className="text-sm text-[#374151] font-medium truncate">
                         {SEARCH_SUGGESTIONS[placeholderIndex]}
                       </span>
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
-                      <Camera className="w-4 h-4 text-[#888888] hover:text-[#DF9F28] transition-colors" />
-                      <kbd className="hidden lg:inline-flex items-center gap-0.5 px-2 py-0.5 text-[11px] font-mono font-semibold text-[#888888] bg-[#F8FAFC] rounded-md border border-[#E2E8F0] shadow-2xs select-none">
+                      <Camera className="w-4 h-4 text-[#4B5563] hover:text-[#946000] transition-colors" />
+                      <kbd className="hidden lg:inline-flex items-center gap-0.5 px-2 py-0.5 text-[13px] font-mono font-semibold text-[#4B5563] bg-[#F8FAFC] rounded-md border border-[#E2E8F0] shadow-2xs select-none">
                         ⌘K
                       </kbd>
                     </div>
@@ -647,30 +647,30 @@ export default function Navbar() {
             </div>
 
             {/* Right: Currency, Wishlist, Sign In, Cart */}
-            <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
+            <div className="flex items-center gap-2 sm:gap-3 shrink-0">
               
               {/* Currency Badge */}
               <button
                 type="button"
                 onClick={() => setIsCurrencyModalOpen(true)}
-                className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold text-[#555555] hover:text-[#111111] hover:bg-slate-100 transition-all border border-[#E2E8F0] bg-white cursor-pointer select-none focus-visible:ring-2 focus-visible:ring-[#DF9F28]"
+                className="flex items-center gap-1.5 min-h-[44px] px-3.5 py-2.5 rounded-xl text-sm font-semibold text-[#374151] hover:text-[#111111] hover:bg-slate-100 transition-all border border-[#E2E8F0] bg-white cursor-pointer select-none focus-visible:ring-2 focus-visible:ring-[#DF9F28]"
                 title="Select Currency"
               >
-                <span className="text-sm leading-none" role="img" aria-label={selectedCurrency.name}>{selectedCurrency.flag}</span>
+                <span className="text-base leading-none" role="img" aria-label={selectedCurrency.name}>{selectedCurrency.flag}</span>
                 <span className="font-bold text-[#111111] tracking-tight">{selectedCurrency.code}</span>
-                <span className="text-[#888888] font-mono text-[11px]">({selectedCurrency.symbol})</span>
+                <span className="text-[#374151] font-mono text-[13px]">({selectedCurrency.symbol})</span>
               </button>
 
               {/* Wishlist Link */}
               <Link
                 href="/wishlist"
-                className="relative p-2.5 rounded-xl text-[#555555] hover:text-[#DF9F28] hover:bg-slate-100 border border-transparent hover:border-[#E2E8F0] transition-all shrink-0 focus-visible:ring-2 focus-visible:ring-[#DF9F28]"
+                className="relative min-w-[44px] min-h-[44px] p-2.5 rounded-xl text-[#374151] hover:text-[#946000] hover:bg-slate-100 border border-transparent hover:border-[#E2E8F0] transition-all shrink-0 flex items-center justify-center focus-visible:ring-2 focus-visible:ring-[#DF9F28]"
                 aria-label="Wishlist"
                 title="View Wishlist"
               >
-                <Heart className="w-4 h-4" />
+                <Heart className="w-5 h-5" />
                 {totalWishlistItems > 0 && (
-                  <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-[16px] bg-[#DF9F28] text-[#111111] text-[9px] font-bold rounded-full flex items-center justify-center px-0.5 shadow-xs">
+                  <span className="absolute -top-0.5 -right-0.5 min-w-[20px] h-[20px] bg-[#DF9F28] text-[#111111] text-[13px] font-bold rounded-full flex items-center justify-center px-1 shadow-xs">
                     {totalWishlistItems}
                   </span>
                 )}
@@ -683,49 +683,49 @@ export default function Navbar() {
                     <button
                       type="button"
                       onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                      className="flex items-center gap-1.5 px-2.5 sm:px-3 py-2 rounded-xl bg-white hover:bg-slate-100 border border-[#E2E8F0] text-[#111111] transition-all text-xs font-semibold cursor-pointer shrink-0 group focus-visible:ring-2 focus-visible:ring-[#DF9F28]"
+                      className="flex items-center gap-2 min-h-[44px] px-3.5 py-2.5 rounded-xl bg-white hover:bg-slate-100 border border-[#E2E8F0] text-[#111111] transition-all text-sm font-semibold cursor-pointer shrink-0 group focus-visible:ring-2 focus-visible:ring-[#DF9F28]"
                       aria-label="User Account Menu"
                     >
-                      <User className="w-3.5 h-3.5 text-[#DF9F28] group-hover:scale-110 transition-transform" />
-                      <span className="max-w-[80px] truncate">
+                      <User className="w-4 h-4 text-[#946000] group-hover:scale-110 transition-transform" />
+                      <span className="max-w-[100px] truncate">
                         {session.user.name || 'Account'}
                       </span>
-                      <ChevronDown className={`w-3 h-3 text-[#888888] transition-transform duration-200 ${isUserMenuOpen ? 'rotate-180' : ''}`} />
+                      <ChevronDown className={`w-4 h-4 text-[#4B5563] transition-transform duration-200 ${isUserMenuOpen ? 'rotate-180' : ''}`} />
                     </button>
 
                     {/* Account Dropdown */}
                     {isUserMenuOpen && (
-                      <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-[#E2E8F0] py-1.5 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
-                        <div className="px-4 py-2.5 border-b border-[#F1F5F9]">
-                          <p className="text-xs font-semibold text-[#111111] truncate">
+                      <div className="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-xl border border-[#E2E8F0] py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+                        <div className="px-4 py-3 border-b border-[#F1F5F9]">
+                          <p className="text-sm font-bold text-[#111111] truncate">
                             {session.user.name || 'User'}
                           </p>
-                          <p className="text-[11px] text-[#888888] truncate">
+                          <p className="text-[13px] text-[#4B5563] truncate mt-0.5">
                             {session.user.email}
                           </p>
                         </div>
 
                         <Link
                           href="/profile"
-                          className="flex items-center gap-2.5 px-4 py-2 text-xs font-medium text-[#555555] hover:bg-[#F8FAFC] hover:text-[#111111] transition-colors"
+                          className="flex items-center gap-2.5 px-4 py-2.5 text-sm font-medium text-[#374151] hover:bg-[#F8FAFC] hover:text-[#111111] transition-colors"
                         >
-                          <User className="w-4 h-4 text-[#888888]" />
-                          <span>My Profile & Addresses</span>
+                          <User className="w-4 h-4 text-[#4B5563]" />
+                          <span>My Profile &amp; Addresses</span>
                         </Link>
 
                         <Link
                           href="/orders"
-                          className="flex items-center gap-2.5 px-4 py-2 text-xs font-medium text-[#555555] hover:bg-[#F8FAFC] hover:text-[#111111] transition-colors"
+                          className="flex items-center gap-2.5 px-4 py-2.5 text-sm font-medium text-[#374151] hover:bg-[#F8FAFC] hover:text-[#111111] transition-colors"
                         >
-                          <Package className="w-4 h-4 text-[#888888]" />
+                          <Package className="w-4 h-4 text-[#4B5563]" />
                           <span>My Orders</span>
                         </Link>
 
                         <Link
                           href="/lucky-draw"
-                          className="flex items-center gap-2.5 px-4 py-2 text-xs font-medium text-[#555555] hover:bg-[#F8FAFC] hover:text-[#111111] transition-colors"
+                          className="flex items-center gap-2.5 px-4 py-2.5 text-sm font-medium text-[#374151] hover:bg-[#F8FAFC] hover:text-[#111111] transition-colors"
                         >
-                          <Ticket className="w-4 h-4 text-[#DF9F28]" />
+                          <Ticket className="w-4 h-4 text-[#946000]" />
                           <span>My Lucky Tickets</span>
                         </Link>
 
@@ -733,7 +733,7 @@ export default function Navbar() {
                           <button
                             type="button"
                             onClick={handleLogout}
-                            className="flex items-center gap-2.5 w-full text-left px-4 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                            className="flex items-center gap-2.5 w-full text-left px-4 py-2.5 text-sm font-semibold text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
                           >
                             <LogOut className="w-4 h-4 text-rose-500" />
                             <span>Sign Out</span>
@@ -749,10 +749,10 @@ export default function Navbar() {
                       setAuthModalMode('signin');
                       setIsAuthModalOpen(true);
                     }}
-                    className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white hover:bg-slate-100 border border-[#E2E8F0] text-[#111111] transition-all text-xs font-semibold cursor-pointer shrink-0 group focus-visible:ring-2 focus-visible:ring-[#DF9F28]"
+                    className="flex items-center gap-2 min-h-[44px] px-4 py-2.5 rounded-xl bg-white hover:bg-slate-100 border border-[#E2E8F0] text-[#111111] transition-all text-sm font-semibold cursor-pointer shrink-0 group focus-visible:ring-2 focus-visible:ring-[#DF9F28]"
                     aria-label="Customer Sign In"
                   >
-                    <User className="w-3.5 h-3.5 group-hover:scale-110 transition-transform text-[#DF9F28]" />
+                    <User className="w-4 h-4 group-hover:scale-110 transition-transform text-[#946000]" />
                     <span>Sign In</span>
                   </button>
                 )}
@@ -762,12 +762,12 @@ export default function Navbar() {
               <button
                 type="button"
                 onClick={() => openDrawer()}
-                className="relative flex items-center gap-1.5 sm:gap-2 px-3.5 sm:px-4 py-2 rounded-xl bg-[#0A192F] hover:bg-[#061B3A] text-white transition-all duration-150 active:scale-95 shrink-0 group cursor-pointer focus-visible:ring-2 focus-visible:ring-[#DF9F28] shadow-sm"
+                className="relative flex items-center gap-2 min-h-[44px] px-4 py-2.5 rounded-xl bg-[#0A192F] hover:bg-[#061B3A] text-white transition-all duration-150 active:scale-95 shrink-0 group cursor-pointer focus-visible:ring-2 focus-visible:ring-[#DF9F28] shadow-sm"
                 aria-label="Shopping Cart"
               >
-                <ShoppingBag className="w-4 h-4 text-white group-hover:text-[#DF9F28] transition-colors" />
-                <span className="hidden sm:inline text-xs font-semibold tracking-wide">Cart</span>
-                <span className="flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[10px] font-bold rounded-full bg-[#DF9F28] text-[#111111]">
+                <ShoppingBag className="w-5 h-5 text-white group-hover:text-[#DF9F28] transition-colors" />
+                <span className="hidden sm:inline text-sm font-semibold tracking-wide">Cart</span>
+                <span className="flex items-center justify-center min-w-[20px] h-[20px] px-1 text-[13px] font-bold rounded-full bg-[#DF9F28] text-[#111111]">
                   {totalItems}
                 </span>
               </button>
@@ -782,7 +782,7 @@ export default function Navbar() {
           onMouseLeave={handleMouseLeave}
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between h-11 sm:h-12">
+            <div className="flex items-center justify-between h-12">
               
               {/* Category Nav Items */}
               <div className="flex items-center space-x-1 xl:space-x-2">
@@ -795,24 +795,24 @@ export default function Navbar() {
                       <Link
                         href={cat.href}
                         onMouseEnter={() => handleCategoryMouseEnter(cat.id)}
-                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-150 select-none group ${
+                        className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm font-semibold transition-all duration-150 select-none group ${
                           isActive
-                            ? 'bg-[#DF9F28] text-[#111111] font-semibold shadow-xs hover:bg-[#C6891E]'
+                            ? 'bg-[#DF9F28] text-[#111111] font-bold shadow-xs hover:bg-[#C6891E]'
                             : 'text-slate-200 hover:text-white hover:bg-white/10'
                         }`}
                       >
                         <span className={isActive ? 'text-[#111111]' : 'text-[#DF9F28]'}>
-                          <Icon className="w-3.5 h-3.5" />
+                          <Icon className="w-4 h-4" />
                         </span>
                         <span>{cat.label}</span>
                         {cat.popular && (
-                          <span className="text-[9px] px-1.5 py-0.5 rounded-full font-semibold uppercase tracking-wider bg-[#DF9F28] text-[#111111]">
+                          <span className="text-[13px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider bg-[#DF9F28] text-[#111111]">
                             Popular
                           </span>
                         )}
                         <ChevronDown
-                          className={`w-3 h-3 transition-transform duration-200 ${
-                            isActive ? 'rotate-180 text-[#111111]' : 'text-slate-400 group-hover:text-white'
+                          className={`w-3.5 h-3.5 transition-transform duration-200 ${
+                            isActive ? 'rotate-180 text-[#111111]' : 'text-slate-300 group-hover:text-white'
                           }`}
                         />
                       </Link>
@@ -822,13 +822,13 @@ export default function Navbar() {
               </div>
 
               {/* Right Trust & Guarantee Badges */}
-              <div className="hidden xl:flex items-center gap-4 text-xs font-medium text-slate-300">
+              <div className="hidden xl:flex items-center gap-4 text-[13px] font-semibold text-slate-200">
                 <span className="flex items-center gap-1.5 text-emerald-400 font-semibold">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                   Free Delivery over ₹999
                 </span>
-                <span className="text-slate-600">•</span>
-                <Link href="/faq" className="text-slate-300 hover:text-[#DF9F28] transition-colors">
+                <span className="text-slate-500">•</span>
+                <Link href="/faq" className="text-slate-200 hover:text-[#DF9F28] transition-colors">
                   7-Day Easy Returns
                 </Link>
               </div>
@@ -849,10 +849,10 @@ export default function Navbar() {
                   {/* Left Directory Grid (col-span-7) */}
                   <div className="col-span-7 space-y-4">
                     <div>
-                      <span className="text-xs uppercase tracking-wider font-semibold text-[#DF9F28]">
+                      <span className="text-[13px] uppercase tracking-wider font-bold text-[#946000]">
                         {activeCategoryData.directoryTitle}
                       </span>
-                      <h4 className="text-base font-bold text-[#111111] mt-0.5">
+                      <h4 className="text-lg font-bold text-[#111111] mt-0.5">
                         {activeCategoryData.directorySubtitle}
                       </h4>
                     </div>
@@ -862,12 +862,12 @@ export default function Navbar() {
                         <Link
                           key={idx}
                           href={item.href}
-                          className="group flex items-center justify-between p-3 rounded-xl border border-[#E2E8F0] hover:border-[#DF9F28] hover:bg-[#FEF8EE] transition-all"
+                          className="group flex items-center justify-between p-3.5 rounded-xl border border-[#E2E8F0] hover:border-[#DF9F28] hover:bg-[#FEF8EE] transition-all"
                         >
-                          <span className="text-xs font-medium text-[#111111] group-hover:text-[#DF9F28] transition-colors">
+                          <span className="text-sm font-semibold text-[#111111] group-hover:text-[#946000] transition-colors">
                             {item.title}
                           </span>
-                          <ArrowRight className="w-3.5 h-3.5 text-[#888888] group-hover:text-[#DF9F28] group-hover:translate-x-1 transition-all" />
+                          <ArrowRight className="w-4 h-4 text-[#4B5563] group-hover:text-[#946000] group-hover:translate-x-1 transition-all" />
                         </Link>
                       ))}
                     </div>
@@ -875,10 +875,10 @@ export default function Navbar() {
                     <div className="pt-2">
                       <Link
                         href={activeCategoryData.href}
-                        className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#DF9F28] hover:text-[#C6891E] hover:underline"
+                        className="inline-flex items-center gap-1.5 text-sm font-bold text-[#946000] hover:text-[#C6891E] hover:underline"
                       >
                         <span>View all {activeCategoryData.label}</span>
-                        <ArrowRight className="w-3 h-3" />
+                        <ArrowRight className="w-4 h-4" />
                       </Link>
                     </div>
                   </div>
@@ -899,16 +899,16 @@ export default function Navbar() {
                         />
                       </div>
                       <div className="flex-1 min-w-0 space-y-1">
-                        <span className="text-[10px] uppercase tracking-wider font-semibold text-[#DF9F28] bg-[#FEF8EE] border border-[#DF9F28]/30 px-2 py-0.5 rounded-full">
+                        <span className="text-[13px] uppercase tracking-wider font-bold text-[#946000] bg-[#FEF8EE] border border-[#DF9F28]/30 px-2.5 py-0.5 rounded-full inline-block">
                           {activeCategoryData.featured.badge}
                         </span>
-                        <h5 className="text-sm font-semibold text-[#111111] group-hover:text-[#DF9F28] transition-colors truncate">
+                        <h5 className="text-base font-bold text-[#111111] group-hover:text-[#946000] transition-colors truncate">
                           {activeCategoryData.featured.title}
                         </h5>
-                        <p className="text-xs text-[#555555] line-clamp-2 leading-relaxed">
+                        <p className="text-sm text-[#4B5563] line-clamp-2 leading-relaxed">
                           {activeCategoryData.featured.description}
                         </p>
-                        <p className="text-xs font-bold text-[#111111] pt-1">
+                        <p className="text-base font-bold text-[#111111] pt-1">
                           {activeCategoryData.featured.price}
                         </p>
                       </div>
@@ -950,14 +950,14 @@ export default function Navbar() {
                       className="object-contain"
                     />
                   </div>
-                  <span className="text-base font-bold tracking-tight text-[#111111] leading-none">
-                    Judes<span className="text-[#DF9F28]">Cart</span>
+                  <span className="text-lg font-bold tracking-tight text-[#111111] leading-none">
+                    Judes<span className="text-[#946000]">Cart</span>
                   </span>
                 </Link>
                 <button
                   type="button"
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="p-1.5 text-[#555555] hover:text-[#111111] rounded-lg cursor-pointer"
+                  className="min-w-[44px] min-h-[44px] p-2 text-[#374151] hover:text-[#111111] rounded-lg cursor-pointer flex items-center justify-center"
                   aria-label="Close menu"
                 >
                   <X className="w-5 h-5" />
@@ -969,15 +969,15 @@ export default function Navbar() {
                 <Link
                   href="/product"
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="flex items-center gap-2 p-2.5 rounded-xl bg-white text-[#111111] border border-[#E2E8F0] text-xs font-semibold hover:border-[#DF9F28]"
+                  className="flex items-center gap-2 p-3 rounded-xl bg-white text-[#111111] border border-[#E2E8F0] text-sm font-semibold hover:border-[#DF9F28] min-h-[44px]"
                 >
-                  <SlidersHorizontal className="w-4 h-4 text-[#555555] shrink-0" />
+                  <SlidersHorizontal className="w-4 h-4 text-[#4B5563] shrink-0" />
                   <span>All Products</span>
                 </Link>
                 <Link
                   href="/wishlist"
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="flex items-center gap-2 p-2.5 rounded-xl bg-white text-[#111111] border border-[#E2E8F0] text-xs font-semibold hover:border-[#DF9F28]"
+                  className="flex items-center gap-2 p-3 rounded-xl bg-white text-[#111111] border border-[#E2E8F0] text-sm font-semibold hover:border-[#DF9F28] min-h-[44px]"
                 >
                   <Heart className="w-4 h-4 text-rose-500 shrink-0" />
                   <span>Wishlist ({totalWishlistItems})</span>
@@ -986,8 +986,8 @@ export default function Navbar() {
 
               {/* Navigation Category Accordions */}
               <div className="p-3 space-y-1">
-                <p className="px-3 py-1.5 text-[10px] font-semibold text-[#888888] uppercase tracking-wider">
-                  Departments & Categories
+                <p className="px-3 py-1.5 text-xs font-bold text-[#4B5563] uppercase tracking-wider">
+                  Departments &amp; Categories
                 </p>
 
                 {navCategories.map((cat) => {
@@ -1000,12 +1000,12 @@ export default function Navbar() {
                         <Link
                           href={cat.href}
                           onClick={() => setIsMobileMenuOpen(false)}
-                          className="flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-[#111111] hover:text-[#DF9F28] flex-1"
+                          className="flex items-center gap-2.5 px-3 py-2.5 text-sm font-semibold text-[#111111] hover:text-[#946000] flex-1 min-h-[44px]"
                         >
-                          <Icon className="w-4 h-4 text-[#DF9F28]" />
+                          <Icon className="w-4 h-4 text-[#946000]" />
                           <span>{cat.label}</span>
                           {cat.popular && (
-                            <span className="text-[8px] px-1.5 py-0.2 rounded-full font-semibold bg-[#DF9F28] text-[#111111] uppercase">
+                            <span className="text-[13px] px-2 py-0.5 rounded-full font-bold bg-[#DF9F28] text-[#111111] uppercase">
                               Hot
                             </span>
                           )}
@@ -1013,7 +1013,7 @@ export default function Navbar() {
                         <button
                           type="button"
                           onClick={() => setMobileExpandedCat(isExpanded ? null : cat.id)}
-                          className="p-2 text-[#888888] hover:text-[#111111]"
+                          className="min-w-[44px] min-h-[44px] p-2 text-[#4B5563] hover:text-[#111111] flex items-center justify-center"
                           aria-label={`Toggle ${cat.label} subcategories`}
                         >
                           <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`} />
@@ -1027,7 +1027,7 @@ export default function Navbar() {
                               key={i}
                               href={sub.href}
                               onClick={() => setIsMobileMenuOpen(false)}
-                              className="block py-1 text-xs font-medium text-[#555555] hover:text-[#DF9F28]"
+                              className="block py-2 text-sm font-medium text-[#374151] hover:text-[#946000]"
                             >
                               {sub.title}
                             </Link>
@@ -1035,10 +1035,10 @@ export default function Navbar() {
                           <Link
                             href={cat.href}
                             onClick={() => setIsMobileMenuOpen(false)}
-                            className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#DF9F28] pt-1"
+                            className="inline-flex items-center gap-1 text-sm font-bold text-[#946000] pt-1"
                           >
                             <span>View All {cat.label}</span>
-                            <ChevronRight className="w-3 h-3" />
+                            <ChevronRight className="w-3.5 h-3.5" />
                           </Link>
                         </div>
                       )}
@@ -1050,13 +1050,13 @@ export default function Navbar() {
                   <Link
                     href="/lucky-draw"
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className="flex items-center justify-between px-3 py-2.5 text-xs font-semibold text-[#111111] bg-[#FEF8EE] rounded-xl border border-[#DF9F28]/30"
+                    className="flex items-center justify-between px-3 py-3 text-sm font-semibold text-[#111111] bg-[#FEF8EE] rounded-xl border border-[#DF9F28]/30 min-h-[44px]"
                   >
                     <div className="flex items-center gap-2">
-                      <Ticket className="w-4 h-4 text-[#DF9F28]" />
+                      <Ticket className="w-4 h-4 text-[#946000]" />
                       <span>Weekly Lucky Draw</span>
                     </div>
-                    <span className="text-[10px] bg-[#DF9F28] text-[#111111] font-bold px-1.5 py-0.5 rounded-md">
+                    <span className="text-xs bg-[#DF9F28] text-[#111111] font-bold px-2 py-0.5 rounded-md">
                       LIVE
                     </span>
                   </Link>
@@ -1069,26 +1069,26 @@ export default function Navbar() {
               {session?.user ? (
                 <div className="space-y-2">
                   <div className="flex items-center gap-2 px-1">
-                    <div className="w-7 h-7 rounded-full bg-[#FEF8EE] text-[#DF9F28] font-semibold text-xs flex items-center justify-center border border-[#DF9F28]/30">
+                    <div className="w-8 h-8 rounded-full bg-[#FEF8EE] text-[#946000] font-bold text-sm flex items-center justify-center border border-[#DF9F28]/30">
                       {session.user.name ? session.user.name.charAt(0) : 'U'}
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="text-xs font-semibold text-[#111111] truncate">{session.user.name}</p>
-                      <p className="text-[10px] text-[#888888] truncate">{session.user.email}</p>
+                      <p className="text-sm font-bold text-[#111111] truncate">{session.user.name}</p>
+                      <p className="text-xs text-[#4B5563] truncate">{session.user.email}</p>
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-2 pt-1">
                     <Link
                       href="/profile"
                       onClick={() => setIsMobileMenuOpen(false)}
-                      className="py-1.5 px-3 bg-white border border-[#E2E8F0] rounded-lg text-xs font-medium text-center text-[#555555] hover:border-[#DF9F28]"
+                      className="min-h-[44px] py-2 px-3 bg-white border border-[#E2E8F0] rounded-lg text-sm font-medium text-center text-[#374151] hover:border-[#DF9F28] flex items-center justify-center"
                     >
                       Profile
                     </Link>
                     <Link
                       href="/orders"
                       onClick={() => setIsMobileMenuOpen(false)}
-                      className="py-1.5 px-3 bg-white border border-[#E2E8F0] rounded-lg text-xs font-medium text-center text-[#555555] hover:border-[#DF9F28]"
+                      className="min-h-[44px] py-2 px-3 bg-white border border-[#E2E8F0] rounded-lg text-sm font-medium text-center text-[#374151] hover:border-[#DF9F28] flex items-center justify-center"
                     >
                       Orders
                     </Link>
@@ -1096,7 +1096,7 @@ export default function Navbar() {
                   <button
                     type="button"
                     onClick={handleLogout}
-                    className="w-full py-1.5 text-xs font-semibold text-rose-600 text-center hover:underline cursor-pointer"
+                    className="w-full min-h-[44px] py-2 text-sm font-semibold text-rose-600 text-center hover:underline cursor-pointer flex items-center justify-center"
                   >
                     Sign Out
                   </button>
@@ -1105,7 +1105,7 @@ export default function Navbar() {
                 <Link
                   href="/login"
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="flex items-center justify-center gap-2 w-full py-2.5 bg-[#0A192F] hover:bg-[#DF9F28] text-white hover:text-[#111111] rounded-xl text-xs font-semibold tracking-wide transition-colors"
+                  className="flex items-center justify-center gap-2 w-full min-h-[44px] py-3 bg-[#0A192F] hover:bg-[#DF9F28] text-white hover:text-[#111111] rounded-xl text-sm font-bold tracking-wide transition-colors"
                 >
                   <User className="w-4 h-4" />
                   <span>Sign In / Join JudesCart</span>

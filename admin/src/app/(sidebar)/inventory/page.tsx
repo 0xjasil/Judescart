@@ -1,12 +1,28 @@
 import { inventoryColumns } from "@/components/inventory/inventory-column";
 import InventoryTable from "@/components/inventory/inventory-table";
 import React from "react";
-import { Brand , Category } from "@prisma/client";
+import { Brand, Category } from "@prisma/client";
 
 export default async function InventoryPage() {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+  let brands: Brand[] = [];
+  let categories: Category[] = [];
 
-  const brands : Brand[] = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/brands`, { cache: "no-store" }).then((res) => res.json());
-  const categories : Category[] = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories`, { cache: "no-store" }).then((res) => res.json());
+  try {
+    const [brandsRes, categoriesRes] = await Promise.all([
+      fetch(`${apiUrl}/brands`, { cache: "no-store" }),
+      fetch(`${apiUrl}/categories`, { cache: "no-store" }),
+    ]);
+
+    if (brandsRes.ok) {
+      brands = await brandsRes.json();
+    }
+    if (categoriesRes.ok) {
+      categories = await categoriesRes.json();
+    }
+  } catch (err) {
+    console.error("Failed to fetch brands/categories for inventory:", err);
+  }
 
   return (
     <div className="flex flex-1 flex-col">
@@ -19,7 +35,7 @@ export default async function InventoryPage() {
             </div>
           </div>
 
-          <InventoryTable brands={brands} categories={categories} columns={inventoryColumns} />
+          <InventoryTable brands={Array.isArray(brands) ? brands : []} categories={Array.isArray(categories) ? categories : []} columns={inventoryColumns} />
         </div>
       </div>
     </div>

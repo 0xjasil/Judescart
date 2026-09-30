@@ -24,12 +24,16 @@ export default function ProductCollectionGrid() {
         if (response.ok) {
           const resData = await response.json();
           if (resData && Array.isArray(resData.data)) {
-            const mapped = resData.data.map((p: any) => ({
-              id: p.id,
-              name: p.name,
-              price: p.variants?.[0]?.price || 5400,
-              image: p.image || "/prod_overshirt_1778670536589.png"
-            }));
+            const mapped = resData.data.map((p: any) => {
+              const firstVariant = p.variants?.[0];
+              const sellingPrice = firstVariant?.offerPrice ? firstVariant.offerPrice : (firstVariant?.price || p.price || 5400);
+              return {
+                id: p.id,
+                name: p.name,
+                price: sellingPrice,
+                image: p.image || "/prod_overshirt_1778670536589.png"
+              };
+            });
             setProducts(mapped);
           }
         }

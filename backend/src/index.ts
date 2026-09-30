@@ -25,6 +25,8 @@ import couponRoutes from './routes/couponRoutes.js';
 import drawCampaignRoutes from './routes/drawCampaignRoutes.js';
 import logRoutes from './routes/logRoutes.js';
 import razorpayRoutes from "./routes/razorpayRoutes.js";
+import benefitRoutes from './routes/benefitRoutes.js';
+import zendropRoutes from './routes/zendropRoutes.js';
 
 dotenv.config();
 
@@ -93,6 +95,8 @@ app.use('/api/attributes', attributeRoutes);
 app.use('/api/variants', variantRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/banners', bannerRoutes);
+app.use('/api/benefits', benefitRoutes);
+app.use('/api/zendrop', zendropRoutes);
 app.use('/api/inventory', inventoryRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/wishlist', wishlistRoutes);
@@ -104,3 +108,4 @@ app.use("/api/payments/razorpay", razorpayRoutes);
 app.listen(PORT, () => {
     console.log(`🚀 Backend server running on http://localhost:${PORT}`);
 });
+

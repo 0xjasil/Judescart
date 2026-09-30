@@ -4,16 +4,20 @@ import { Category } from "@prisma/client";
 import { categoryColumns } from "@/components/category/category-columns";
 
 export default async function CategoriesPage() {
-  // Fetch categories from your backend
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories`, {
-    cache: "no-store",
-  });
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+  let categories: Category[] = [];
 
-  if (!res.ok) {
-    throw new Error("Failed to fetch categories");
+  try {
+    const res = await fetch(`${apiUrl}/categories`, {
+      cache: "no-store",
+    });
+
+    if (res.ok) {
+      categories = await res.json();
+    }
+  } catch (err) {
+    console.error("Failed to fetch categories:", err);
   }
-
-  const categories: Category[] = await res.json();
 
   return (
     <div className="flex flex-1 flex-col">
@@ -28,7 +32,7 @@ export default async function CategoriesPage() {
           </div>
 
           {/* Categories Table */}
-          <CategoryTable data={categories} columns={categoryColumns} />
+          <CategoryTable data={Array.isArray(categories) ? categories : []} columns={categoryColumns} />
         </div>
       </div>
     </div>

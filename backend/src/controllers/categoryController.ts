@@ -72,11 +72,29 @@ export const updateCategory = async (req: Request, res: Response) => {
 export const deleteCategory = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
-        const category = await prisma.category.findUnique({ where: { id: id as string } });
+        const categoryId = id as string;
+        const category = await prisma.category.findUnique({ where: { id: categoryId } });
         if (!category) return res.status(404).json({ error: "Category not found" });
 
-        await safeDeleteImage(category.image);
-        await prisma.category.delete({ where: { id: id as string } });
+        // Safe delete category image if hosted
+        if (category.image) {
+            await safeDeleteImage(category.image);
+        }
+
+        // 1. Unlink any products that reference this category
+        await prisma.product.updateMany({
+            where: { categoryId: categoryId },
+            data: { categoryId: null, subCategoryId: null }
+        });
+
+        // 2. Delete all subcategories associated with this category
+        await prisma.subCategory.deleteMany({
+            where: { categoryId: categoryId }
+        });
+
+        // 3. Delete the category
+        await prisma.category.delete({ where: { id: categoryId } });
+
         res.json({ success: true, message: "Category deleted successfully" });
     } catch (error: any) {
         console.error("Error deleting category:", error);

@@ -19,6 +19,10 @@ import {
   X,
   Boxes,
   Gift,
+  ImageIcon,
+  LayoutTemplate,
+  Sparkles,
+  Zap,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -58,12 +62,16 @@ const adminNavigation: AdminNavItem[] = [
   { title: "Brands", href: "/brand", icon: Tag },
   { title: "Categories", href: "/category", icon: Layers },
   { title: "Subcategories", href: "/subcategory", icon: FileText },
-  { title: "Orders", href: "/order", icon: ShoppingCart },
+  { title: "Orders", href: "/orders", icon: ShoppingCart },
   { title: "Customers", href: "/customers", icon: Users },
   { title: "Inventory", href: "/inventory", icon: Boxes },
-  { title: "Analytics", href: "/analytics", icon: BarChart3 },
   { title: "Variations", href: "/variations", icon: Layers },
+  { title: "Analytics", href: "/analytics", icon: BarChart3 },
+  { title: "Hero Banners", href: "/banners", icon: ImageIcon },
+  { title: "Offer Slides", href: "/offer-slides", icon: LayoutTemplate },
+  { title: "Brand Benefits", href: "/brand-benefits", icon: Sparkles },
   { title: "Draw Campaigns", href: "/draws", icon: Gift },
+  { title: "Zendrop Dropship", href: "/zendrop", icon: Zap },
   { title: "Settings", href: "/settings", icon: Settings },
 ];
 

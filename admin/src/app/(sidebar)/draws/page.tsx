@@ -372,166 +372,274 @@ export default function DrawsPage() {
           </p>
         </div>
 
-        <Dialog open={isDialogOpen} onOpenChange={(open) => { setIsDialogOpen(open); if (!open) resetForm(); }}>
-          <DialogTrigger asChild>
-            <Button className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white transition-all shadow-md shadow-indigo-100 dark:shadow-none">
-              <Plus className="h-4 w-4" />
-              Create Draw Campaign
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[500px]">
-            <form onSubmit={handleFormSubmit}>
-              <DialogHeader>
-                <DialogTitle className="flex items-center gap-2 text-xl font-bold">
-                  <Trophy className="h-5 w-5 text-amber-500 animate-bounce" />
-                  {editingCampaign ? "Edit Draw Campaign" : "New Draw Campaign"}
-                </DialogTitle>
-                <DialogDescription>
-                  Configure details for your promotional draw event. Fill in specifications below.
-                </DialogDescription>
-              </DialogHeader>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" onClick={fetchCampaigns} disabled={loading} className="gap-1.5">
+            <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
+            Refresh
+          </Button>
 
-              <div className="space-y-4 py-4">
-                {/* Draw Name */}
-                <div className="space-y-1">
-                  <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                    Draw Campaign Name *
-                  </label>
-                  <Input
-                    placeholder="e.g. Eid Mega Lucky Draw"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    required
-                    className="focus-visible:ring-indigo-500"
-                  />
-                </div>
+          <Dialog open={isDialogOpen} onOpenChange={(open) => { setIsDialogOpen(open); if (!open) resetForm(); }}>
+            <DialogTrigger asChild>
+              <Button className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white transition-all shadow-md shadow-indigo-100 dark:shadow-none">
+                <Plus className="h-4 w-4" />
+                Create Draw Campaign
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[500px]">
+              <form onSubmit={handleFormSubmit}>
+                <DialogHeader>
+                  <DialogTitle className="flex items-center gap-2 text-xl font-bold">
+                    <Trophy className="h-5 w-5 text-amber-500 animate-bounce" />
+                    {editingCampaign ? "Edit Draw Campaign" : "New Draw Campaign"}
+                  </DialogTitle>
+                  <DialogDescription>
+                    Configure specifications, prize assets, and precise schedule for storefront countdown.
+                  </DialogDescription>
+                </DialogHeader>
 
-                {/* Prize Name */}
-                <div className="space-y-1">
-                  <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                    Prize Name *
-                  </label>
-                  <Input
-                    placeholder="e.g. iPhone 16 Pro Max"
-                    value={prizeName}
-                    onChange={(e) => setPrizeName(e.target.value)}
-                    required
-                    className="focus-visible:ring-indigo-500"
-                  />
-                </div>
-
-                {/* Prize Image File Upload */}
-                <div className="space-y-1">
-                  <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                    Prize Image *
-                  </label>
-                  <div className="flex flex-col gap-2">
-                    <Input
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => {
-                        const file = e.target.files?.[0];
-                        if (file) {
-                          setPrizeImageFile(file);
-                          setPreviewUrl(URL.createObjectURL(file));
-                        }
-                      }}
-                      required={!editingCampaign}
-                      className="cursor-pointer file:mr-4 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
-                    />
-                    {previewUrl && (
-                      <div className="relative h-32 w-full rounded-lg border border-dashed border-gray-300 dark:border-gray-800 bg-gray-50 dark:bg-zinc-900 flex items-center justify-center p-2 mt-1 overflow-hidden group">
-                        <Image
-                          src={previewUrl}
-                          alt="Prize Preview"
-                          fill
-                          sizes="(max-width: 500px) 100vw, 500px"
-                          className="object-contain transition-transform group-hover:scale-105 duration-300"
-                        />
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* Date Fields */}
-                <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-4 py-4">
+                  {/* Draw Name */}
                   <div className="space-y-1">
                     <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                      Start Date *
+                      Draw Campaign Name *
                     </label>
                     <Input
-                      type="datetime-local"
-                      value={startDate}
-                      onChange={(e) => setStartDate(e.target.value)}
+                      placeholder="e.g. Weekly Luxury Sweepstakes"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
                       required
+                      className="focus-visible:ring-indigo-500"
                     />
                   </div>
+
+                  {/* Prize Name */}
                   <div className="space-y-1">
                     <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                      End Date *
+                      Prize Name *
                     </label>
                     <Input
-                      type="datetime-local"
-                      value={endDate}
-                      onChange={(e) => setEndDate(e.target.value)}
+                      placeholder="e.g. Tailored Cashmere Coat & Artisan Duffle"
+                      value={prizeName}
+                      onChange={(e) => setPrizeName(e.target.value)}
                       required
+                      className="focus-visible:ring-indigo-500"
                     />
+                  </div>
+
+                  {/* Prize Image File Upload */}
+                  <div className="space-y-1">
+                    <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                      Prize Image *
+                    </label>
+                    <div className="flex flex-col gap-2">
+                      <Input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            setPrizeImageFile(file);
+                            setPreviewUrl(URL.createObjectURL(file));
+                          }
+                        }}
+                        required={!editingCampaign}
+                        className="cursor-pointer file:mr-4 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
+                      />
+                      {previewUrl && (
+                        <div className="relative h-32 w-full rounded-lg border border-dashed border-gray-300 dark:border-gray-800 bg-gray-50 dark:bg-zinc-900 flex items-center justify-center p-2 mt-1 overflow-hidden group">
+                          <Image
+                            src={previewUrl}
+                            alt="Prize Preview"
+                            fill
+                            sizes="(max-width: 500px) 100vw, 500px"
+                            className="object-contain transition-transform group-hover:scale-105 duration-300"
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Date Ranges */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                      <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                        Start Date &amp; Time *
+                      </label>
+                      <Input
+                        type="datetime-local"
+                        value={startDate}
+                        onChange={(e) => setStartDate(e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                        End Date &amp; Time (Countdown) *
+                      </label>
+                      <Input
+                        type="datetime-local"
+                        value={endDate}
+                        onChange={(e) => setEndDate(e.target.value)}
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  {/* Winner Count & Status */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                      <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                        Winner Count *
+                      </label>
+                      <Input
+                        type="number"
+                        min="1"
+                        value={winnerCount}
+                        onChange={(e) => setWinnerCount(e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                        Campaign Status
+                      </label>
+                      <Select
+                        value={status}
+                        onValueChange={(val: typeof status) => setStatus(val)}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="DRAFT">Draft</SelectItem>
+                          <SelectItem value="ACTIVE">Active (Storefront Visible)</SelectItem>
+                          <SelectItem value="COMPLETED">Completed</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
                 </div>
 
-                {/* Winner Count & Status */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-1">
-                    <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                      Winner Count *
-                    </label>
-                    <Input
-                      type="number"
-                      min="1"
-                      value={winnerCount}
-                      onChange={(e) => setWinnerCount(e.target.value)}
-                      required
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                      Campaign Status
-                    </label>
-                    <Select
-                      value={status}
-                      onValueChange={(val: typeof status) => setStatus(val)}
-                    >
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select status" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="DRAFT">Draft</SelectItem>
-                        <SelectItem value="ACTIVE">Active</SelectItem>
-                        <SelectItem value="COMPLETED">Completed</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-              </div>
-
-              <DialogFooter className="mt-4 gap-2">
-                <DialogClose asChild>
-                  <Button type="button" variant="outline" className="w-full sm:w-auto">
-                    Cancel
+                <DialogFooter className="mt-4 gap-2">
+                  <DialogClose asChild>
+                    <Button type="button" variant="outline" className="w-full sm:w-auto">
+                      Cancel
+                    </Button>
+                  </DialogClose>
+                  <Button 
+                    type="submit" 
+                    disabled={submitting} 
+                    className="bg-indigo-600 hover:bg-indigo-700 text-white w-full sm:w-auto font-semibold"
+                  >
+                    {submitting ? "Processing..." : editingCampaign ? "Save Changes" : "Create Campaign"}
                   </Button>
-                </DialogClose>
-                <Button 
-                  type="submit" 
-                  disabled={submitting} 
-                  className="bg-indigo-600 hover:bg-indigo-700 text-white w-full sm:w-auto"
-                >
-                  {submitting ? "Processing..." : editingCampaign ? "Save Changes" : "Create Campaign"}
-                </Button>
-              </DialogFooter>
-            </form>
-          </DialogContent>
-        </Dialog>
+                </DialogFooter>
+              </form>
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
+
+      {/* Live Active Sweepstakes Countdown & Storefront Analysis */}
+      {campaigns.filter((c) => c.status === "ACTIVE").map((activeC) => {
+        const diff = Math.max(0, new Date(activeC.endDate).getTime() - Date.now());
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+        const minutes = Math.floor((diff / (1000 * 60)) % 60);
+        const seconds = Math.floor((diff / 1000) % 60);
+
+        const extendTime = async (hoursToAdd: number) => {
+          try {
+            const currentEnd = new Date(activeC.endDate).getTime();
+            const newEnd = new Date(Math.max(Date.now(), currentEnd) + hoursToAdd * 3600000).toISOString();
+            const formData = new FormData();
+            formData.append("endDate", newEnd);
+
+            const res = await fetch(`${API_URL}/draws/${activeC.id}`, {
+              method: "PATCH",
+              body: formData,
+            });
+            if (res.ok) {
+              toast.success(`Extended campaign schedule by ${hoursToAdd} hours`);
+              fetchCampaigns();
+            } else {
+              toast.error("Failed to extend schedule");
+            }
+          } catch {
+            toast.error("Error updating schedule");
+          }
+        };
+
+        return (
+          <Card key={activeC.id} className="border-amber-500/30 bg-gradient-to-r from-amber-500/10 via-background to-background shadow-xs">
+            <CardContent className="p-5">
+              <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5">
+                
+                {/* Left Info */}
+                <div className="space-y-1.5">
+                  <div className="flex items-center gap-2">
+                    <Badge className="bg-emerald-600 text-white font-bold text-xs">
+                      ● Active Storefront Countdown
+                    </Badge>
+                    <span className="text-xs text-muted-foreground font-mono">
+                      Target: {new Date(activeC.endDate).toLocaleString()}
+                    </span>
+                  </div>
+                  <h3 className="text-base font-bold text-foreground">
+                    {activeC.name}
+                  </h3>
+                  <p className="text-xs text-muted-foreground flex items-center gap-2">
+                    <span>Featured Prize: <strong>{activeC.prizeName}</strong></span>
+                    <span>•</span>
+                    <span>Winners: <strong>{activeC.winnerCount}</strong></span>
+                  </p>
+                </div>
+
+                {/* Center Live Countdown Widget */}
+                <div className="flex items-center gap-2 font-mono text-center">
+                  <div className="bg-background border rounded-lg p-2 min-w-14 shadow-xs">
+                    <span className="text-base font-extrabold text-foreground block leading-none">{String(days).padStart(2, "0")}</span>
+                    <span className="text-[10px] text-muted-foreground uppercase font-sans">Days</span>
+                  </div>
+                  <span className="text-base font-bold text-muted-foreground">:</span>
+                  <div className="bg-background border rounded-lg p-2 min-w-14 shadow-xs">
+                    <span className="text-base font-extrabold text-foreground block leading-none">{String(hours).padStart(2, "0")}</span>
+                    <span className="text-[10px] text-muted-foreground uppercase font-sans">Hours</span>
+                  </div>
+                  <span className="text-base font-bold text-muted-foreground">:</span>
+                  <div className="bg-background border rounded-lg p-2 min-w-14 shadow-xs">
+                    <span className="text-base font-extrabold text-foreground block leading-none">{String(minutes).padStart(2, "0")}</span>
+                    <span className="text-[10px] text-muted-foreground uppercase font-sans">Mins</span>
+                  </div>
+                  <span className="text-base font-bold text-muted-foreground">:</span>
+                  <div className="bg-background border border-amber-500/40 rounded-lg p-2 min-w-14 shadow-xs">
+                    <span className="text-base font-extrabold text-amber-600 block leading-none">{String(seconds).padStart(2, "0")}</span>
+                    <span className="text-[10px] text-amber-600 uppercase font-sans">Secs</span>
+                  </div>
+                </div>
+
+                {/* Right Action Quick Extensions */}
+                <div className="flex flex-wrap items-center gap-2">
+                  <Button size="sm" variant="outline" onClick={() => extendTime(24)} className="text-xs">
+                    +24 Hours
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={() => extendTime(72)} className="text-xs">
+                    +3 Days
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={() => extendTime(168)} className="text-xs">
+                    +1 Week
+                  </Button>
+                  <Button size="sm" onClick={() => openEditDialog(activeC)} className="text-xs bg-amber-600 hover:bg-amber-700 text-white">
+                    <Edit className="h-3.5 w-3.5 mr-1" />
+                    Edit Schedule
+                  </Button>
+                </div>
+
+              </div>
+            </CardContent>
+          </Card>
+        );
+      })}
 
       {/* Filter and Table Card */}
       <Card className="border border-gray-200 dark:border-zinc-800 shadow-sm overflow-hidden">

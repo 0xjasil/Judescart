@@ -183,6 +183,66 @@ const PRODUCT_SIZES = [
   { label: '42 FR / 8 US', status: 'Out', disabled: true },
 ];
 
+function ProductDetailSkeleton() {
+  return (
+    <main className="flex-1 pb-24 select-none max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
+        <div className="lg:col-span-7 flex flex-col-reverse lg:flex-row gap-4">
+          <div className="flex lg:flex-col gap-3">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="w-20 h-24 rounded-xl bg-slate-200 animate-pulse shrink-0" />
+            ))}
+          </div>
+          <div className="flex-1 aspect-[3/4] rounded-2xl bg-slate-200 animate-pulse" />
+        </div>
+        <div className="lg:col-span-5 space-y-6">
+          <div className="space-y-3">
+            <div className="h-4 w-28 bg-amber-500/20 rounded animate-pulse" />
+            <div className="h-8 w-4/5 bg-slate-200 rounded animate-pulse" />
+            <div className="h-7 w-36 bg-slate-200 rounded animate-pulse" />
+          </div>
+          <div className="h-24 bg-slate-200 rounded-xl animate-pulse" />
+          <div className="space-y-3 pt-2">
+            <div className="h-12 bg-slate-200 rounded-xl animate-pulse" />
+            <div className="h-12 bg-slate-200 rounded-xl animate-pulse" />
+          </div>
+        </div>
+      </div>
+    </main>
+  );
+}
+
+function ProductCatalogSkeleton() {
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start select-none">
+      <div className="hidden lg:block lg:col-span-3 space-y-6">
+        <div className="h-6 w-24 bg-slate-200 rounded animate-pulse" />
+        <div className="space-y-3">
+          {[1, 2, 3, 4, 5].map((i) => (
+            <div key={i} className="h-5 w-full bg-slate-200 rounded animate-pulse" />
+          ))}
+        </div>
+      </div>
+      <div className="lg:col-span-9 grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+        {[1, 2, 3, 4, 5, 6].map((i) => (
+          <div key={i} className="rounded-lg bg-white border border-[#E2E8F0] p-3 space-y-2.5 animate-pulse">
+            <div className="aspect-[3/4] w-full bg-slate-200 rounded-md" />
+            <div className="space-y-1.5 pt-1">
+              <div className="h-3 w-1/3 bg-slate-200 rounded" />
+              <div className="h-4 w-full bg-slate-200 rounded" />
+              <div className="h-4 w-2/3 bg-slate-200 rounded" />
+            </div>
+            <div className="pt-2 border-t border-[#F1F5F9] flex items-center justify-between">
+              <div className="h-5 w-20 bg-slate-200 rounded" />
+              <div className="h-8 w-8 bg-slate-200 rounded-lg sm:hidden" />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function ProductContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -202,6 +262,8 @@ function ProductContent() {
   const [selectedSize, setSelectedSize] = useState(PRODUCT_SIZES[0].label);
   const [quantity, setQuantity] = useState(1);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [catalogLoading, setCatalogLoading] = useState(true);
+  const [detailLoading, setDetailLoading] = useState(false);
 
   // Accordion states
   const [openAccordions, setOpenAccordions] = useState<{ [key: string]: boolean }>({
@@ -224,7 +286,7 @@ function ProductContent() {
   const [showMobileFilters, setShowMobileFilters] = useState(false);
 
   // Data fetching state
-  const [allProducts, setAllProducts] = useState<ProductSummary[]>(DEFAULT_FALLBACK_PRODUCTS);
+  const [allProducts, setAllProducts] = useState<ProductSummary[]>([]);
   const [categoriesList, setCategoriesList] = useState<{ id: string; name: string }[]>([]);
 
   // Show Toast helper
@@ -270,6 +332,8 @@ function ProductContent() {
 
   // 3. Fetch products list
   useEffect(() => {
+    let isMounted = true;
+    setCatalogLoading(true);
     fetch(`${getApiUrl()}/products?limit=50`)
       .then((r) => r.json())
       .then((res) => {
@@ -277,7 +341,7 @@ function ProductContent() {
           const mapped: ProductSummary[] = res.data.map((p: any) => {
             const firstVariant = p.variants?.[0];
             const priceVal = Number(firstVariant?.offerPrice || firstVariant?.price || p.price || 2999);
-            const origPriceVal = Number(firstVariant?.price || p.originalPrice || Math.round(priceVal * 1.2));
+            const origPriceVal = firstVariant?.offerPrice && firstVariant.price > firstVariant.offerPrice ? firstVariant.price : undefined;
             return {
               id: p.id,
               name: p.name,
@@ -292,25 +356,43 @@ function ProductContent() {
               isCustomerFavorite: p.isCustomerFavorite || false,
             };
           });
-          setAllProducts(mapped);
+          if (isMounted) {
+            setAllProducts(mapped);
+          }
+        } else if (isMounted) {
+          setAllProducts(DEFAULT_FALLBACK_PRODUCTS);
         }
       })
       .catch(() => {
-        setAllProducts(DEFAULT_FALLBACK_PRODUCTS);
+        if (isMounted) {
+          setAllProducts(DEFAULT_FALLBACK_PRODUCTS);
+        }
+      })
+      .finally(() => {
+        if (isMounted) {
+          setCatalogLoading(false);
+        }
       });
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   // 4. Handle ?id= selected product
   useEffect(() => {
     if (!selectedId) {
       setSelectedProduct(null);
+      setDetailLoading(false);
       return;
     }
 
+    setDetailLoading(true);
     const found = allProducts.find((p) => String(p.id) === String(selectedId));
     if (found) {
       setSelectedProduct(found);
       setActiveImageIndex(0);
+      setDetailLoading(false);
     } else {
       // Fetch specifically or fallback
       fetch(`${getApiUrl()}/products/${selectedId}`)
@@ -318,26 +400,33 @@ function ProductContent() {
         .then((res) => {
           if (res.data) {
             const p = res.data;
+            const firstVariant = p.variants?.[0];
+            const priceVal = Number(firstVariant?.offerPrice || firstVariant?.price || p.price || 2999);
+            const origPriceVal = Number(firstVariant?.offerPrice ? firstVariant.price : (p.originalPrice || Math.round(priceVal * 1.2)));
             setSelectedProduct({
               id: p.id,
+              variantId: firstVariant?.id,
               name: p.name,
               category: p.category?.name || 'Apparel',
-              brand: 'JudesCart',
-              price: Number(p.price) || 2999,
-              originalPrice: p.price ? Math.round(Number(p.price) * 1.2) : 3599,
-              image: p.images?.[0] || p.image || '/prod_overshirt_1778670536589.png',
-              subimage: p.images || ['/prod_overshirt_1778670536589.png', '/cat_apparel_1778670103427.png'],
+              brand: p.brand?.name || 'JudesCart',
+              price: priceVal,
+              originalPrice: origPriceVal,
+              image: p.image || p.images?.[0] || '/prod_overshirt_1778670536589.png',
+              subimage: p.subimage && p.subimage.length > 0 ? p.subimage : (p.images && p.images.length > 0 ? p.images : ['/prod_overshirt_1778670536589.png', '/cat_apparel_1778670103427.png']),
               description: p.description,
               isNewArrival: p.isNewArrival,
               isCustomerFavorite: p.isCustomerFavorite,
             });
             setActiveImageIndex(0);
           } else {
-            setSelectedProduct(DEFAULT_FALLBACK_PRODUCTS[0]);
+            setSelectedProduct(null);
           }
         })
         .catch(() => {
-          setSelectedProduct(DEFAULT_FALLBACK_PRODUCTS[0]);
+          setSelectedProduct(null);
+        })
+        .finally(() => {
+          setDetailLoading(false);
         });
     }
   }, [selectedId, allProducts]);
@@ -482,7 +571,33 @@ function ProductContent() {
       {/* ========================================================================= */}
       {/* 1. SINGLE PRODUCT DETAIL VIEW (When a product is selected via ?id=...)   */}
       {/* ========================================================================= */}
-      {selectedProduct ? (
+      {selectedId && detailLoading ? (
+        <ProductDetailSkeleton />
+      ) : selectedId && !selectedProduct ? (
+        <main className="flex-1 py-16 px-4 max-w-xl mx-auto text-center space-y-4">
+          <div className="w-14 h-14 rounded-full bg-rose-50 text-rose-600 border border-rose-200 flex items-center justify-center mx-auto">
+            <AlertCircle className="w-7 h-7" />
+          </div>
+          <h2 className="text-xl sm:text-2xl font-bold text-[#111111]">Product Not Found</h2>
+          <p className="text-sm text-[#555555]">
+            The product you requested is currently unavailable, out of stock, or may have been archived.
+          </p>
+          <div className="pt-3 flex items-center justify-center gap-3">
+            <Link
+              href="/product"
+              className="px-5 py-2.5 rounded-lg bg-[#0A192F] hover:bg-[#061B3A] text-white text-xs font-bold uppercase tracking-wider transition-colors shadow-xs"
+            >
+              Browse Catalog
+            </Link>
+            <Link
+              href="/"
+              className="px-5 py-2.5 rounded-lg bg-white border border-slate-200 hover:border-[#DF9F28] text-[#111111] text-xs font-bold uppercase tracking-wider transition-colors shadow-2xs"
+            >
+              Home Page
+            </Link>
+          </div>
+        </main>
+      ) : selectedProduct ? (
         <main className="flex-1 pb-24">
           {/* Breadcrumbs Row */}
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -1376,7 +1491,24 @@ function ProductContent() {
 
               {/* Products Catalog Cards Grid */}
               <div className="lg:col-span-9">
-                {filteredProducts.length === 0 ? (
+                {catalogLoading ? (
+                  <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2.5 sm:gap-3.5 lg:gap-4">
+                    {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+                      <div key={i} className="rounded-lg bg-white border border-[#E2E8F0] p-3 space-y-2.5 animate-pulse">
+                        <div className="aspect-[3/4] w-full bg-slate-200 rounded-md" />
+                        <div className="space-y-1.5 pt-1">
+                          <div className="h-3 w-1/3 bg-slate-200 rounded" />
+                          <div className="h-4 w-full bg-slate-200 rounded" />
+                          <div className="h-4 w-2/3 bg-slate-200 rounded" />
+                        </div>
+                        <div className="pt-2 border-t border-[#F1F5F9] flex items-center justify-between">
+                          <div className="h-5 w-20 bg-slate-200 rounded" />
+                          <div className="h-8 w-8 bg-slate-200 rounded-lg sm:hidden" />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : filteredProducts.length === 0 ? (
                   <div className="py-16 text-center bg-white rounded-lg border border-slate-200 p-6 space-y-3">
                     <div className="w-12 h-12 rounded-full bg-[#FEF8EE] text-[#DF9F28] flex items-center justify-center mx-auto">
                       <ShoppingBag className="w-6 h-6" />

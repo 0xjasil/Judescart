@@ -34,7 +34,7 @@ model SubCategory {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
-  category Category  @relation(fields: [categoryId], references: [id])
+  category Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   products Product[]
 }
 
@@ -53,9 +53,9 @@ model Product {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
-  brand       Brand?       @relation(fields: [brandId], references: [id])
-  category    Category?    @relation(fields: [categoryId], references: [id])
-  subCategory SubCategory? @relation(fields: [subCategoryId], references: [id])
+  brand       Brand?       @relation(fields: [brandId], references: [id], onDelete: SetNull)
+  category    Category?    @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  subCategory SubCategory? @relation(fields: [subCategoryId], references: [id], onDelete: SetNull)
 
   variants      ProductVariant[]
   notifications Notification[]

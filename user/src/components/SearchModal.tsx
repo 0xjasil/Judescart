@@ -85,6 +85,7 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
   const [query, setQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [products, setProducts] = useState(SAMPLE_PRODUCTS);
+  const [loading, setLoading] = useState(true);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -115,6 +116,7 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
   // Fetch real products and categories
   useEffect(() => {
     async function loadData() {
+      setLoading(true);
       try {
         const [prodRes, catRes] = await Promise.all([
           fetch(`${getApiUrl()}/products?limit=50`),
@@ -128,7 +130,7 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
             const mapped = rawItems.map((p: any) => {
               const firstVariant = p.variants?.[0];
               const priceVal = Number(firstVariant?.offerPrice || firstVariant?.price || p.price || 2999);
-              const origPriceVal = Number(firstVariant?.price || p.originalPrice || Math.round(priceVal * 1.2));
+              const origPriceVal = firstVariant?.offerPrice && firstVariant.price > firstVariant.offerPrice ? firstVariant.price : undefined;
               return {
                 id: p.id,
                 name: p.name,
@@ -144,6 +146,8 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
         }
       } catch (e) {
         // Fallback to SAMPLE_PRODUCTS
+      } finally {
+        setLoading(false);
       }
     }
     loadData();
@@ -270,7 +274,22 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
               )}
             </div>
 
-            {filteredProducts.length === 0 ? (
+            {loading ? (
+              <div className="space-y-2">
+                {[1, 2, 3, 4].map((i) => (
+                  <div key={i} className="flex items-center justify-between p-2.5 rounded-lg border border-[#E2E8F0] animate-pulse">
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 rounded-md bg-slate-200 shrink-0" />
+                      <div className="space-y-1.5">
+                        <div className="h-4 w-40 bg-slate-200 rounded" />
+                        <div className="h-3 w-20 bg-slate-200 rounded" />
+                      </div>
+                    </div>
+                    <div className="h-4 w-16 bg-slate-200 rounded" />
+                  </div>
+                ))}
+              </div>
+            ) : filteredProducts.length === 0 ? (
               <div className="text-center py-10">
                 <Package className="w-10 h-10 text-slate-300 mx-auto mb-2" />
                 <p className="text-sm font-bold text-[#111111]">No products found</p>
@@ -295,22 +314,22 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
                         />
                       </div>
                       <div className="min-w-0">
-                        <p className="text-xs font-bold text-[#111111] group-hover:text-[#DF9F28] transition-colors truncate">
+                        <p className="text-sm font-bold text-[#111111] group-hover:text-[#946000] transition-colors truncate">
                           {item.name}
                         </p>
-                        <p className="text-[11px] text-[#555555]">
+                        <p className="text-[13px] text-[#4B5563]">
                           {item.category || 'General'}
                         </p>
                       </div>
                     </div>
                     <div className="flex items-center gap-3 shrink-0 ml-3">
                       <div className="text-right">
-                        <p className="text-xs font-bold text-[#111111]">₹{item.price.toLocaleString('en-IN')}</p>
+                        <p className="text-sm sm:text-base font-bold text-[#111111]">₹{item.price.toLocaleString('en-IN')}</p>
                         {item.originalPrice && (
-                          <p className="text-[10px] text-[#888888] line-through">₹{item.originalPrice.toLocaleString('en-IN')}</p>
+                          <p className="text-[13px] text-[#4B5563] line-through">₹{item.originalPrice.toLocaleString('en-IN')}</p>
                         )}
                       </div>
-                      <ChevronRight className="w-4 h-4 text-[#888888] group-hover:text-[#DF9F28] group-hover:translate-x-0.5 transition-all" />
+                      <ChevronRight className="w-4 h-4 text-[#4B5563] group-hover:text-[#946000] group-hover:translate-x-0.5 transition-all" />
                     </div>
                   </div>
                 ))}
@@ -320,16 +339,16 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
         </div>
 
         {/* Footer info */}
-        <div className="px-5 py-3 bg-[#F8FAFC] border-t border-[#E2E8F0] flex items-center justify-between text-[11px] text-[#555555]">
-          <div className="flex items-center gap-2">
-            <span className="flex items-center gap-1">
-              <kbd className="px-1.5 py-0.5 bg-white border border-[#E2E8F0] rounded font-mono text-[10px] shadow-2xs">↵</kbd> to search
+        <div className="px-5 py-3 bg-[#F8FAFC] border-t border-[#E2E8F0] flex items-center justify-between text-[13px] text-[#334155]">
+          <div className="flex items-center gap-3">
+            <span className="flex items-center gap-1.5">
+              <kbd className="px-1.5 py-0.5 bg-white border border-[#E2E8F0] rounded font-mono text-[13px] font-semibold shadow-2xs">↵</kbd> to search
             </span>
-            <span className="flex items-center gap-1">
-              <kbd className="px-1.5 py-0.5 bg-white border border-[#E2E8F0] rounded font-mono text-[10px] shadow-2xs">ESC</kbd> to close
+            <span className="flex items-center gap-1.5">
+              <kbd className="px-1.5 py-0.5 bg-white border border-[#E2E8F0] rounded font-mono text-[13px] font-semibold shadow-2xs">ESC</kbd> to close
             </span>
           </div>
-          <span className="text-[#DF9F28] font-semibold">Weekly Lucky Draw on every order</span>
+          <span className="text-[#946000] font-bold">Weekly Lucky Draw on every order</span>
         </div>
       </div>
     </div>

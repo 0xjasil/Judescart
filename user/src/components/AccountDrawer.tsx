@@ -94,14 +94,14 @@ export default function AccountDrawer({
               </div>
               <div className="min-w-0">
                 <div className="flex items-center gap-2">
-                  <h3 className="text-sm font-bold text-white truncate">
+                  <h3 className="text-base font-bold text-white truncate">
                     {session?.user?.name || 'Guest Customer'}
                   </h3>
-                  <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-[#DF9F28]/20 text-[#DF9F28] border border-[#DF9F28]/30 shrink-0">
+                  <span className="px-2.5 py-0.5 rounded-full text-[13px] font-bold bg-[#DF9F28] text-[#111111] shrink-0">
                     🏆 Gold VIP
                   </span>
                 </div>
-                <p className="text-xs text-slate-400 truncate mt-0.5">
+                <p className="text-[13px] text-slate-300 truncate mt-0.5">
                   {session?.user?.email || 'Browsing as visitor'}
                 </p>
               </div>
@@ -110,7 +110,7 @@ export default function AccountDrawer({
             <button
               type="button"
               onClick={onClose}
-              className="p-2 rounded-full text-slate-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+              className="min-w-[44px] min-h-[44px] rounded-full text-slate-300 hover:text-white hover:bg-white/10 transition-colors cursor-pointer flex items-center justify-center"
               aria-label="Close account drawer"
             >
               <X className="w-5 h-5" />
@@ -122,19 +122,19 @@ export default function AccountDrawer({
             
             {/* Guest Sign In Callout */}
             {!session?.user && (
-              <div className="p-4 rounded-2xl bg-[#FEF8EE] border border-[#DF9F28]/30">
-                <h4 className="text-xs font-bold text-[#111111]">Sign in to JudesCart</h4>
-                <p className="text-[11px] text-[#555555] mt-0.5">
+              <div className="p-4 rounded-2xl bg-[#FEF8EE] border border-[#946000]/30">
+                <h4 className="text-sm font-bold text-[#111111]">Sign in to JudesCart</h4>
+                <p className="text-[13px] text-[#334155] mt-1">
                   View your order history, delivery radar, & unlock 200 free coins.
                 </p>
-                <div className="flex gap-2 mt-3">
+                <div className="flex gap-2 mt-3.5">
                   <button
                     type="button"
                     onClick={() => {
                       onClose();
                       onOpenAuth('signin');
                     }}
-                    className="flex-1 py-2 px-3 rounded-xl bg-[#DF9F28] hover:bg-[#C6891E] text-[#111111] font-bold text-xs transition-colors cursor-pointer text-center"
+                    className="flex-1 min-h-[44px] py-2.5 px-3 rounded-xl bg-[#DF9F28] hover:bg-[#C6891E] text-[#111111] font-bold text-sm transition-colors cursor-pointer text-center"
                   >
                     Sign In
                   </button>
@@ -144,7 +144,7 @@ export default function AccountDrawer({
                       onClose();
                       onOpenAuth('signup');
                     }}
-                    className="flex-1 py-2 px-3 rounded-xl bg-white hover:bg-slate-100 text-[#111111] border border-slate-200 font-bold text-xs transition-colors cursor-pointer text-center"
+                    className="flex-1 min-h-[44px] py-2.5 px-3 rounded-xl bg-white hover:bg-slate-100 text-[#111111] border border-slate-200 font-bold text-sm transition-colors cursor-pointer text-center"
                   >
                     Create Account
                   </button>
@@ -157,38 +157,38 @@ export default function AccountDrawer({
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <Coins className="w-5 h-5 text-[#DF9F28]" />
-                  <span className="text-lg font-black tracking-tight text-white">0 JudesCoins</span>
+                  <span className="text-lg font-bold tracking-tight text-white">0 JudesCoins</span>
                 </div>
-                <span className="text-[10px] uppercase font-bold text-[#DF9F28] bg-[#DF9F28]/20 px-2 py-0.5 rounded-full border border-[#DF9F28]/30">
+                <span className="text-[13px] uppercase font-bold text-[#DF9F28] bg-[#DF9F28]/20 px-2.5 py-0.5 rounded-full border border-[#DF9F28]/30">
                   Tier 1
                 </span>
               </div>
 
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 gap-2.5">
                 <button
                   type="button"
                   onClick={() => {
                     onClose();
                     onOpenDailyGift();
                   }}
-                  className="p-2.5 rounded-xl bg-[#061B3A] hover:bg-[#061B3A]/80 border border-slate-700/60 text-left transition-colors flex items-center gap-2"
+                  className="p-3 min-h-[44px] rounded-xl bg-[#061B3A] hover:bg-[#061B3A]/80 border border-slate-700/60 text-left transition-colors flex items-center gap-2.5"
                 >
                   <Gift className="w-4 h-4 text-[#DF9F28] shrink-0" />
                   <div>
-                    <p className="text-[11px] font-bold text-white leading-none">🎁 Day 1</p>
-                    <p className="text-[9px] text-slate-400 mt-0.5">Claim Reward</p>
+                    <p className="text-[13px] font-bold text-white leading-none">🎁 Day 1</p>
+                    <p className="text-[13px] text-slate-300 mt-1">Claim Reward</p>
                   </div>
                 </button>
 
                 <Link
                   href="/lucky-draw"
                   onClick={onClose}
-                  className="p-2.5 rounded-xl bg-[#061B3A] hover:bg-[#061B3A]/80 border border-slate-700/60 text-left transition-colors flex items-center gap-2"
+                  className="p-3 min-h-[44px] rounded-xl bg-[#061B3A] hover:bg-[#061B3A]/80 border border-slate-700/60 text-left transition-colors flex items-center gap-2.5"
                 >
                   <Ticket className="w-4 h-4 text-[#DF9F28] shrink-0" />
                   <div>
-                    <p className="text-[11px] font-bold text-white leading-none">Lucky Draws</p>
-                    <p className="text-[9px] text-slate-400 mt-0.5">Live Sunday 8PM</p>
+                    <p className="text-[13px] font-bold text-white leading-none">Lucky Draws</p>
+                    <p className="text-[13px] text-slate-300 mt-1">Live Sunday 8PM</p>
                   </div>
                 </Link>
               </div>
@@ -200,10 +200,10 @@ export default function AccountDrawer({
                 <button
                   type="button"
                   onClick={() => setActiveTab('orders')}
-                  className={`flex-1 pb-2.5 text-xs font-bold transition-all ${
+                  className={`flex-1 min-h-[44px] pb-2 text-sm font-bold transition-all ${
                     activeTab === 'orders'
-                      ? 'text-[#DF9F28] border-b-2 border-[#DF9F28]'
-                      : 'text-[#555555] hover:text-[#111111]'
+                      ? 'text-[#946000] border-b-2 border-[#946000]'
+                      : 'text-[#475569] hover:text-[#111111]'
                   }`}
                 >
                   Orders (0)
@@ -211,21 +211,21 @@ export default function AccountDrawer({
                 <button
                   type="button"
                   onClick={() => setActiveTab('perks')}
-                  className={`flex-1 pb-2.5 text-xs font-bold transition-all ${
+                  className={`flex-1 min-h-[44px] pb-2 text-sm font-bold transition-all ${
                     activeTab === 'perks'
-                      ? 'text-[#DF9F28] border-b-2 border-[#DF9F28]'
-                      : 'text-[#555555] hover:text-[#111111]'
+                      ? 'text-[#946000] border-b-2 border-[#946000]'
+                      : 'text-[#475569] hover:text-[#111111]'
                   }`}
                 >
-                  Coins & Perks
+                  Coins &amp; Perks
                 </button>
                 <button
                   type="button"
                   onClick={() => setActiveTab('addresses')}
-                  className={`flex-1 pb-2.5 text-xs font-bold transition-all ${
+                  className={`flex-1 min-h-[44px] pb-2 text-sm font-bold transition-all ${
                     activeTab === 'addresses'
-                      ? 'text-[#DF9F28] border-b-2 border-[#DF9F28]'
-                      : 'text-[#555555] hover:text-[#111111]'
+                      ? 'text-[#946000] border-b-2 border-[#946000]'
+                      : 'text-[#475569] hover:text-[#111111]'
                   }`}
                 >
                   Addresses
@@ -233,10 +233,10 @@ export default function AccountDrawer({
                 <button
                   type="button"
                   onClick={() => setActiveTab('preferences')}
-                  className={`flex-1 pb-2.5 text-xs font-bold transition-all ${
+                  className={`flex-1 min-h-[44px] pb-2 text-sm font-bold transition-all ${
                     activeTab === 'preferences'
-                      ? 'text-[#DF9F28] border-b-2 border-[#DF9F28]'
-                      : 'text-[#555555] hover:text-[#111111]'
+                      ? 'text-[#946000] border-b-2 border-[#946000]'
+                      : 'text-[#475569] hover:text-[#111111]'
                   }`}
                 >
                   Preferences
@@ -247,60 +247,60 @@ export default function AccountDrawer({
               <div className="py-4">
                 {activeTab === 'orders' && (
                   <div className="text-center py-8 space-y-3 bg-white rounded-2xl border border-slate-200/80 p-4">
-                    <Package className="w-10 h-10 text-slate-300 mx-auto" />
-                    <p className="text-xs font-bold text-[#111111]">No orders placed yet</p>
-                    <p className="text-[11px] text-[#555555] max-w-xs mx-auto">
+                    <Package className="w-10 h-10 text-slate-400 mx-auto" />
+                    <p className="text-sm font-bold text-[#111111]">No orders placed yet</p>
+                    <p className="text-[13px] text-[#334155] max-w-xs mx-auto">
                       Your fulfilled orders and live dispatch milestones will appear here.
                     </p>
                     <Link
                       href="/product"
                       onClick={onClose}
-                      className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#0A192F] hover:bg-[#DF9F28] hover:text-[#111111] text-xs font-bold text-white transition-colors"
+                      className="inline-flex items-center gap-1.5 min-h-[44px] px-5 py-2.5 rounded-full bg-[#0A192F] hover:bg-[#DF9F28] hover:text-[#111111] text-sm font-bold text-white transition-colors"
                     >
                       <span>Start Shopping</span>
-                      <ArrowRight className="w-3 h-3" />
+                      <ArrowRight className="w-4 h-4" />
                     </Link>
                   </div>
                 )}
 
                 {activeTab === 'perks' && (
-                  <div className="space-y-3 text-xs">
-                    <div className="p-3 bg-[#FEF8EE] rounded-xl border border-[#DF9F28]/20 flex items-center justify-between">
+                  <div className="space-y-3 text-sm">
+                    <div className="p-3 bg-[#FEF8EE] rounded-xl border border-[#946000]/20 flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <Sparkles className="w-4 h-4 text-[#DF9F28]" />
+                        <Sparkles className="w-4 h-4 text-[#946000]" />
                         <span className="font-bold text-[#111111]">Weekly Bumper Entry</span>
                       </div>
-                      <span className="font-bold text-[#DF9F28]">Active</span>
+                      <span className="font-bold text-[#946000]">Active</span>
                     </div>
                     <div className="p-3 bg-white rounded-xl border border-slate-200 flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <Coins className="w-4 h-4 text-[#DF9F28]" />
+                        <Coins className="w-4 h-4 text-[#946000]" />
                         <span className="font-bold text-[#111111]">Signup Bonus</span>
                       </div>
-                      <span className="font-bold text-emerald-600">+200 Coins</span>
+                      <span className="font-bold text-emerald-700">+200 Coins</span>
                     </div>
                   </div>
                 )}
 
                 {activeTab === 'addresses' && (
                   <div className="text-center py-8 space-y-2 bg-white rounded-2xl border border-slate-200/80 p-4">
-                    <MapPin className="w-8 h-8 text-slate-300 mx-auto" />
-                    <p className="text-xs font-bold text-[#111111]">No saved addresses</p>
-                    <p className="text-[11px] text-[#555555]">
+                    <MapPin className="w-8 h-8 text-slate-400 mx-auto" />
+                    <p className="text-sm font-bold text-[#111111]">No saved addresses</p>
+                    <p className="text-[13px] text-[#334155]">
                       Addresses will be saved automatically during checkout.
                     </p>
                   </div>
                 )}
 
                 {activeTab === 'preferences' && (
-                  <div className="space-y-3 text-xs">
-                    <div className="p-3 bg-white rounded-xl border border-slate-200 flex items-center justify-between">
-                      <span className="text-[#555555]">Default Currency</span>
+                  <div className="space-y-3 text-sm">
+                    <div className="p-3.5 bg-white rounded-xl border border-slate-200 flex items-center justify-between">
+                      <span className="text-[#334155] font-medium">Default Currency</span>
                       <span className="font-bold text-[#111111]">INR (₹)</span>
                     </div>
-                    <div className="p-3 bg-white rounded-xl border border-slate-200 flex items-center justify-between">
-                      <span className="text-[#555555]">Order Alerts</span>
-                      <span className="font-bold text-emerald-600">Enabled (SMS + WA)</span>
+                    <div className="p-3.5 bg-white rounded-xl border border-slate-200 flex items-center justify-between">
+                      <span className="text-[#334155] font-medium">Order Alerts</span>
+                      <span className="font-bold text-emerald-700">Enabled (SMS + WA)</span>
                     </div>
                   </div>
                 )}
@@ -308,14 +308,14 @@ export default function AccountDrawer({
             </div>
 
             {/* Quick Navigation Links */}
-            <div className="space-y-1 pt-2 border-t border-slate-200">
+            <div className="space-y-1.5 pt-2 border-t border-slate-200">
               <Link
                 href="/wishlist"
                 onClick={onClose}
-                className="flex items-center justify-between p-3 rounded-xl hover:bg-white text-xs font-semibold text-[#111111] transition-colors border border-transparent hover:border-slate-200"
+                className="flex items-center justify-between min-h-[44px] p-3 rounded-xl hover:bg-white text-sm font-bold text-[#111111] transition-colors border border-transparent hover:border-slate-200"
               >
                 <div className="flex items-center gap-2.5">
-                  <Heart className="w-4 h-4 text-[#DF9F28]" />
+                  <Heart className="w-4 h-4 text-[#946000]" />
                   <span>Saved Wishlist</span>
                 </div>
                 <ChevronRight className="w-4 h-4 text-slate-400" />
@@ -324,7 +324,7 @@ export default function AccountDrawer({
               <Link
                 href="/track-order"
                 onClick={onClose}
-                className="flex items-center justify-between p-3 rounded-xl hover:bg-white text-xs font-semibold text-[#111111] transition-colors border border-transparent hover:border-slate-200"
+                className="flex items-center justify-between min-h-[44px] p-3 rounded-xl hover:bg-white text-sm font-bold text-[#111111] transition-colors border border-transparent hover:border-slate-200"
               >
                 <div className="flex items-center gap-2.5">
                   <Package className="w-4 h-4 text-[#0A192F]" />
@@ -336,11 +336,11 @@ export default function AccountDrawer({
               <Link
                 href="/faq"
                 onClick={onClose}
-                className="flex items-center justify-between p-3 rounded-xl hover:bg-white text-xs font-semibold text-[#111111] transition-colors border border-transparent hover:border-slate-200"
+                className="flex items-center justify-between min-h-[44px] p-3 rounded-xl hover:bg-white text-sm font-bold text-[#111111] transition-colors border border-transparent hover:border-slate-200"
               >
                 <div className="flex items-center gap-2.5">
-                  <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                  <span>Help & FAQ</span>
+                  <ShieldCheck className="w-4 h-4 text-emerald-700" />
+                  <span>Help &amp; FAQ</span>
                 </div>
                 <ChevronRight className="w-4 h-4 text-slate-400" />
               </Link>
@@ -353,7 +353,7 @@ export default function AccountDrawer({
               <button
                 type="button"
                 onClick={handleLogout}
-                className="w-full py-3 px-4 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold transition-colors flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full min-h-[44px] py-3 px-4 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 text-sm font-bold transition-colors flex items-center justify-center gap-2 cursor-pointer"
               >
                 <LogOut className="w-4 h-4" />
                 <span>Sign Out of JudesCart</span>
@@ -365,7 +365,7 @@ export default function AccountDrawer({
                   onClose();
                   onOpenAuth('signin');
                 }}
-                className="w-full py-3.5 px-4 rounded-xl bg-[#DF9F28] hover:bg-[#C6891E] text-[#111111] text-xs font-bold tracking-wider uppercase transition-all flex items-center justify-center gap-2 shadow-md cursor-pointer"
+                className="w-full min-h-[44px] py-3.5 px-4 rounded-xl bg-[#DF9F28] hover:bg-[#C6891E] text-[#111111] text-sm font-bold tracking-wider uppercase transition-all flex items-center justify-center gap-2 shadow-md cursor-pointer"
               >
                 <User className="w-4 h-4" />
                 <span>Sign In / Register</span>

@@ -4,9 +4,17 @@ import { subcategoryColumns } from "@/components/subcategory/subcategory-columns
 import { SubCategoryWithCategory } from "@/types/subcategory";
 
 export default async function SubcategoriesPage() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/subcategories`, { cache: "no-store" });
-  if (!res.ok) throw new Error("Failed to fetch subcategories");
-  const subcategories: SubCategoryWithCategory[] = await res.json();
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+  let subcategories: SubCategoryWithCategory[] = [];
+
+  try {
+    const res = await fetch(`${apiUrl}/subcategories`, { cache: "no-store" });
+    if (res.ok) {
+      subcategories = await res.json();
+    }
+  } catch (err) {
+    console.error("Failed to fetch subcategories:", err);
+  }
 
   return (
     <div className="flex flex-1 flex-col">
@@ -22,7 +30,7 @@ export default async function SubcategoriesPage() {
           </div>
 
           {/* Subcategories Table */}
-          <SubcategoryTable columns={subcategoryColumns} data={subcategories} />
+          <SubcategoryTable columns={subcategoryColumns} data={Array.isArray(subcategories) ? subcategories : []} />
         </div>
       </div>
     </div>

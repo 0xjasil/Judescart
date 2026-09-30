@@ -419,10 +419,87 @@ export const deleteProduct = async (req: Request, res: Response) => {
     }
 };
 
+export const getTrendingProducts = async (req: Request, res: Response) => {
+    try {
+        const limit = parseInt(req.query.limit as string) || 12;
+        
+        let products = await prisma.product.findMany({
+            where: {
+                OR: [
+                    { isCustomerFavorite: true },
+                    { isNewArrival: true }
+                ]
+            },
+            include: {
+                brand: true,
+                category: true,
+                subCategory: true,
+                variants: {
+                    include: {
+                        options: {
+                            include: {
+                                attribute: true,
+                                attributeValue: true,
+                            }
+                        }
+                    }
+                }
+            },
+            orderBy: { createdAt: 'desc' },
+            take: limit,
+        });
+
+        if (products.length === 0) {
+            products = await prisma.product.findMany({
+                include: {
+                    brand: true,
+                    category: true,
+                    subCategory: true,
+                    variants: {
+                        include: {
+                            options: {
+                                include: {
+                                    attribute: true,
+                                    attributeValue: true,
+                                }
+                            }
+                        }
+                    }
+                },
+                orderBy: { createdAt: 'desc' },
+                take: limit,
+            });
+        }
+
+        res.json({
+            success: true,
+            data: products,
+            count: products.length
+        });
+    } catch (error) {
+        console.error('Failed to fetch trending products:', error);
+        res.status(500).json({ error: "Failed to fetch trending products" });
+    }
+};
+
 export const getProducts = async (req: Request, res: Response) => {
     try {
         console.log("🚀 GET /api/products called with query:", req.query);
-        const { categoryId, subCategoryId, brandId, search, searchType, sort, priceRanges, page = '1', limit = '10' } = req.query;
+        const { 
+            categoryId, 
+            category,
+            subCategoryId, 
+            brandId, 
+            search, 
+            searchType, 
+            sort, 
+            priceRanges, 
+            page = '1', 
+            limit = '10',
+            isCustomerFavorite,
+            isNewArrival,
+            trending,
+        } = req.query;
 
         const skip = (parseInt(page as string) - 1) * parseInt(limit as string);
         const take = parseInt(limit as string);
@@ -431,6 +508,31 @@ export const getProducts = async (req: Request, res: Response) => {
         if (categoryId) where.categoryId = categoryId;
         if (subCategoryId) where.subCategoryId = subCategoryId;
         if (brandId) where.brandId = brandId;
+
+        if (category) {
+            where.category = {
+                name: { contains: category as string, mode: 'insensitive' }
+            };
+        }
+
+        if (isCustomerFavorite === 'true') {
+            where.isCustomerFavorite = true;
+        } else if (isCustomerFavorite === 'false') {
+            where.isCustomerFavorite = false;
+        }
+
+        if (isNewArrival === 'true') {
+            where.isNewArrival = true;
+        } else if (isNewArrival === 'false') {
+            where.isNewArrival = false;
+        }
+
+        if (trending === 'true') {
+            where.OR = [
+                { isCustomerFavorite: true },
+                { isNewArrival: true }
+            ];
+        }
 
         const andConditions: any[] = [];
 

@@ -76,11 +76,49 @@ const DEFAULT_RECOMMENDED: Product[] = [
   },
 ];
 
+function RecentlyViewedSkeleton() {
+  return (
+    <section aria-label="Loading recommendations" className="sj-container select-none">
+      <div className="space-y-4 sm:space-y-5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#E2E8F0] pb-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-lg bg-amber-500/20 animate-pulse" />
+            <div className="space-y-1.5">
+              <div className="h-6 w-52 bg-slate-200 rounded animate-pulse" />
+              <div className="h-3.5 w-64 bg-slate-200 rounded animate-pulse" />
+            </div>
+          </div>
+          <div className="h-4 w-32 bg-slate-200 rounded animate-pulse" />
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-5">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="rounded-lg bg-white border border-[#E2E8F0] p-3 space-y-2.5 animate-pulse">
+              <div className="aspect-[3/4] w-full bg-slate-200 rounded-md" />
+              <div className="space-y-1.5 pt-1">
+                <div className="h-3 w-1/3 bg-slate-200 rounded" />
+                <div className="h-4 w-full bg-slate-200 rounded" />
+                <div className="h-4 w-2/3 bg-slate-200 rounded" />
+              </div>
+              <div className="pt-2 border-t border-[#F1F5F9] flex items-center justify-between">
+                <div className="h-5 w-20 bg-slate-200 rounded" />
+                <div className="h-8 w-8 bg-slate-200 rounded-lg sm:hidden" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export default function RecentlyViewed() {
-  const [products, setProducts] = useState<Product[]>(DEFAULT_RECOMMENDED);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
   const [hasRecent, setHasRecent] = useState(false);
 
   useEffect(() => {
+    let isMounted = true;
     // 1. Try to load recently viewed from localStorage
     try {
       const stored = localStorage.getItem('judescart_recently_viewed') || localStorage.getItem('stevejon_recently_viewed');
@@ -95,7 +133,10 @@ export default function RecentlyViewed() {
               combined.push(def);
             }
           });
-          setProducts(combined.slice(0, 4));
+          if (isMounted) {
+            setProducts(combined.slice(0, 4));
+            setLoading(false);
+          }
           return;
         }
       }
@@ -111,7 +152,7 @@ export default function RecentlyViewed() {
           const formatted: Product[] = res.data.slice(0, 4).map((p: any, idx: number) => {
             const firstVariant = p.variants?.[0];
             const priceVal = Number(firstVariant?.offerPrice || firstVariant?.price || p.price || 2999);
-            const origPriceVal = Number(firstVariant?.price || p.originalPrice || Math.round(priceVal * 1.2));
+            const origPriceVal = firstVariant?.offerPrice && firstVariant.price > firstVariant.offerPrice ? firstVariant.price : undefined;
             return {
               id: p.id,
               name: p.name,
@@ -127,36 +168,55 @@ export default function RecentlyViewed() {
               isNewArrival: idx % 2 === 1,
             };
           });
-          setProducts(formatted);
+          if (isMounted) {
+            setProducts(formatted);
+          }
+        } else if (isMounted) {
+          setProducts(DEFAULT_RECOMMENDED);
         }
       })
       .catch(() => {
-        // Fallback to default recommended products
+        if (isMounted) {
+          setProducts(DEFAULT_RECOMMENDED);
+        }
+      })
+      .finally(() => {
+        if (isMounted) {
+          setLoading(false);
+        }
       });
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
+
+  if (loading) {
+    return <RecentlyViewedSkeleton />;
+  }
 
   return (
     <section className="sj-container">
-      <div className="space-y-3 sm:space-y-4">
+      <div className="space-y-4 sm:space-y-5">
         {/* Section Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-b border-[#E2E8F0] pb-3">
-          <div className="flex items-center gap-2">
-            <div className="p-1.5 rounded-md bg-[#FEF8EE] text-[#DF9F28] border border-[#DF9F28]/30">
-              <History className="w-3.5 h-3.5 text-[#DF9F28]" />
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#E2E8F0] pb-4">
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-[#FEF8EE] text-[#946000] border border-[#946000]/30">
+              <History className="w-5 h-5 text-[#946000]" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="text-lg sm:text-xl font-semibold text-[#111111] tracking-tight">
+                <h3 className="text-xl sm:text-2xl font-bold text-[#111111] tracking-tight">
                   Recently Viewed &amp; Recommended
                 </h3>
                 {hasRecent && (
-                  <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-medium bg-[#FEF8EE] text-[#DF9F28] border border-[#DF9F28]/30">
-                    <Sparkles className="w-3 h-3 text-[#DF9F28]" />
+                  <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[13px] font-bold bg-[#FEF8EE] text-[#946000] border border-[#946000]/30">
+                    <Sparkles className="w-3.5 h-3.5 text-[#946000]" />
                     Personalized
                   </span>
                 )}
               </div>
-              <p className="text-xs text-[#555555] mt-0.5 font-normal">
+              <p className="text-sm sm:text-base text-[#334155] mt-1 font-normal">
                 Curated suggestions based on your taste and catalog bestsellers
               </p>
             </div>
@@ -164,15 +224,15 @@ export default function RecentlyViewed() {
 
           <Link
             href="/product"
-            className="text-xs font-medium text-[#DF9F28] hover:text-[#C6891E] inline-flex items-center gap-1 transition-colors self-start sm:self-auto focus-visible:outline-none"
+            className="text-sm font-bold text-[#946000] hover:text-[#734B00] inline-flex items-center gap-1.5 transition-colors self-start sm:self-auto min-h-[44px] focus-visible:outline-none"
           >
             <span>Browse entire catalog</span>
-            <ArrowRight className="w-3.5 h-3.5" />
+            <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
 
         {/* Products Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3.5 lg:gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-5">
           {products.map((prod) => (
             <ProductCard
               key={prod.id}
