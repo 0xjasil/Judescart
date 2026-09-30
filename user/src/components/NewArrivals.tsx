@@ -49,6 +49,9 @@ const CATEGORY_TABS = [
   'FOOTWEAR',
   'ACCESSORIES',
   'HOME LIVING',
+  'TOPS',
+  'DRESSES',
+  'OUTERWEAR',
 ];
 
 const FALLBACK_PRODUCTS: RawProduct[] = [
@@ -184,6 +187,39 @@ const FALLBACK_PRODUCTS: RawProduct[] = [
     reviewsCount: 136,
     variants: [{ id: 'v12', price: 16999, offerPrice: 19999 }],
   },
+  {
+    id: 'prod-13',
+    name: 'Striped Fine Cotton Polo Shirt',
+    category: { id: 'c6', name: 'TOPS' },
+    brand: { id: 'b1', name: 'JudesCart' },
+    image: '/cat_apparel_1778670103427.png',
+    isCustomerFavorite: true,
+    rating: 4.8,
+    reviewsCount: 92,
+    variants: [{ id: 'v13', price: 1899, offerPrice: 2499 }],
+  },
+  {
+    id: 'prod-14',
+    name: 'Floral Silk Evening Midi Dress',
+    category: { id: 'c7', name: 'DRESSES' },
+    brand: { id: 'b1', name: 'JudesCart' },
+    image: '/cat_apparel_1778670103427.png',
+    isNewArrival: true,
+    rating: 4.9,
+    reviewsCount: 68,
+    variants: [{ id: 'v14', price: 4999, offerPrice: 6299 }],
+  },
+  {
+    id: 'prod-15',
+    name: 'All-Weather Technical Puffer Jacket',
+    category: { id: 'c8', name: 'OUTERWEAR' },
+    brand: { id: 'b1', name: 'JudesCart' },
+    image: '/prod_overshirt_1778670536589.png',
+    isCustomerFavorite: true,
+    rating: 4.9,
+    reviewsCount: 114,
+    variants: [{ id: 'v15', price: 6999, offerPrice: 8999 }],
+  },
 ];
 
 function NewArrivalsSkeleton() {
@@ -249,8 +285,14 @@ export default function NewArrivals() {
             return;
           }
         }
+        if (isMounted) {
+          setProducts(FALLBACK_PRODUCTS);
+        }
       } catch (err) {
-        console.error('Error fetching products:', err);
+        console.warn('Live API unavailable, using curated fallback catalog:', err);
+        if (isMounted) {
+          setProducts(FALLBACK_PRODUCTS);
+        }
       } finally {
         if (isMounted) {
           setLoading(false);

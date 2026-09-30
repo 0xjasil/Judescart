@@ -1,68 +1,49 @@
 import { prisma } from "../lib/prisma.js";
 
 async function main() {
-  const reqQuery: any = { limit: '100' };
-  const { 
-    categoryId, 
-    category,
-    subCategoryId, 
-    brandId, 
-    search, 
-    searchType, 
-    sort, 
-    priceRanges, 
-    page = '1', 
-    limit = '10',
-    isCustomerFavorite,
-    isNewArrival,
-    trending,
-    includeAll,
-  } = reqQuery;
+  const prods = await prisma.product.findMany({
+    include: {
+      category: true,
+      brand: true,
+      variants: true,
+    },
+    orderBy: { createdAt: 'desc' },
+  });
 
-  const skip = (parseInt(page as string) - 1) * parseInt(limit as string);
-  const take = parseInt(limit as string);
+  console.log("=== TOTAL PRODUCTS IN STORE DATABASE:", prods.length, "===");
 
-  const where: any = {};
+  const report = prods.map((p, idx) => {
+    const isZendrop = (p.description || '').includes('Zendrop SKU');
+    const zendropMatch = (p.description || '').match(/\[Zendrop SKU:\s*([^\]]+)\]/);
+    const zendropSku = zendropMatch ? zendropMatch[1].trim() : 'N/A';
+    const totalStock = p.variants.reduce((sum, v) => sum + (v.qty || 0), 0);
+    const priceDisplay = p.variants.length > 0 ? `₹${p.variants[0].price}` : 'N/A';
 
-  if (includeAll !== 'true') {
-    where.isPermitted = { not: false };
-  }
+    return {
+      no: idx + 1,
+      id: p.id,
+      name: p.name,
+      origin: isZendrop ? `⚡ IMPORTED FROM ZENDROP API (${zendropSku})` : `📦 STORE DIRECT DB (Manual/Seeded)`,
+      category: p.category?.name || 'Uncategorized',
+      brand: p.brand?.name || 'Steve John',
+      price: priceDisplay,
+      variantsCount: p.variants.length,
+      stock: totalStock,
+      isPermitted: (p as any).isPermitted,
+      createdAt: p.createdAt,
+    };
+  });
 
-  try {
-    const [products, totalCount] = await Promise.all([
-      prisma.product.findMany({
-        where,
-        include: {
-          brand: true,
-          category: true,
-          subCategory: true,
-          variants: {
-            include: {
-              options: {
-                include: {
-                  attribute: true,
-                  attributeValue: true,
-                }
-              }
-            }
-          }
-        },
-        orderBy: { createdAt: 'desc' },
-        skip,
-        take,
-      }),
-      prisma.product.count({ where })
-    ]);
+  console.log(JSON.stringify(report, null, 2));
 
-    console.log("SUCCESS FETCHED PRODUCTS:", products.length, "Total:", totalCount);
-    const cats = await prisma.category.findMany({
-      include: { _count: { select: { products: true } } }
-    });
-    console.log("CATEGORIES AND COUNTS:", JSON.stringify(cats.map(c => ({ id: c.id, name: c.name, productCount: c._count.products })), null, 2));
-    console.log("PRODUCTS LIST:", JSON.stringify(products.map(p => ({ id: p.id, name: p.name, category: p.category?.name, isPermitted: (p as any).isPermitted })), null, 2));
-  } catch (err) {
-    console.error("DEBUG QUERY ERROR:", err);
-  }
+  const zendropCount = report.filter(r => r.origin.includes('ZENDROP')).length;
+  const localDbCount = report.filter(r => r.origin.includes('STORE DIRECT')).length;
+
+  console.log("\n================ SUMMARY ================");
+  console.log(`Total Products in Database: ${prods.length}`);
+  console.log(`- Imported from Zendrop API: ${zendropCount}`);
+  console.log(`- Created / Seeded directly in Database: ${localDbCount}`);
+  console.log("=========================================\n");
 }
 
 main().finally(() => prisma.$disconnect());
