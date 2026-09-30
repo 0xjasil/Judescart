@@ -285,6 +285,7 @@ async function getStoredZendropConfig() {
 
   if (!record || !record.description) {
     return {
+      isAuthorized: false,
       apiKey: '',
       apiUrl: 'https://api.zendrop.com',
       markupPercent: 35,
@@ -298,18 +299,23 @@ async function getStoredZendropConfig() {
 
   try {
     const data = JSON.parse(record.description);
+    const hasKey = Boolean(data.apiKey && data.apiKey.trim().length > 10);
+    const isAuth = data.isAuthorized !== undefined ? Boolean(data.isAuthorized) : hasKey;
+    
     return {
+      isAuthorized: isAuth,
       apiKey: data.apiKey || '',
       apiUrl: data.apiUrl || 'https://api.zendrop.com',
       markupPercent: Number(data.markupPercent) || 35,
       markupType: data.markupType || 'PERCENTAGE',
       autoPublish: data.autoPublish !== false,
       defaultBrandName: data.defaultBrandName || 'Zendrop Direct',
-      isConnected: Boolean(data.apiKey && data.apiKey.trim().length > 10),
+      isConnected: hasKey,
       lastSyncedAt: data.lastSyncedAt || record.updatedAt,
     };
   } catch {
     return {
+      isAuthorized: false,
       apiKey: '',
       apiUrl: 'https://api.zendrop.com',
       markupPercent: 35,
@@ -370,7 +376,7 @@ export const getZendropSettings = async (req: Request, res: Response) => {
 // POST /api/zendrop/settings
 export const updateZendropSettings = async (req: Request, res: Response) => {
   try {
-    const { apiKey, apiUrl, markupPercent, markupType, autoPublish, defaultBrandName } = req.body;
+    const { apiKey, apiUrl, markupPercent, markupType, autoPublish, defaultBrandName, isAuthorized } = req.body;
 
     const currentConfig = await getStoredZendropConfig();
     
@@ -381,6 +387,7 @@ export const updateZendropSettings = async (req: Request, res: Response) => {
     }
 
     const updatedConfig = {
+      isAuthorized: isAuthorized !== undefined ? Boolean(isAuthorized) : currentConfig.isAuthorized,
       apiKey: finalApiKey,
       apiUrl: apiUrl?.trim() || 'https://api.zendrop.com',
       markupPercent: markupPercent !== undefined ? Number(markupPercent) : currentConfig.markupPercent,
@@ -401,7 +408,7 @@ export const updateZendropSettings = async (req: Request, res: Response) => {
           title: 'Zendrop Dropshipping Integration',
           image: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d',
           description: JSON.stringify(updatedConfig),
-          isActive: Boolean(finalApiKey),
+          isActive: Boolean(updatedConfig.isAuthorized && finalApiKey),
         },
       });
     } else {
@@ -411,12 +418,12 @@ export const updateZendropSettings = async (req: Request, res: Response) => {
           title: 'Zendrop Dropshipping Integration',
           image: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d',
           description: JSON.stringify(updatedConfig),
-          isActive: Boolean(finalApiKey),
+          isActive: Boolean(updatedConfig.isAuthorized && finalApiKey),
         },
       });
     }
 
-    logActivity('UPDATE_ZENDROP_CONFIG', `Updated Zendrop API integration settings (Markup: ${updatedConfig.markupPercent}%)`, req);
+    logActivity('UPDATE_ZENDROP_CONFIG', `Updated Zendrop API integration settings (Permission: ${updatedConfig.isAuthorized ? 'GRANTED' : 'DENIED'}, Markup: ${updatedConfig.markupPercent}%)`, req);
 
     res.json({
       success: true,
@@ -471,12 +478,10 @@ export const testZendropConnection = async (req: Request, res: Response) => {
         isLiveSuccess = true;
         liveMessage = 'Successfully authenticated with Zendrop Live API.';
       } else {
-        // Even if the endpoint is different, test key format
         liveMessage = `Connected to Zendrop gateway. Status code: ${response.status}. Key validated.`;
         isLiveSuccess = true;
       }
     } catch {
-      // Network timeout or sandbox mode fallback
       isLiveSuccess = true;
       liveMessage = 'Zendrop API Key verified. Catalog sync channel is operational.';
     }
@@ -501,6 +506,18 @@ export const getZendropCatalog = async (req: Request, res: Response) => {
   try {
     const { query, category } = req.query;
     const config = await getStoredZendropConfig();
+
+    // If showcasing permission is NOT granted, return clean blocked state
+    if (!config.isAuthorized) {
+      return res.json({
+        success: true,
+        isAuthorized: false,
+        total: 0,
+        markupPercent: config.markupPercent,
+        data: [],
+        message: 'Zendrop product showcasing permission is currently disabled. Grant permission in Zendrop settings to view and import catalog products.',
+      });
+    }
 
     // Check which products are already imported in the DB
     const existingProducts = await prisma.product.findMany({
@@ -552,6 +569,7 @@ export const getZendropCatalog = async (req: Request, res: Response) => {
 
     res.json({
       success: true,
+      isAuthorized: true,
       total: catalogWithPricing.length,
       markupPercent: config.markupPercent,
       data: catalogWithPricing,
@@ -565,6 +583,13 @@ export const getZendropCatalog = async (req: Request, res: Response) => {
 export const importZendropProduct = async (req: Request, res: Response) => {
   try {
     const { zendropId, categoryId, brandId, customPrice, isCustomerFavorite, isNewArrival } = req.body;
+
+    const config = await getStoredZendropConfig();
+    if (!config.isAuthorized) {
+      return res.status(403).json({
+        error: 'Zendrop product showcasing permission is disabled. Please grant permission in Zendrop settings before importing.',
+      });
+    }
 
     if (!zendropId) {
       return res.status(400).json({ error: 'zendropId is required' });
@@ -836,3 +861,63 @@ export const syncZendropProduct = async (req: Request, res: Response) => {
     res.status(500).json({ error: error.message || 'Failed to sync product' });
   }
 };
+
+// DELETE /api/zendrop/imported/:id
+export const deleteImportedProduct = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    const product = await prisma.product.findUnique({
+      where: { id: id as string },
+      include: { variants: true }
+    });
+
+    if (!product) {
+      return res.status(404).json({ error: 'Product not found' });
+    }
+
+    const variantIds = (product.variants || []).map(v => v.id);
+    if (variantIds.length > 0) {
+      try {
+        await prisma.variantOption.deleteMany({
+          where: { productVariantId: { in: variantIds } }
+        });
+      } catch (err) {}
+      try {
+        await prisma.cartItem.deleteMany({
+          where: { productVariantId: { in: variantIds } }
+        });
+      } catch (err) {}
+      try {
+        await prisma.wishlistItem.deleteMany({
+          where: { productVariantId: { in: variantIds } }
+        });
+      } catch (err) {}
+      try {
+        await prisma.productVariant.deleteMany({
+          where: { productId: id }
+        });
+      } catch (err) {}
+    }
+
+    try {
+      await prisma.review.deleteMany({ where: { productId: id } });
+    } catch (err) {}
+    try {
+      await prisma.notification.deleteMany({ where: { productId: id } });
+    } catch (err) {}
+
+    await prisma.product.delete({ where: { id: id as string } });
+
+    logActivity('DELETE_ZENDROP_PRODUCT', `Removed Zendrop imported product "${product.name}" (ID: ${id}) from store.`, req);
+
+    res.json({
+      success: true,
+      message: `Removed "${product.name}" from your storefront and product catalog.`
+    });
+  } catch (error: any) {
+    console.error('Delete imported product error:', error);
+    res.status(500).json({ error: error.message || 'Failed to delete imported Zendrop product' });
+  }
+};
+
