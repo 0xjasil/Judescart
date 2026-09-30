@@ -524,37 +524,6 @@ export default function ZendropIntegrationPage() {
         </div>
       </div>
 
-      {/* Permission Explainer Strip */}
-      <Card className="border-border/60 bg-gradient-to-r from-amber-500/10 via-card to-card rounded-2xl p-4 sm:p-5 shadow-sm">
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-          <div className="flex items-center gap-3.5">
-            <div className="p-2.5 bg-amber-500/20 text-amber-500 rounded-xl border border-amber-500/30">
-              <ShieldCheck className="h-6 w-6" />
-            </div>
-            <div>
-              <h2 className="text-sm sm:text-base font-bold text-foreground flex items-center gap-2">
-                <span>Granular Storefront Permission Enforcement</span>
-                <Badge className="bg-emerald-500 text-black font-extrabold text-[10px]">STRICT GATE ACTIVE</Badge>
-              </h2>
-              <p className="text-xs text-muted-foreground mt-0.5 max-w-2xl">
-                Products are ONLY showcased on your customer storefront (<code>http://localhost:3000/</code>) when given explicit permission. You can grant or revoke showcasing permission per product at any time below.
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2 shrink-0">
-            <Badge variant="outline" className="bg-emerald-500/10 text-emerald-500 border-emerald-500/30 text-xs px-3 py-1 font-bold">
-              {activePermittedCount} Live on Store
-            </Badge>
-            {revokedCount > 0 && (
-              <Badge variant="outline" className="bg-amber-500/10 text-amber-500 border-amber-500/30 text-xs px-3 py-1 font-bold">
-                {revokedCount} Hidden
-              </Badge>
-            )}
-          </div>
-        </div>
-      </Card>
-
       {/* Metrics Summary Strip */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card className="bg-card/70 border-border/50 hover:border-border transition-colors">
