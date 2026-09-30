@@ -60,7 +60,7 @@ const STORY_ITEMS: StoryItem[] = [
 
 export default function CategoryStories() {
   return (
-    <section aria-label="Quick Category Access" className="w-full bg-white border-b border-[#F1F5F9] py-2.5 sm:py-3 select-none">
+    <section aria-label="Quick Category Access" className="md:hidden w-full bg-white border-b border-[#F1F5F9] py-2.5 sm:py-3 select-none">
       <div className="max-w-7xl mx-auto px-3.5 sm:px-4 lg:px-8">
         <div className="flex items-center gap-3 sm:gap-4 overflow-x-auto no-scrollbar scroll-smooth snap-x snap-mandatory py-0.5">
           {STORY_ITEMS.map((item) => (

@@ -492,24 +492,24 @@ export default function NewArrivals() {
         </div>
       ) : (
         <div className="relative group/carousel">
-          {/* Floating Left Navigation Button - Desktop only */}
+          {/* Floating Left Navigation Button - Available on small & large screens (Taneira Style) */}
           <button
             type="button"
             onClick={() => scroll('left')}
-            className="hidden md:flex absolute -left-3 lg:-left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/95 backdrop-blur-xs text-[#111111] shadow-md hover:shadow-lg border border-[#E2E8F0] items-center justify-center hover:bg-[#0A192F] hover:text-white transition-all active:scale-90 cursor-pointer opacity-90 group-hover/carousel:opacity-100"
+            className="flex absolute left-1 sm:-left-3 lg:-left-4 top-[38%] -translate-y-1/2 z-20 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/95 backdrop-blur-xs text-[#111111] shadow-md hover:shadow-lg border border-[#E2E8F0] items-center justify-center hover:bg-[#0A192F] hover:text-white transition-all active:scale-90 cursor-pointer"
             aria-label="Scroll left"
           >
-            <ChevronLeft className="w-5 h-5" />
+            <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
 
-          {/* Floating Right Navigation Button - Desktop only */}
+          {/* Floating Right Navigation Button - Available on small & large screens (Taneira Style) */}
           <button
             type="button"
             onClick={() => scroll('right')}
-            className="hidden md:flex absolute -right-3 lg:-right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/95 backdrop-blur-xs text-[#111111] shadow-md hover:shadow-lg border border-[#E2E8F0] items-center justify-center hover:bg-[#0A192F] hover:text-white transition-all active:scale-90 cursor-pointer opacity-90 group-hover/carousel:opacity-100"
+            className="flex absolute right-1 sm:-right-3 lg:-right-4 top-[38%] -translate-y-1/2 z-20 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/95 backdrop-blur-xs text-[#111111] shadow-md hover:shadow-lg border border-[#E2E8F0] items-center justify-center hover:bg-[#0A192F] hover:text-white transition-all active:scale-90 cursor-pointer"
             aria-label="Scroll right"
           >
-            <ChevronRight className="w-5 h-5" />
+            <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
 
           {/* Horizontal Carousel Track - Taneira-Style Fluid Touch Swiping */}
