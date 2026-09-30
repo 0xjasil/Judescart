@@ -600,7 +600,6 @@ export const importZendropProduct = async (req: Request, res: Response) => {
       return res.status(404).json({ error: `Zendrop product ${zendropId} not found in catalog` });
     }
 
-    const config = await getStoredZendropConfig();
     const { price: defaultListPrice, offerPrice: defaultOfferPrice } = calculateSellingPrice(
       zendropItem.wholesalePrice,
       config.markupPercent,
@@ -885,26 +884,26 @@ export const deleteImportedProduct = async (req: Request, res: Response) => {
       } catch (err) {}
       try {
         await prisma.cartItem.deleteMany({
-          where: { productVariantId: { in: variantIds } }
+          where: { variantId: { in: variantIds } }
         });
       } catch (err) {}
       try {
         await prisma.wishlistItem.deleteMany({
-          where: { productVariantId: { in: variantIds } }
+          where: { variantId: { in: variantIds } }
         });
       } catch (err) {}
       try {
         await prisma.productVariant.deleteMany({
-          where: { productId: id }
+          where: { productId: id as string }
         });
       } catch (err) {}
     }
 
     try {
-      await prisma.review.deleteMany({ where: { productId: id } });
+      await prisma.review.deleteMany({ where: { productId: id as string } });
     } catch (err) {}
     try {
-      await prisma.notification.deleteMany({ where: { productId: id } });
+      await prisma.notification.deleteMany({ where: { productId: id as string } });
     } catch (err) {}
 
     await prisma.product.delete({ where: { id: id as string } });

@@ -388,26 +388,26 @@ export const deleteProduct = async (req: Request, res: Response) => {
             }
             try {
                 await prisma.cartItem.deleteMany({
-                    where: { productVariantId: { in: variantIds } }
+                    where: { variantId: { in: variantIds } }
                 });
             } catch (err) {}
             try {
                 await prisma.wishlistItem.deleteMany({
-                    where: { productVariantId: { in: variantIds } }
+                    where: { variantId: { in: variantIds } }
                 });
             } catch (err) {}
             try {
                 await prisma.productVariant.deleteMany({
-                    where: { productId: id }
+                    where: { productId: id as string }
                 });
             } catch (err) {}
         }
         
         try {
-            await prisma.review.deleteMany({ where: { productId: id } });
+            await prisma.review.deleteMany({ where: { productId: id as string } });
         } catch (err) {}
         try {
-            await prisma.notification.deleteMany({ where: { productId: id } });
+            await prisma.notification.deleteMany({ where: { productId: id as string } });
         } catch (err) {}
 
         await prisma.product.delete({ where: { id: id as string } });
