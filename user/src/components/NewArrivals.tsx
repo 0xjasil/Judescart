@@ -421,28 +421,20 @@ export default function NewArrivals() {
   return (
     <section className="sj-container space-y-3 sm:space-y-4">
       {/* =========================================================================
-          TANEIRA-INSPIRED SECTION HEADER: CUSTOMER FAVOURITES
+          CLEAN TANEIRA-STYLE SECTION HEADER: CUSTOMER FAVOURITES
          ========================================================================= */}
-      <div className="space-y-3 border-b border-[#E2E8F0] pb-3">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
-          <div>
-            <div className="inline-flex items-center gap-1.5 text-[13px] uppercase tracking-widest font-medium text-[#946000] mb-0.5">
-              <span>FEATURED AT JUDESCART</span>
-            </div>
-            <h2 className="text-xl sm:text-2xl font-semibold text-[#111111] tracking-tight">
-              Customer Favourites
-            </h2>
-            <p className="text-sm sm:text-base text-[#475569] mt-0.5 font-normal leading-relaxed max-w-2xl">
-              Discover our highest-rated sartorial pieces, master leathers, and signature craftsmanship.
-            </p>
-          </div>
+      <div className="space-y-3 border-b border-[#E2E8F0] pb-2.5">
+        <div className="flex items-center justify-between gap-3">
+          <h2 className="text-xl sm:text-2xl font-semibold text-[#111111] tracking-tight">
+            Customer Favourites
+          </h2>
 
-          {/* Top Navigation Arrow Controls - 44px tap targets */}
+          {/* Top Navigation Arrow Controls */}
           <div className="hidden sm:flex items-center gap-1.5 shrink-0">
             <button
               type="button"
               onClick={() => scroll('left')}
-              className="min-w-[44px] min-h-[44px] w-11 h-11 rounded-full bg-white border border-[#E2E8F0] text-[#374151] hover:text-[#111111] hover:border-[#0A192F] hover:bg-slate-100 flex items-center justify-center transition-all shadow-xs active:scale-95 cursor-pointer"
+              className="w-10 h-10 rounded-full bg-white border border-[#E2E8F0] text-[#374151] hover:text-[#111111] hover:border-[#0A192F] hover:bg-slate-100 flex items-center justify-center transition-all shadow-xs active:scale-95 cursor-pointer"
               aria-label="Previous customer favourites"
             >
               <ChevronLeft className="w-5 h-5" />
@@ -450,7 +442,7 @@ export default function NewArrivals() {
             <button
               type="button"
               onClick={() => scroll('right')}
-              className="min-w-[44px] min-h-[44px] w-11 h-11 rounded-full bg-white border border-[#E2E8F0] text-[#374151] hover:text-[#111111] hover:border-[#0A192F] hover:bg-slate-100 flex items-center justify-center transition-all shadow-xs active:scale-95 cursor-pointer"
+              className="w-10 h-10 rounded-full bg-white border border-[#E2E8F0] text-[#374151] hover:text-[#111111] hover:border-[#0A192F] hover:bg-slate-100 flex items-center justify-center transition-all shadow-xs active:scale-95 cursor-pointer"
               aria-label="Next customer favourites"
             >
               <ChevronRight className="w-5 h-5" />

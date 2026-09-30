@@ -117,12 +117,12 @@ export default function ProductCard({
 
   return (
     <div
-      className="group relative flex flex-col rounded-lg bg-white border border-[#E2E8F0] overflow-hidden hover:shadow-md hover:border-[#DF9F28] transition-all duration-300"
+      className="group relative flex flex-col rounded-2xl bg-white border border-[#E2E8F0] overflow-hidden hover:shadow-md hover:border-[#DF9F28] transition-all duration-300"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Image Container with 3:4 Aspect Ratio & Subtle Rounding */}
-      <div className="relative aspect-[3/4] w-full overflow-hidden bg-slate-100">
+      {/* Image Container with Portrait Aspect Ratio & Rounded Frame */}
+      <div className="relative aspect-[3/4] w-full overflow-hidden bg-slate-100 rounded-t-2xl">
         <Link href={`/product?id=${encodeURIComponent(String(id))}`} className="relative block w-full h-full focus-visible:outline-none">
           <Image
             src={cardImg || '/prod_overshirt_1778670536589.png'}
@@ -131,46 +131,29 @@ export default function ProductCard({
             unoptimized
             onError={() => setCardImg('/prod_overshirt_1778670536589.png')}
             sizes="(max-width: 640px) 45vw, (max-width: 1024px) 25vw, 20vw"
-            className="object-cover object-center group-hover:scale-[1.03] transition-transform duration-300 ease-out"
+            className="object-cover object-center group-hover:scale-[1.04] transition-transform duration-500 ease-out"
           />
         </Link>
-
-        {/* Badges */}
-        <div className="absolute top-2 left-2 z-10 pointer-events-none flex flex-col gap-1">
-          {hasDiscount ? (
-            <span className="inline-flex items-center px-1.5 sm:px-2 py-0.5 rounded text-[10px] sm:text-xs font-bold uppercase tracking-wider bg-[#0A192F] text-white shadow-xs">
-              {discountPercent}% OFF
-            </span>
-          ) : isCustomerFavorite ? (
-            <span className="inline-flex items-center px-1.5 sm:px-2 py-0.5 rounded text-[10px] sm:text-xs font-bold uppercase tracking-wider bg-[#DF9F28] text-[#111111] shadow-xs">
-              Bestseller
-            </span>
-          ) : isNewArrival ? (
-            <span className="inline-flex items-center px-1.5 sm:px-2 py-0.5 rounded text-[10px] sm:text-xs font-bold uppercase tracking-wider bg-[#0A192F] text-white shadow-xs">
-              New
-            </span>
-          ) : null}
-        </div>
 
         {/* Wishlist Button - Perfectly proportioned circular button */}
         <button
           type="button"
           onClick={handleWishlistToggle}
           aria-label={isFavorited ? 'Remove from wishlist' : 'Add to wishlist'}
-          className="absolute top-2 right-2 z-10 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white/90 backdrop-blur-xs border border-[#E2E8F0] flex items-center justify-center text-[#374151] hover:text-rose-600 hover:bg-white transition-all active:scale-90 cursor-pointer shadow-xs"
+          className="absolute top-2.5 right-2.5 z-10 w-8 h-8 rounded-full bg-white/90 backdrop-blur-xs border border-[#E2E8F0] flex items-center justify-center text-[#374151] hover:text-rose-600 hover:bg-white transition-all active:scale-90 cursor-pointer shadow-xs"
         >
-          <Heart className={`w-3.5 h-3.5 sm:w-4 sm:h-4 transition-colors ${isFavorited ? 'fill-rose-600 text-rose-600' : ''}`} />
+          <Heart className={`w-4 h-4 transition-colors ${isFavorited ? 'fill-rose-600 text-rose-600' : ''}`} />
         </button>
 
         {/* Desktop Quick Action Floating Bar */}
-        <div className="absolute inset-x-2 bottom-2 z-20 transition-all duration-200 transform translate-y-2 opacity-0 pointer-events-none group-hover:translate-y-0 group-hover:opacity-100 group-hover:pointer-events-auto hidden sm:block">
+        <div className="absolute inset-x-2.5 bottom-2.5 z-20 transition-all duration-200 transform translate-y-2 opacity-0 pointer-events-none group-hover:translate-y-0 group-hover:opacity-100 group-hover:pointer-events-auto hidden sm:block">
           <div className="flex items-center gap-1.5">
             <button
               type="button"
               onClick={handleQuickView}
               aria-label="Quick View"
               title="Quick View"
-              className="w-9 h-9 rounded-lg bg-white text-[#374151] hover:text-[#111111] border border-[#E2E8F0] shadow-xs flex items-center justify-center cursor-pointer transition-colors"
+              className="w-9 h-9 rounded-xl bg-white text-[#374151] hover:text-[#111111] border border-[#E2E8F0] shadow-xs flex items-center justify-center cursor-pointer transition-colors"
             >
               <Eye className="w-4 h-4" />
             </button>
@@ -178,7 +161,7 @@ export default function ProductCard({
               type="button"
               onClick={handleAddToCart}
               disabled={isAdded}
-              className={`flex-1 h-9 px-2.5 rounded-lg text-xs font-semibold tracking-wide transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-xs ${
+              className={`flex-1 h-9 px-3 rounded-xl text-xs font-semibold tracking-wide transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-xs ${
                 isAdded
                   ? 'bg-emerald-600 text-white'
                   : 'bg-[#0A192F] hover:bg-[#DF9F28] hover:text-[#111111] text-white'
@@ -200,57 +183,25 @@ export default function ProductCard({
         </div>
       </div>
 
-      {/* Card Information Body - Compact & Clean */}
-      <div className="p-2.5 sm:p-3 flex-1 flex flex-col justify-between space-y-1.5 bg-white">
-        <div className="space-y-1">
-          {/* Category & Rating Row */}
-          <div className="flex items-center justify-between text-xs gap-1">
-            <span className="text-[11px] sm:text-xs uppercase tracking-wider font-semibold text-[#946000] truncate max-w-[70%]">
-              {category}
+      {/* Card Information Body - Clean & Simple (Taneira Style) */}
+      <div className="p-3 flex-1 flex flex-col justify-between space-y-1 bg-white">
+        {/* Product Title */}
+        <Link href={`/product?id=${encodeURIComponent(String(id))}`} className="block group-hover:text-[#946000] transition-colors focus-visible:outline-none">
+          <h3 className="text-xs sm:text-sm font-normal text-[#111111] leading-snug line-clamp-1 group-hover:text-[#946000]">
+            {name}
+          </h3>
+        </Link>
+
+        {/* Price Row */}
+        <div className="pt-0.5 flex items-baseline gap-1.5">
+          <span className="text-sm sm:text-[15px] font-bold text-[#111111]">
+            ₹ {price.toLocaleString('en-IN')}
+          </span>
+          {hasDiscount && (
+            <span className="text-xs text-[#64748B] font-normal line-through">
+              ₹ {originalPrice.toLocaleString('en-IN')}
             </span>
-            <div className="flex items-center gap-1 text-[#374151] shrink-0">
-              <Star className="w-3 h-3 fill-[#DF9F28] text-[#DF9F28]" />
-              <span className="text-[11px] sm:text-xs font-bold text-[#111111]">{rating.toFixed(1)}</span>
-            </div>
-          </div>
-
-          {/* Product Title */}
-          <Link href={`/product?id=${encodeURIComponent(String(id))}`} className="block group-hover:text-[#946000] transition-colors focus-visible:outline-none">
-            <h3 className="text-xs sm:text-sm font-medium text-[#111111] leading-snug line-clamp-2 min-h-[2rem] sm:min-h-[2.5rem]">
-              {name}
-            </h3>
-          </Link>
-        </div>
-
-        {/* Price & Mobile Actions */}
-        <div className="pt-1.5 border-t border-[#F1F5F9] flex items-center justify-between gap-1">
-          <div className="flex flex-wrap items-baseline gap-1">
-            <span className="text-xs sm:text-[15px] font-bold text-[#111111]">
-              ₹{price.toLocaleString('en-IN')}
-            </span>
-            {hasDiscount && (
-              <span className="text-[10px] sm:text-xs text-[#64748B] font-normal line-through">
-                ₹{originalPrice.toLocaleString('en-IN')}
-              </span>
-            )}
-          </div>
-
-          {/* Mobile Quick Add */}
-          <div className="sm:hidden shrink-0">
-            <button
-              type="button"
-              onClick={handleAddToCart}
-              disabled={isAdded}
-              aria-label="Add to bag"
-              className={`w-8 h-8 rounded-lg text-xs font-semibold transition-all flex items-center justify-center shadow-xs cursor-pointer active:scale-90 ${
-                isAdded
-                  ? 'bg-emerald-600 text-white'
-                  : 'bg-[#0A192F] text-white active:bg-[#DF9F28] active:text-[#111111]'
-              }`}
-            >
-              {isAdded ? <Check className="w-3.5 h-3.5" /> : <ShoppingBag className="w-3.5 h-3.5" />}
-            </button>
-          </div>
+          )}
         </div>
       </div>
     </div>
