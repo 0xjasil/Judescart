@@ -8,6 +8,7 @@ import {
   getImportedProducts,
   syncZendropProduct,
   deleteImportedProduct,
+  toggleProductPermission,
 } from '../controllers/zendropController.js';
 
 const router = Router();
@@ -18,8 +19,10 @@ router.post('/test-connection', testZendropConnection);
 router.get('/catalog', getZendropCatalog);
 router.post('/import', importZendropProduct);
 router.get('/imported', getImportedProducts);
+router.post('/toggle-permission/:id', toggleProductPermission);
 router.delete('/imported/:id', deleteImportedProduct);
 router.post('/sync/:id', syncZendropProduct);
 
 export default router;
+
 

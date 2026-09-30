@@ -507,29 +507,20 @@ export const getZendropCatalog = async (req: Request, res: Response) => {
     const { query, category } = req.query;
     const config = await getStoredZendropConfig();
 
-    // If showcasing permission is NOT granted, return clean blocked state
-    if (!config.isAuthorized) {
-      return res.json({
-        success: true,
-        isAuthorized: false,
-        total: 0,
-        markupPercent: config.markupPercent,
-        data: [],
-        message: 'Zendrop product showcasing permission is currently disabled. Grant permission in Zendrop settings to view and import catalog products.',
-      });
-    }
-
-    // Check which products are already imported in the DB
+    // Check which products are in the DB and their permission state
     const existingProducts = await prisma.product.findMany({
-      select: { id: true, name: true, description: true },
+      select: { id: true, name: true, description: true, isPermitted: true },
     });
 
-    const importedZendropIds = new Set<string>();
+    const dbProductsByZendropId = new Map<string, { id: string; isPermitted: boolean }>();
     existingProducts.forEach(p => {
       if (p.description) {
         const match = p.description.match(/\[Zendrop SKU:\s*([^\]]+)\]/);
         if (match && match[1]) {
-          importedZendropIds.add(match[1].trim());
+          dbProductsByZendropId.set(match[1].trim(), {
+            id: p.id,
+            isPermitted: p.isPermitted !== false,
+          });
         }
       }
     });
@@ -552,10 +543,10 @@ export const getZendropCatalog = async (req: Request, res: Response) => {
       items = items.filter(i => i.categoryName.toLowerCase() === category.toLowerCase());
     }
 
-    // Map items with calculated selling price and import status
+    // Map items with calculated selling price and permission status
     const catalogWithPricing = items.map(item => {
       const { price, offerPrice } = calculateSellingPrice(item.wholesalePrice, config.markupPercent, config.markupType);
-      const isImported = importedZendropIds.has(item.zendropId);
+      const dbInfo = dbProductsByZendropId.get(item.zendropId);
 
       return {
         ...item,
@@ -563,13 +554,15 @@ export const getZendropCatalog = async (req: Request, res: Response) => {
         calculatedListPrice: price,
         profitMargin: offerPrice - item.wholesalePrice,
         profitPercent: Math.round(((offerPrice - item.wholesalePrice) / item.wholesalePrice) * 100),
-        isImported,
+        isImported: Boolean(dbInfo),
+        dbProductId: dbInfo ? dbInfo.id : null,
+        isPermitted: dbInfo ? dbInfo.isPermitted : false,
       };
     });
 
     res.json({
       success: true,
-      isAuthorized: true,
+      isAuthorized: config.isAuthorized,
       total: catalogWithPricing.length,
       markupPercent: config.markupPercent,
       data: catalogWithPricing,
@@ -582,14 +575,9 @@ export const getZendropCatalog = async (req: Request, res: Response) => {
 // POST /api/zendrop/import
 export const importZendropProduct = async (req: Request, res: Response) => {
   try {
-    const { zendropId, categoryId, brandId, customPrice, isCustomerFavorite, isNewArrival } = req.body;
+    const { zendropId, categoryId, brandId, customPrice, isCustomerFavorite, isNewArrival, isPermitted } = req.body;
 
     const config = await getStoredZendropConfig();
-    if (!config.isAuthorized) {
-      return res.status(403).json({
-        error: 'Zendrop product showcasing permission is disabled. Please grant permission in Zendrop settings before importing.',
-      });
-    }
 
     if (!zendropId) {
       return res.status(400).json({ error: 'zendropId is required' });
@@ -650,7 +638,7 @@ export const importZendropProduct = async (req: Request, res: Response) => {
     // Prepare description with provenance marker
     const fullDescription = `${zendropItem.description}\n\n[Zendrop SKU: ${zendropItem.zendropId}] [Wholesale: ₹${zendropItem.wholesalePrice}] [Fast Dispatch: ${zendropItem.shippingDays}]`;
 
-    // Check if already imported
+    // Check if already in DB
     const existing = await prisma.product.findFirst({
       where: {
         description: { contains: zendropItem.zendropId }
@@ -658,9 +646,20 @@ export const importZendropProduct = async (req: Request, res: Response) => {
     });
 
     if (existing) {
-      return res.status(400).json({
-        error: `Product "${zendropItem.name}" is already imported in your store catalog.`,
-        productId: existing.id
+      // Re-grant permission and activate product
+      const updated = await prisma.product.update({
+        where: { id: existing.id },
+        data: {
+          isPermitted: isPermitted !== undefined ? Boolean(isPermitted) : true,
+        },
+      });
+
+      logActivity('UPDATE_ZENDROP_PRODUCT_PERMISSION', `Granted permission to showcase "${zendropItem.name}" on storefront.`, req);
+
+      return res.json({
+        success: true,
+        message: `Permission granted! "${zendropItem.name}" is now showcased on your storefront.`,
+        data: updated,
       });
     }
 
@@ -676,6 +675,7 @@ export const importZendropProduct = async (req: Request, res: Response) => {
           categoryId: targetCategoryId,
           isCustomerFavorite: Boolean(isCustomerFavorite),
           isNewArrival: isNewArrival !== undefined ? Boolean(isNewArrival) : true,
+          isPermitted: isPermitted !== undefined ? Boolean(isPermitted) : true,
         },
       });
 
@@ -785,14 +785,29 @@ export const getImportedProducts = async (req: Request, res: Response) => {
         id: p.id,
         zendropId,
         name: p.name,
+        description: p.description,
         image: p.image,
         category: p.category?.name || 'Uncategorized',
         brand: p.brand?.name || 'Steve John',
         wholesaleCost,
         storePrice: displayPrice,
         estimatedMargin: wholesaleCost > 0 ? displayPrice - wholesaleCost : 0,
+        profitPercent: wholesaleCost > 0 ? Math.round(((displayPrice - wholesaleCost) / wholesaleCost) * 100) : 35,
         totalStock,
         variantsCount: p.variants.length,
+        isPermitted: p.isPermitted !== false,
+        variants: p.variants.map(v => ({
+          id: v.id,
+          sku: v.sku,
+          price: v.price,
+          offerPrice: v.offerPrice,
+          qty: v.qty,
+          images: v.images,
+          options: v.options.map(o => ({
+            attribute: o.attribute?.name,
+            value: o.attributeValue?.value,
+          })),
+        })),
         createdAt: p.createdAt,
         updatedAt: p.updatedAt,
       };
@@ -805,6 +820,46 @@ export const getImportedProducts = async (req: Request, res: Response) => {
     });
   } catch (error: any) {
     res.status(500).json({ error: error.message || 'Failed to fetch imported Zendrop products' });
+  }
+};
+
+// POST /api/zendrop/toggle-permission/:id
+export const toggleProductPermission = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { isPermitted } = req.body;
+
+    const product = await prisma.product.findUnique({
+      where: { id: id as string },
+    });
+
+    if (!product) {
+      return res.status(404).json({ error: 'Product not found' });
+    }
+
+    const nextPermitted = isPermitted !== undefined ? Boolean(isPermitted) : !Boolean(product.isPermitted);
+
+    const updated = await prisma.product.update({
+      where: { id: id as string },
+      data: { isPermitted: nextPermitted },
+    });
+
+    logActivity(
+      'TOGGLE_PRODUCT_PERMISSION',
+      `Permission for product "${product.name}" (ID: ${id}) changed to ${nextPermitted ? 'GRANTED (LIVE)' : 'REVOKED (HIDDEN)'}`,
+      req
+    );
+
+    res.json({
+      success: true,
+      message: nextPermitted
+        ? `Permission granted! "${product.name}" is now live and showcased on the storefront.`
+        : `Permission revoked! "${product.name}" is now hidden from the storefront.`,
+      isPermitted: nextPermitted,
+      data: updated,
+    });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message || 'Failed to toggle product permission' });
   }
 };
 

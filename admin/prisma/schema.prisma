@@ -50,6 +50,7 @@ model Product {
   subCategoryId String?  @db.ObjectId
   isCustomerFavorite Boolean  @default(false)
   isNewArrival      Boolean  @default(false)
+  isPermitted       Boolean  @default(true)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 

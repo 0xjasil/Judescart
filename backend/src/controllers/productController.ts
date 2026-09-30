@@ -425,6 +425,7 @@ export const getTrendingProducts = async (req: Request, res: Response) => {
         
         let products = await prisma.product.findMany({
             where: {
+                isPermitted: { not: false },
                 OR: [
                     { isCustomerFavorite: true },
                     { isNewArrival: true }
@@ -451,6 +452,9 @@ export const getTrendingProducts = async (req: Request, res: Response) => {
 
         if (products.length === 0) {
             products = await prisma.product.findMany({
+                where: {
+                    isPermitted: { not: false },
+                },
                 include: {
                     brand: true,
                     category: true,
@@ -499,12 +503,19 @@ export const getProducts = async (req: Request, res: Response) => {
             isCustomerFavorite,
             isNewArrival,
             trending,
+            includeAll,
         } = req.query;
 
         const skip = (parseInt(page as string) - 1) * parseInt(limit as string);
         const take = parseInt(limit as string);
 
         const where: any = {};
+
+        // Enforce permission: only products with granted permission are visible on storefront
+        if (includeAll !== 'true') {
+            where.isPermitted = { not: false };
+        }
+
         if (categoryId) where.categoryId = categoryId;
         if (subCategoryId) where.subCategoryId = subCategoryId;
         if (brandId) where.brandId = brandId;
