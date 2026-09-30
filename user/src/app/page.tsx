@@ -1,4 +1,5 @@
 import Navbar from "@/components/Navbar";
+import CategoryStories from "@/components/CategoryStories";
 import Hero from "@/components/Hero";
 import Categories from "@/components/Categories";
 import NewArrivals from "@/components/NewArrivals";
@@ -13,6 +14,7 @@ export default function Home() {
     <div className="min-h-screen bg-[#FAFAFA] text-zinc-900 font-sans flex flex-col justify-between">
       <Navbar />
       <main className="flex-1 pb-10 sm:pb-14">
+        <CategoryStories />
         <Hero />
         <div className="mt-4 sm:mt-5 md:mt-6">
           <Categories />

@@ -467,136 +467,99 @@ export default function Navbar() {
         {/* ======================================================== */}
         {/* 1. MOBILE HEADER (Below md - Taneira Style)             */}
         {/* ======================================================== */}
-        <div className="md:hidden">
+        <div className="md:hidden bg-white">
           {/* Top Bar: Hamburger | Centered Brand | Wishlist & Cart */}
-          <div className="flex items-center justify-between h-15 px-3.5 sm:px-4">
+          <div className="flex items-center justify-between h-14 px-3.5 sm:px-4">
             {/* Left: Hamburger Toggle - 44px touch target */}
             <button
               type="button"
               onClick={() => setIsMobileMenuOpen(true)}
-              className="min-w-[44px] min-h-[44px] p-2.5 -ml-1 text-[#111111] hover:text-[#946000] active:scale-95 transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-[#DF9F28] rounded-lg flex items-center justify-center"
+              className="w-10 h-10 -ml-1 text-[#111111] hover:text-[#881337] active:scale-95 transition-all cursor-pointer rounded-lg flex items-center justify-center"
               aria-label="Toggle navigation menu"
             >
-              <Menu className="w-6 h-6 stroke-[2]" />
+              <Menu className="w-6 h-6 stroke-[1.8]" />
             </button>
 
             {/* Center: Brand Logo & Subtitle (Taneira/Tata luxury feel) */}
             <Link
               href="/"
-              className="flex flex-col items-center justify-center -mr-1 group focus-visible:outline-none py-1"
+              className="flex flex-col items-center justify-center text-center group focus-visible:outline-none py-0.5"
               aria-label="JudesCart Home"
             >
-              <div className="flex items-center gap-1.5">
-                <div className="relative w-5 h-5 shrink-0">
-                  <Image
-                    src="/logo-icon.webp"
-                    alt="JudesCart"
-                    fill
-                    sizes="20px"
-                    className="object-contain group-hover:scale-105 transition-transform"
-                    priority
-                  />
-                </div>
-                <span className="text-lg font-bold tracking-tight text-[#111111] group-hover:text-[#946000] transition-colors leading-none">
-                  Judes<span className="text-[#946000]">Cart</span>
-                </span>
-              </div>
-              <span className="text-[13px] tracking-wider font-semibold text-[#4B5563] uppercase mt-0.5">
-                Shop More. Live Better.
+              <span className="text-[17px] font-serif font-black tracking-[0.16em] uppercase text-[#881337] group-hover:text-[#9F1239] transition-colors leading-none">
+                JUDESCART
+              </span>
+              <span className="text-[8px] tracking-[0.22em] font-semibold text-[#8C7A6B] uppercase mt-0.5 leading-none">
+                A WILLOWY VENTURE
               </span>
             </Link>
 
-            {/* Right: Symbol Actions (Currency | User | Wishlist | Cart) - 44px touch targets */}
-            <div className="flex items-center gap-1">
-              {/* Currency Symbol */}
-              <button
-                type="button"
-                onClick={() => setIsCurrencyModalOpen(true)}
-                className="flex items-center justify-center min-w-[44px] min-h-[44px] px-2 rounded-lg bg-white border border-[#E2E8F0] text-base font-bold text-[#111111] hover:border-[#DF9F28] transition-colors cursor-pointer select-none active:scale-95"
-                title={`Currency: ${selectedCurrency.code}`}
-                aria-label="Change Currency"
-              >
-                <span>{selectedCurrency.symbol}</span>
-              </button>
-
-              {/* User / Account Symbol */}
-              <button
-                type="button"
-                onClick={() => {
-                  if (session?.user) {
-                    setIsAccountDrawerOpen(true);
-                  } else {
-                    setAuthModalMode('signin');
-                    setIsAuthModalOpen(true);
-                  }
-                }}
-                className="relative min-w-[44px] min-h-[44px] p-2.5 text-[#111111] hover:text-[#946000] active:scale-95 transition-all rounded-lg flex items-center justify-center"
-                aria-label="Account"
-                title={session?.user ? 'My Account' : 'Sign In'}
-              >
-                <User className="w-5 h-5 stroke-[1.8]" />
-                {session?.user && (
-                  <span className="absolute top-2 right-2 w-2.5 h-2.5 bg-[#22C55E] rounded-full ring-2 ring-white" />
-                )}
-              </button>
-
+            {/* Right: Clean Luxury Wishlist & Cart Icons (Taneira Style) */}
+            <div className="flex items-center gap-0.5">
               {/* Wishlist Symbol */}
               <Link
                 href="/wishlist"
-                className="relative min-w-[44px] min-h-[44px] p-2.5 text-[#111111] hover:text-[#946000] active:scale-95 transition-all rounded-lg flex items-center justify-center"
+                className="relative w-10 h-10 text-[#111111] hover:text-[#881337] active:scale-95 transition-all rounded-lg flex items-center justify-center"
                 aria-label="Wishlist"
                 title="Wishlist"
               >
                 <Heart className="w-5 h-5 stroke-[1.8]" />
-                {totalWishlistItems > 0 && (
-                  <span className="absolute top-1 right-1 min-w-[20px] h-[20px] bg-[#E53E3E] text-white text-[13px] font-bold rounded-full flex items-center justify-center px-1 shadow-xs">
-                    {totalWishlistItems}
-                  </span>
-                )}
+                <span className="absolute top-1.5 right-1 min-w-[17px] h-[17px] bg-[#881337] text-white text-[10px] font-bold rounded-full flex items-center justify-center px-1 ring-1 ring-white shadow-2xs">
+                  {totalWishlistItems}
+                </span>
               </Link>
 
               {/* Shopping Bag / Cart Symbol */}
               <button
                 type="button"
                 onClick={() => openDrawer()}
-                className="relative min-w-[44px] min-h-[44px] p-2.5 text-[#111111] hover:text-[#946000] active:scale-95 transition-all cursor-pointer rounded-lg flex items-center justify-center"
+                className="relative w-10 h-10 text-[#111111] hover:text-[#881337] active:scale-95 transition-all cursor-pointer rounded-lg flex items-center justify-center"
                 aria-label="Shopping Cart"
                 title="Cart"
               >
                 <ShoppingBag className="w-5 h-5 stroke-[1.8]" />
-                {totalItems > 0 && (
-                  <span className="absolute top-1 right-1 min-w-[20px] h-[20px] bg-[#DF9F28] text-[#111111] text-[13px] font-bold rounded-full flex items-center justify-center px-1 shadow-xs">
-                    {totalItems}
-                  </span>
-                )}
+                <span className="absolute top-1.5 right-1 min-w-[17px] h-[17px] bg-[#881337] text-white text-[10px] font-bold rounded-full flex items-center justify-center px-1 ring-1 ring-white shadow-2xs">
+                  {totalItems}
+                </span>
               </button>
             </div>
           </div>
 
-          {/* Search Row: Full-width Curved Search Bar with Animated Placeholder & Camera Icon */}
+          {/* Search Row: Full-width Curved Search Bar with Animated Placeholder & Camera + Search Icons */}
           <div className="px-3.5 pb-2.5 pt-0.5">
             <div
               onClick={() => setIsSearchModalOpen(true)}
-              className="flex items-center justify-between w-full h-11 px-4 bg-white rounded-full border border-[#E2E8F0] shadow-2xs cursor-pointer group active:scale-[0.99] transition-all hover:border-[#DF9F28]"
+              className="flex items-center justify-between w-full h-11 px-4 bg-[#FAF8F5] sm:bg-white rounded-full border border-[#D8C7B8] shadow-2xs cursor-pointer group active:scale-[0.99] transition-all hover:border-[#881337]"
             >
-              <div className="flex items-center gap-2.5 flex-1 min-w-0 pr-2">
-                <Search className="w-4 h-4 text-[#4B5563] shrink-0 group-hover:text-[#946000] transition-colors" />
-                <span className="text-sm text-[#374151] font-medium truncate select-none transition-all duration-300">
+              <div className="flex items-center gap-2 flex-1 min-w-0 pr-2">
+                <span className="text-[13px] sm:text-sm text-[#73685F] font-normal truncate select-none transition-all duration-300">
                   {SEARCH_SUGGESTIONS[placeholderIndex]}
                 </span>
               </div>
-              <div className="flex items-center gap-2 shrink-0 pl-2">
+              <div className="flex items-center gap-1 shrink-0">
                 <button
                   type="button"
                   onClick={(e) => {
                     e.stopPropagation();
                     setIsSearchModalOpen(true);
                   }}
-                  className="min-w-[44px] min-h-[44px] p-2 text-[#4B5563] hover:text-[#946000] transition-colors cursor-pointer flex items-center justify-center"
+                  className="w-8 h-8 p-1 text-[#8C7A6B] hover:text-[#881337] transition-colors cursor-pointer flex items-center justify-center"
                   title="Visual Search / Upload Image"
                   aria-label="Visual Search"
                 >
-                  <Camera className="w-5 h-5" />
+                  <Camera className="w-4.5 h-4.5 stroke-[1.6]" />
+                </button>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsSearchModalOpen(true);
+                  }}
+                  className="w-8 h-8 p-1 text-[#881337] hover:scale-110 transition-transform cursor-pointer flex items-center justify-center"
+                  title="Search"
+                  aria-label="Search"
+                >
+                  <Search className="w-4.5 h-4.5 stroke-[2]" />
                 </button>
               </div>
             </div>
