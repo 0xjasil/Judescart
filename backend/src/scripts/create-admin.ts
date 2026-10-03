@@ -20,20 +20,35 @@ async function createAdmin() {
         data: { role: 'admin' },
       });
       console.log(`✅ User ${email} is now an admin.`);
-      return;
+    } else {
+      // Create admin via Better-Auth
+      const res = await (adminAuth.api as any).signUpEmail({
+        body: {
+          email,
+          password,
+          name,
+        },
+      });
+
+      await prisma.user.update({
+        where: { email },
+        data: { role: 'admin' },
+      });
+      console.log(`✅ User ${email} created.`);
     }
 
-    // Create admin via Better-Auth
-    const res = await (adminAuth.api as any).signUpEmail({
-      body: {
-        email,
-        password,
-        name,
-        role: 'admin',
-      },
-    });
-
-    console.log(`✅ Successfully created admin user:`, email);
+    // Verify credentials work
+    try {
+      const signInRes = await (adminAuth.api as any).signInEmail({
+        body: {
+          email,
+          password,
+        },
+      });
+      console.log(`🔐 Admin sign in test succeeded!`, signInRes ? 'OK' : '');
+    } catch (e: any) {
+      console.error(`⚠️ Sign in verification failed:`, e?.message || e);
+    }
   } catch (err: any) {
     console.error(`❌ Error creating admin user:`, err?.message || err);
   } finally {
