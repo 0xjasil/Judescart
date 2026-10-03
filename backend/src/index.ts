@@ -36,6 +36,7 @@ const PORT = process.env.PORT || 5000;
 
 const allowedOrigins = [
     process.env.FRONTEND_URL || 'http://localhost:3000',
+    'https://judescart-admin.vercel.app',
     'https://judescart-feg8.vercel.app',
     'https://judescart-ammi.vercel.app',
     'https://judescart-six.vercel.app',
