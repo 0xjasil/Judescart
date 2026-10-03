@@ -12,6 +12,9 @@ const defaultLocalOrigins = [
 const trustedOrigins = [
   process.env.FRONTEND_URL,
   process.env.ADMIN_URL,
+  "https://judescart-feg8.vercel.app",
+  "https://judescart-ammi.vercel.app",
+  "https://judescart-six.vercel.app",
   ...defaultLocalOrigins,
 ].filter(Boolean) as string[];
 
