@@ -319,13 +319,26 @@ model Banner {
 }
 
 model OfferSlide {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  image     String
-  route     String
-  order     Int      @default(0)
-  isActive  Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id               String   @id @default(auto()) @map("_id") @db.ObjectId
+  image            String
+  route            String
+  order            Int      @default(0)
+  isActive         Boolean  @default(true)
+  // Content customization
+  title            String?
+  tagline          String?
+  badgeLabel       String?
+  buttonText       String?
+  // Visual customization
+  overlayColor     String?  // e.g. "#061B3A"
+  overlayOpacity   Float?   // 0-1, e.g. 0.75
+  gradientDir      String?  // "to-r" | "to-l" | "to-t" | "to-b"
+  titleColor       String?  // e.g. "#FFFFFF"
+  buttonColor      String?  // e.g. "#DF9F28"
+  buttonTextColor  String?  // e.g. "#111111"
+  imageOpacity     Float?   // 0-1, e.g. 0.85
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 
   @@map("offer_slide")
 }

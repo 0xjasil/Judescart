@@ -10,8 +10,8 @@ import { authMiddleware, adminMiddleware } from '../middleware/authMiddleware.js
 
 const router = Router();
 
-// Customer coupon verification endpoint (requires login)
-router.post('/validate', authMiddleware, validateCoupon);
+// Customer coupon verification endpoint (public for checkout & cart)
+router.post('/validate', validateCoupon);
 
 // Admin Coupon CRUD endpoints (requires admin role)
 router.get('/', adminMiddleware, getAllCoupons);

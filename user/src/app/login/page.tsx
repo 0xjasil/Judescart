@@ -80,11 +80,7 @@ export default function LoginPage() {
       }
     } catch (err: any) {
       console.error('Auth error:', err);
-      setSuccessMessage(mode === 'signup' ? 'Account created! (+200 Coins)' : 'Signed in!');
-      setTimeout(() => {
-        router.push('/');
-        router.refresh();
-      }, 600);
+      setErrorMessage(err.message || 'An unexpected error occurred during authentication.');
     } finally {
       setIsLoading(false);
     }

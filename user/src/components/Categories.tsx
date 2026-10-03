@@ -33,23 +33,20 @@ const DEFAULT_FALLBACK_CATEGORIES: Category[] = [
 
 function CategoriesSkeleton() {
   return (
-    <section aria-label="Loading departments" className="sj-container space-y-4 sm:space-y-6 select-none">
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 border-b border-[#E2E8F0] pb-4">
-        <div className="space-y-1.5">
-          <div className="h-3.5 w-24 bg-amber-500/20 rounded animate-pulse" />
-          <div className="h-7 w-48 bg-slate-200 rounded animate-pulse" />
-        </div>
-        <div className="h-4 w-28 bg-slate-200 rounded animate-pulse" />
+    <section aria-label="Loading departments" className="sj-container space-y-3.5 sm:space-y-4 select-none">
+      <div className="flex items-baseline justify-between border-b border-slate-200 pb-3">
+        <div className="h-6 w-36 bg-slate-200 rounded animate-pulse" />
+        <div className="h-4 w-16 bg-slate-200 rounded animate-pulse" />
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-5">
-        {[1, 2, 3, 4, 5, 6].map((i) => (
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-4">
+        {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
           <div
             key={i}
-            className="aspect-[16/11] rounded-xl overflow-hidden bg-slate-200/80 border border-slate-200 animate-pulse flex flex-col justify-end p-4 sm:p-6 space-y-2"
+            className="aspect-[4/5] rounded-xl overflow-hidden bg-slate-100 border border-slate-200 animate-pulse flex flex-col justify-end p-3 sm:p-4"
           >
-            <div className="h-3 w-16 bg-slate-300 rounded" />
-            <div className="h-5 w-32 bg-slate-300 rounded" />
+            <div className="h-4 w-20 bg-slate-300 rounded mb-1.5" />
+            <div className="h-3 w-12 bg-slate-200 rounded" />
           </div>
         ))}
       </div>
@@ -110,32 +107,28 @@ export default function Categories() {
   return (
     <section className="sj-container space-y-3 sm:space-y-4">
       {/* Section Header */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2 border-b border-[#E2E8F0] pb-3">
+      <div className="flex items-baseline justify-between border-b border-slate-200/80 pb-2.5 sm:pb-3">
         <div>
-          <span className="text-[13px] uppercase tracking-wider font-medium text-[#946000]">
-            All Departments
-          </span>
-          <h2 className="text-xl sm:text-2xl font-semibold text-[#111111] tracking-tight mt-0.5">
-            Shop by Department
+          <h2 className="text-base sm:text-xl font-bold text-slate-900 tracking-tight">
+            Shop by Category
           </h2>
         </div>
 
         <Link
           href="/product"
-          className="text-sm font-medium uppercase tracking-wider text-[#946000] hover:text-[#C6891E] flex items-center gap-1.5 transition-colors focus-visible:outline-none py-1 min-h-[44px]"
+          className="text-xs sm:text-sm font-medium text-amber-800 hover:text-amber-900 transition-colors py-0.5"
         >
-          <span>View All Products</span>
-          <ArrowRight className="w-4 h-4" />
+          See all
         </Link>
       </div>
 
-      {/* Categories Grid (2 cols mobile, 3 cols tablet, 4 cols desktop - refined compact footprint) */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+      {/* Categories Grid (2 cols mobile, 3 cols tablet, 4 cols desktop) */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-4">
         {displayCategories.map((cat, idx) => {
           const count = cat._count?.products;
           const countLabel = typeof count === 'number'
-            ? `${count} ${count === 1 ? 'Product' : 'Products'}`
-            : `${idx * 6 + 12} Styles`;
+            ? `${count} ${count === 1 ? 'item' : 'items'}`
+            : `${idx * 6 + 12} items`;
 
           const fallbackSrc = DEFAULT_FALLBACK_CATEGORIES[idx % DEFAULT_FALLBACK_CATEGORIES.length].image;
           const imageSrc = (failedImages[cat.id] || !cat.image) ? fallbackSrc : cat.image;
@@ -144,7 +137,7 @@ export default function Categories() {
             <Link
               key={cat.id}
               href={`/product?category=${encodeURIComponent(cat.name)}`}
-              className="group relative aspect-[4/3] rounded-lg overflow-hidden bg-slate-900 border border-[#E2E8F0] shadow-xs flex flex-col justify-end p-3.5 sm:p-4 transition-all duration-300 hover:shadow-md hover:border-[#DF9F28] focus-visible:ring-2 focus-visible:ring-[#DF9F28]"
+              className="group relative aspect-[4/5] rounded-xl sm:rounded-2xl overflow-hidden bg-slate-100 border border-slate-200/70 shadow-xs flex flex-col justify-end p-3 sm:p-4 transition-all duration-300 hover:shadow-md hover:border-slate-300 focus-visible:ring-2 focus-visible:ring-amber-500"
             >
               {/* Category Background Image */}
               <Image
@@ -154,21 +147,20 @@ export default function Categories() {
                 unoptimized
                 onError={() => handleImageError(cat.id)}
                 sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                className="object-cover group-hover:scale-[1.03] transition-transform duration-300 ease-out"
+                className="object-cover object-center group-hover:scale-[1.03] transition-transform duration-500 ease-out"
               />
 
-              {/* Midnight Navy Gradient Dark Overlay (#061B3A) */}
-              <div className="absolute inset-0 bg-gradient-to-t from-[#061B3A]/90 via-[#061B3A]/40 to-transparent pointer-events-none" />
+              {/* Gentle, natural bottom scrim only over lower 45% */}
+              <div className="absolute inset-x-0 bottom-0 h-[45%] bg-gradient-to-t from-black/80 via-black/35 to-transparent pointer-events-none" />
 
-              {/* Bottom Card Information */}
-              <div className="relative z-10 text-white space-y-0.5">
-                <span className="text-[13px] uppercase tracking-wider text-[#DF9F28] font-medium block">
-                  {countLabel}
-                </span>
-                
-                <h3 className="text-sm sm:text-base md:text-lg font-medium text-white leading-tight line-clamp-1">
+              {/* Bottom Card Content - Human, balanced typography */}
+              <div className="relative z-10 text-white">
+                <h3 className="text-sm sm:text-base font-semibold text-white tracking-tight leading-snug line-clamp-1 group-hover:text-amber-200 transition-colors">
                   {cat.name}
                 </h3>
+                <p className="text-[11px] sm:text-xs text-white/80 font-normal mt-0.5 leading-none">
+                  {countLabel}
+                </p>
               </div>
             </Link>
           );

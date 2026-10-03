@@ -34,7 +34,9 @@ export default function CheckoutPage() {
   const [shippingMethod, setShippingMethod] = useState<'standard' | 'express'>('standard');
   const [paymentMethod, setPaymentMethod] = useState<'COD' | 'RAZORPAY' | 'UPI'>('RAZORPAY');
   const [couponCode, setCouponCode] = useState('');
-  const [appliedDiscount, setAppliedDiscount] = useState(0);
+  const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; discountAmount: number } | null>(null);
+  const [couponError, setCouponError] = useState<string | null>(null);
+  const [isCheckingCoupon, setIsCheckingCoupon] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
   const [orderId, setOrderId] = useState('');
@@ -49,19 +51,51 @@ export default function CheckoutPage() {
     pincode: '',
   });
 
+  const appliedDiscount = appliedCoupon?.discountAmount || 0;
   const shippingCost = shippingMethod === 'express' ? 199 : (totalPrice > 1999 ? 0 : 99);
   const finalTotal = Math.max(0, totalPrice + shippingCost - appliedDiscount);
   const luckyDrawTickets = Math.floor(finalTotal / 1000);
 
-  const handleApplyCoupon = (e: React.FormEvent) => {
+  const handleApplyCoupon = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (couponCode.toUpperCase() === 'WELCOME10') {
-      setAppliedDiscount(Math.round(totalPrice * 0.1));
-    } else if (couponCode.toUpperCase() === 'LUCKY500') {
-      setAppliedDiscount(500);
-    } else {
-      alert('Invalid Promo Code. Try "WELCOME10" or "LUCKY500"');
+    if (!couponCode.trim()) return;
+    setIsCheckingCoupon(true);
+    setCouponError(null);
+
+    try {
+      const response = await fetch(`${apiUrl}/coupons/validate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          code: couponCode.trim().toUpperCase(),
+          cartTotal: totalPrice,
+        }),
+        credentials: 'include',
+      });
+
+      const res = await response.json();
+      if (response.ok && res.success) {
+        setAppliedCoupon({
+          code: res.code,
+          discountAmount: res.discountAmount,
+        });
+        setCouponError(null);
+      } else {
+        setAppliedCoupon(null);
+        setCouponError(res.error || 'Invalid coupon code');
+      }
+    } catch (err) {
+      setAppliedCoupon(null);
+      setCouponError('Error validating coupon code');
+    } finally {
+      setIsCheckingCoupon(false);
     }
+  };
+
+  const handleRemoveCoupon = () => {
+    setAppliedCoupon(null);
+    setCouponCode('');
+    setCouponError(null);
   };
 
   const handlePlaceOrder = async (e: React.FormEvent) => {
@@ -76,16 +110,22 @@ export default function CheckoutPage() {
 
     try {
       // Send to backend order API if reachable
-      await fetch(`${apiUrl}/api/orders`, {
+      await fetch(`${apiUrl}/orders`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           orderId: generatedOrderId,
-          items,
+          items: items.map(item => ({
+            variantId: item.variantId || item.id,
+            quantity: item.quantity,
+            price: item.price
+          })),
           total: finalTotal,
+          couponCode: appliedCoupon?.code || undefined,
           shippingAddress: formData,
           paymentMethod,
         }),
+        credentials: 'include'
       }).catch(() => null);
 
       setOrderId(generatedOrderId);
@@ -404,24 +444,54 @@ export default function CheckoutPage() {
               </div>
 
               {/* Coupon Form */}
-              <form onSubmit={handleApplyCoupon} className="flex gap-2 mb-6">
-                <div className="relative flex-1">
-                  <Tag className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-                  <input
-                    type="text"
-                    value={couponCode}
-                    onChange={(e) => setCouponCode(e.target.value)}
-                    placeholder="Coupon code (WELCOME10)"
-                    className="w-full pl-8 pr-3 py-2 text-xs rounded-xl border border-slate-200 uppercase font-mono text-[#111111] focus:outline-none focus:border-[#DF9F28]"
-                  />
+              {appliedCoupon ? (
+                <div className="mb-6 p-3 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Check className="w-4 h-4 text-emerald-600" />
+                    <div>
+                      <p className="text-xs font-bold text-emerald-800">
+                        Coupon <span className="font-mono">{appliedCoupon.code}</span> applied!
+                      </p>
+                      <p className="text-[10px] text-emerald-600">
+                        ₹{appliedCoupon.discountAmount.toLocaleString('en-IN')} discount applied
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleRemoveCoupon}
+                    className="text-xs text-rose-500 hover:text-rose-700 font-semibold cursor-pointer underline"
+                  >
+                    Remove
+                  </button>
                 </div>
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-[#0A192F] hover:bg-[#061B3A] text-white text-xs font-bold rounded-xl transition-colors cursor-pointer"
-                >
-                  Apply
-                </button>
-              </form>
+              ) : (
+                <div className="mb-6">
+                  <form onSubmit={handleApplyCoupon} className="flex gap-2">
+                    <div className="relative flex-1">
+                      <Tag className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                      <input
+                        type="text"
+                        value={couponCode}
+                        onChange={(e) => setCouponCode(e.target.value)}
+                        placeholder="Enter coupon code (e.g. SZD554)"
+                        disabled={isCheckingCoupon}
+                        className="w-full pl-8 pr-3 py-2 text-xs rounded-xl border border-slate-200 uppercase font-mono text-[#111111] focus:outline-none focus:border-[#DF9F28] disabled:bg-slate-50"
+                      />
+                    </div>
+                    <button
+                      type="submit"
+                      disabled={isCheckingCoupon || !couponCode.trim()}
+                      className="px-4 py-2 bg-[#0A192F] hover:bg-[#061B3A] disabled:bg-slate-400 text-white text-xs font-bold rounded-xl transition-colors cursor-pointer disabled:cursor-not-allowed"
+                    >
+                      {isCheckingCoupon ? 'Checking...' : 'Apply'}
+                    </button>
+                  </form>
+                  {couponError && (
+                    <p className="text-xs text-rose-500 font-medium mt-1.5 ml-1">{couponError}</p>
+                  )}
+                </div>
+              )}
 
               {/* Price Breakdown */}
               <div className="space-y-2.5 text-xs text-[#555555] border-t border-slate-100 pt-4 mb-6">

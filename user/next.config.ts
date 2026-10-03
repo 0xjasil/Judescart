@@ -36,6 +36,16 @@ const nextConfig: NextConfig = {
     ],
   },
 
+  async redirects() {
+    return [
+      {
+        source: '/draws',
+        destination: '/lucky-draw',
+        permanent: false,
+      },
+    ];
+  },
+
   async rewrites() {
     return [
       {

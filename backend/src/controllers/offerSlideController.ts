@@ -22,7 +22,12 @@ export const getOfferSlides = async (req: Request, res: Response) => {
 
 export const createOfferSlide = async (req: Request, res: Response) => {
     try {
-        const { route, order } = req.body;
+        const {
+            route, order,
+            title, tagline, badgeLabel, buttonText,
+            overlayColor, overlayOpacity, gradientDir,
+            titleColor, buttonColor, buttonTextColor, imageOpacity
+        } = req.body;
         const file = req.file;
 
         if (!file) return res.status(400).json({ error: "Image is required" });
@@ -30,10 +35,21 @@ export const createOfferSlide = async (req: Request, res: Response) => {
         const photoUrl = await uploadToCloudinary(file.buffer, file.originalname);
 
         const slide = await prisma.offerSlide.create({
-            data: { 
-                route: route || "/", 
-                order: order ? parseInt(order) : 0, 
-                image: photoUrl 
+            data: {
+                route: route || "/",
+                order: order ? parseInt(order) : 0,
+                image: photoUrl,
+                title: title || null,
+                tagline: tagline || null,
+                badgeLabel: badgeLabel || null,
+                buttonText: buttonText || null,
+                overlayColor: overlayColor || null,
+                overlayOpacity: overlayOpacity !== undefined && overlayOpacity !== '' ? parseFloat(overlayOpacity) : null,
+                gradientDir: gradientDir || null,
+                titleColor: titleColor || null,
+                buttonColor: buttonColor || null,
+                buttonTextColor: buttonTextColor || null,
+                imageOpacity: imageOpacity !== undefined && imageOpacity !== '' ? parseFloat(imageOpacity) : null,
             },
         });
 
@@ -47,7 +63,12 @@ export const createOfferSlide = async (req: Request, res: Response) => {
 export const updateOfferSlide = async (req: Request, res: Response) => {
     try {
         const id = req.params.id as string;
-        const { route, order, isActive } = req.body;
+        const {
+            route, order, isActive,
+            title, tagline, badgeLabel, buttonText,
+            overlayColor, overlayOpacity, gradientDir,
+            titleColor, buttonColor, buttonTextColor, imageOpacity
+        } = req.body;
         const file = req.file;
 
         const existingSlide = await prisma.offerSlide.findUnique({ where: { id } });
@@ -65,7 +86,18 @@ export const updateOfferSlide = async (req: Request, res: Response) => {
                 route: route !== undefined ? route : existingSlide.route,
                 order: order !== undefined ? parseInt(order) : existingSlide.order,
                 isActive: isActive !== undefined ? (isActive === 'true' || isActive === true) : existingSlide.isActive,
-                image: photoUrl
+                image: photoUrl,
+                title: title !== undefined ? (title || null) : existingSlide.title,
+                tagline: tagline !== undefined ? (tagline || null) : existingSlide.tagline,
+                badgeLabel: badgeLabel !== undefined ? (badgeLabel || null) : existingSlide.badgeLabel,
+                buttonText: buttonText !== undefined ? (buttonText || null) : existingSlide.buttonText,
+                overlayColor: overlayColor !== undefined ? (overlayColor || null) : existingSlide.overlayColor,
+                overlayOpacity: overlayOpacity !== undefined ? (overlayOpacity !== '' ? parseFloat(overlayOpacity) : null) : existingSlide.overlayOpacity,
+                gradientDir: gradientDir !== undefined ? (gradientDir || null) : existingSlide.gradientDir,
+                titleColor: titleColor !== undefined ? (titleColor || null) : existingSlide.titleColor,
+                buttonColor: buttonColor !== undefined ? (buttonColor || null) : existingSlide.buttonColor,
+                buttonTextColor: buttonTextColor !== undefined ? (buttonTextColor || null) : existingSlide.buttonTextColor,
+                imageOpacity: imageOpacity !== undefined ? (imageOpacity !== '' ? parseFloat(imageOpacity) : null) : existingSlide.imageOpacity,
             }
         });
 

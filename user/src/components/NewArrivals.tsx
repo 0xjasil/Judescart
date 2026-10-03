@@ -40,6 +40,19 @@ export interface OfferSlideItem {
   route: string;
   order: number;
   isActive: boolean;
+  // Content customization
+  title?: string | null;
+  tagline?: string | null;
+  badgeLabel?: string | null;
+  buttonText?: string | null;
+  // Visual customization
+  overlayColor?: string | null;
+  overlayOpacity?: number | null;
+  gradientDir?: string | null;
+  titleColor?: string | null;
+  buttonColor?: string | null;
+  buttonTextColor?: string | null;
+  imageOpacity?: number | null;
 }
 
 const CATEGORY_TABS = [
@@ -555,59 +568,99 @@ export default function NewArrivals() {
          ========================================================================= */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-4 items-stretch pt-1">
         {offerSlides.length > 0 ? (
-          <div className="lg:col-span-8 relative rounded-lg overflow-hidden bg-[#0A192F] text-white p-3 sm:p-5 flex flex-col justify-between min-h-[150px] sm:min-h-[200px] border border-[#E2E8F0] shadow-xs group">
-            <Image
-              src={offerSlides[currentSlideIdx % offerSlides.length].image}
-              alt="Exclusive Offer"
-              fill
-              unoptimized
-              className="object-cover object-center opacity-85 hover:scale-105 transition-transform duration-700"
-            />
-            <div className="absolute inset-0 bg-gradient-to-r from-[#061B3A]/90 via-[#061B3A]/60 to-transparent pointer-events-none" />
+          (() => {
+            const slide = offerSlides[currentSlideIdx % offerSlides.length];
+            const overlayCol = slide.overlayColor ?? '#061B3A';
+            const overlayOp = slide.overlayOpacity ?? 0.75;
+            const imgOp = slide.imageOpacity ?? 0.85;
+            const gradDir = slide.gradientDir ?? 'to-r';
+            const titleCol = slide.titleColor ?? '#FFFFFF';
+            const btnCol = slide.buttonColor ?? '#DF9F28';
+            const btnTxtCol = slide.buttonTextColor ?? '#111111';
+            const badge = slide.badgeLabel ?? 'Featured Promotion';
+            const title = slide.title ?? 'Exclusive Seasonal Curation & Limited Offers';
+            const tagline = slide.tagline ?? null;
+            const btnText = slide.buttonText ?? 'Claim Offer Now';
+            // Hex to rgba helper
+            const hexRgba = (hex: string, alpha: number) => {
+              const h = hex.replace('#', '');
+              const r = parseInt(h.substring(0,2),16);
+              const g = parseInt(h.substring(2,4),16);
+              const b = parseInt(h.substring(4,6),16);
+              return `rgba(${r},${g},${b},${alpha})`;
+            };
+            const gradientStyle: React.CSSProperties = {
+              background: gradDir === 'to-r'
+                ? `linear-gradient(to right, ${hexRgba(overlayCol, overlayOp)}, ${hexRgba(overlayCol, overlayOp * 0.7)}, transparent)`
+                : gradDir === 'to-l'
+                ? `linear-gradient(to left, ${hexRgba(overlayCol, overlayOp)}, ${hexRgba(overlayCol, overlayOp * 0.7)}, transparent)`
+                : gradDir === 'to-b'
+                ? `linear-gradient(to bottom, ${hexRgba(overlayCol, overlayOp)}, ${hexRgba(overlayCol, overlayOp * 0.7)}, transparent)`
+                : gradDir === 'to-t'
+                ? `linear-gradient(to top, ${hexRgba(overlayCol, overlayOp)}, ${hexRgba(overlayCol, overlayOp * 0.7)}, transparent)`
+                : `linear-gradient(to right, ${hexRgba(overlayCol, overlayOp)}, ${hexRgba(overlayCol, overlayOp * 0.7)}, transparent)`,
+            };
+            return (
+              <div className="lg:col-span-8 relative rounded-lg overflow-hidden bg-[#0A192F] text-white p-3 sm:p-5 flex flex-col justify-between min-h-[150px] sm:min-h-[200px] border border-[#E2E8F0] shadow-xs group">
+                <Image
+                  src={slide.image}
+                  alt={title}
+                  fill
+                  unoptimized
+                  className="object-cover object-center hover:scale-105 transition-transform duration-700"
+                  style={{ opacity: imgOp }}
+                />
+                <div className="absolute inset-0 pointer-events-none" style={gradientStyle} />
 
-            <div className="relative z-10 space-y-1.5 max-w-lg">
-              <div className="flex items-center gap-1.5">
-                <span className="inline-block px-2 py-0.5 rounded text-[10px] sm:text-[13px] font-bold uppercase tracking-wider bg-[#DF9F28]/20 text-[#DF9F28] border border-[#DF9F28]/40">
-                  Featured Promotion
-                </span>
-                {offerSlides.length > 1 && (
-                  <span className="text-[10px] sm:text-xs font-semibold text-slate-300 bg-black/40 px-1.5 py-0.5 rounded">
-                    {((currentSlideIdx % offerSlides.length) + 1)} / {offerSlides.length}
-                  </span>
-                )}
-              </div>
-              <h3 className="text-sm sm:text-lg md:text-2xl font-bold text-white tracking-tight leading-snug">
-                Exclusive Seasonal Curation &amp; Limited Offers
-              </h3>
-            </div>
-
-            <div className="relative z-10 pt-2 flex items-center justify-between">
-              <Link
-                href={offerSlides[currentSlideIdx % offerSlides.length].route || "/product"}
-                className="inline-flex items-center gap-1.5 min-h-[36px] sm:min-h-[44px] px-3 py-1.5 sm:px-5 sm:py-2.5 rounded-lg bg-[#DF9F28] hover:bg-[#C6891E] text-[#111111] font-bold text-xs sm:text-sm tracking-wide transition-all shadow-xs active:scale-95 cursor-pointer"
-              >
-                <span>Claim Offer Now</span>
-                <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#111111]" />
-              </Link>
-
-              {offerSlides.length > 1 && (
-                <div className="flex items-center gap-1.5 bg-black/30 backdrop-blur-xs px-2.5 py-1 rounded-full border border-white/10">
-                  {offerSlides.map((_, idx) => (
-                    <button
-                      key={idx}
-                      onClick={() => setCurrentSlideIdx(idx)}
-                      aria-label={`Go to slide ${idx + 1}`}
-                      className={`h-2 rounded-full transition-all cursor-pointer ${
-                        idx === (currentSlideIdx % offerSlides.length)
-                          ? "w-6 bg-[#DF9F28]"
-                          : "w-2 bg-white/40 hover:bg-white/80"
-                      }`}
-                    />
-                  ))}
+                <div className="relative z-10 space-y-1.5 max-w-lg">
+                  <div className="flex items-center gap-1.5">
+                    <span className="inline-block px-2 py-0.5 rounded text-[10px] sm:text-[13px] font-bold uppercase tracking-wider bg-[#DF9F28]/20 text-[#DF9F28] border border-[#DF9F28]/40">
+                      {badge}
+                    </span>
+                    {offerSlides.length > 1 && (
+                      <span className="text-[10px] sm:text-xs font-semibold text-slate-300 bg-black/40 px-1.5 py-0.5 rounded">
+                        {((currentSlideIdx % offerSlides.length) + 1)} / {offerSlides.length}
+                      </span>
+                    )}
+                  </div>
+                  <h3 className="text-sm sm:text-lg md:text-2xl font-bold tracking-tight leading-snug" style={{ color: titleCol }}>
+                    {title}
+                  </h3>
+                  {tagline && (
+                    <p className="text-[11px] sm:text-sm font-medium text-white/80 leading-relaxed">{tagline}</p>
+                  )}
                 </div>
-              )}
-            </div>
-          </div>
+
+                <div className="relative z-10 pt-2 flex items-center justify-between">
+                  <Link
+                    href={slide.route || "/product"}
+                    className="inline-flex items-center gap-1.5 min-h-[36px] sm:min-h-[44px] px-3 py-1.5 sm:px-5 sm:py-2.5 rounded-lg font-bold text-xs sm:text-sm tracking-wide transition-all shadow-xs active:scale-95 cursor-pointer hover:opacity-90"
+                    style={{ backgroundColor: btnCol, color: btnTxtCol }}
+                  >
+                    <span>{btnText}</span>
+                    <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" style={{ color: btnTxtCol }} />
+                  </Link>
+
+                  {offerSlides.length > 1 && (
+                    <div className="flex items-center gap-1.5 bg-black/30 backdrop-blur-xs px-2.5 py-1 rounded-full border border-white/10">
+                      {offerSlides.map((_, idx) => (
+                        <button
+                          key={idx}
+                          onClick={() => setCurrentSlideIdx(idx)}
+                          aria-label={`Go to slide ${idx + 1}`}
+                          className={`h-2 rounded-full transition-all cursor-pointer ${
+                            idx === (currentSlideIdx % offerSlides.length)
+                              ? "w-6 bg-[#DF9F28]"
+                              : "w-2 bg-white/40 hover:bg-white/80"
+                          }`}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          })()
         ) : (
           <div className="lg:col-span-8 relative rounded-lg overflow-hidden bg-[#0A192F] text-white p-3 sm:p-5 flex flex-col justify-between min-h-[150px] sm:min-h-[200px] border border-[#E2E8F0] shadow-xs">
             <Image
