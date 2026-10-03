@@ -1,5 +1,7 @@
 import VariationsPage from "@/components/variations/VariationsPage";
 
+export const dynamic = 'force-dynamic';
+
 export default async function Page() {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
   let initialAttributes = [];

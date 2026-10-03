@@ -3,6 +3,8 @@ import CategoryTable from "@/components/category/category-table";
 import { Category } from "@prisma/client";
 import { categoryColumns } from "@/components/category/category-columns";
 
+export const dynamic = 'force-dynamic';
+
 export default async function CategoriesPage() {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
   let categories: Category[] = [];

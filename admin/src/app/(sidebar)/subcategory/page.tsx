@@ -3,6 +3,8 @@ import SubcategoryTable from "@/components/subcategory/subcategory-table";
 import { subcategoryColumns } from "@/components/subcategory/subcategory-columns";
 import { SubCategoryWithCategory } from "@/types/subcategory";
 
+export const dynamic = 'force-dynamic';
+
 export default async function SubcategoriesPage() {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
   let subcategories: SubCategoryWithCategory[] = [];

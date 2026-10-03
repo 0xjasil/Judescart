@@ -3,6 +3,8 @@ import BrandTable from "@/components/brand/brand-table";
 import { Brand } from "@prisma/client";
 import { brandColumns } from "@/components/brand/brand-columns";
 
+export const dynamic = 'force-dynamic';
+
 export default async function BrandPage() {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
   let brands: Brand[] = [];

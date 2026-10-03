@@ -3,6 +3,8 @@ import InventoryTable from "@/components/inventory/inventory-table";
 import React from "react";
 import { Brand, Category } from "@prisma/client";
 
+export const dynamic = 'force-dynamic';
+
 export default async function InventoryPage() {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
   let brands: Brand[] = [];
