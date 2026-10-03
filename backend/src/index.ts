@@ -83,8 +83,13 @@ app.all(/^\/api\/auth-admin(\/.*)?$/, toNodeHandler(adminAuth));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.get('/health', (req, res) => {
-    res.json({ status: 'ok', timestamp: new Date().toISOString() });
+app.get(['/', '/api', '/health', '/api/health'], (req, res) => {
+    res.json({
+        status: 'ok',
+        service: 'JudesCart API',
+        environment: process.env.NODE_ENV || 'production',
+        timestamp: new Date().toISOString()
+    });
 });
 
 // Serve uploaded media locally
