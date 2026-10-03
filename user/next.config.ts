@@ -4,9 +4,6 @@ const backendUrl =
   process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
 
 const nextConfig: NextConfig = {
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
   images: {
     remotePatterns: [
       {
