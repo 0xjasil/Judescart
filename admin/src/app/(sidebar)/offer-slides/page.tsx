@@ -156,7 +156,7 @@ function SlideFormFields({
             onChange={(e) => onChange("badgeLabel", e.target.value)}
             placeholder="Featured Promotion"
           />
-          <p className="text-xs text-muted-foreground">Small tag shown above the title. Defaults to "Featured Promotion".</p>
+          <p className="text-xs text-muted-foreground">Small tag shown above the title. Defaults to &quot;Featured Promotion&quot;.</p>
         </div>
 
         {/* Title */}
