@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
@@ -138,14 +139,24 @@ export function AdminSidebar({ className }: SidebarProps) {
         )}
       >
         {/* Header */}
-        <div className="flex h-16 items-center border-b border-gray-200 dark:border-gray-800 p-6 flex-shrink-0">
-          <Link href="/" className="flex items-center space-x-3 hover:opacity-80 transition-opacity">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-yellow-500 via-amber-600 to-amber-700 shadow-md">
-              <span className="text-xs font-extrabold text-white tracking-tighter">SJ</span>
-            </div>
-            <span className="text-md font-bold tracking-tight text-gray-900 dark:text-gray-100">
-              STEVE JOHN
-            </span>
+        <div className="flex h-16 items-center border-b border-gray-200 dark:border-gray-800 px-6 flex-shrink-0">
+          <Link href="/" className="flex items-center hover:opacity-85 transition-opacity">
+            <Image
+              src="/logo.png"
+              alt="Logo"
+              width={140}
+              height={28}
+              className="h-7 w-auto object-contain dark:hidden"
+              priority
+            />
+            <Image
+              src="/logo-white.png"
+              alt="Logo"
+              width={140}
+              height={28}
+              className="h-7 w-auto object-contain hidden dark:block"
+              priority
+            />
           </Link>
         </div>
 

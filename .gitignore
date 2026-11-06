@@ -9,5 +9,7 @@ dist/
 uploads/
 .DS_Store
 *.png
+!**/public/*.png
+
 
 

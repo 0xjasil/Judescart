@@ -119,24 +119,14 @@ export default function Footer() {
           
           {/* Brand Info & Newsletter — full width on mobile */}
           <div className="col-span-2 lg:col-span-4 space-y-3 sm:space-y-4">
-            <Link href="/" className="inline-flex items-center gap-2 group focus-visible:outline-none">
-              <div className="relative w-7 h-7 sm:w-8 sm:h-8 shrink-0">
-                <Image
-                  src="/logo-icon.webp"
-                  alt="JudesCart Logo"
-                  fill
-                  sizes="32px"
-                  className="object-contain"
-                />
-              </div>
-              <div className="flex flex-col">
-                <span className="text-lg sm:text-xl font-bold tracking-tight text-white leading-none">
-                  Judes<span className="text-[#DF9F28]">Cart</span>
-                </span>
-                <span className="text-[11px] sm:text-[13px] tracking-[0.15em] font-semibold text-slate-300 uppercase mt-0.5">
-                  Shop More. Live Better.
-                </span>
-              </div>
+            <Link href="/" className="inline-flex items-center group focus-visible:outline-none" aria-label="Home">
+              <Image
+                src="/logo-white.png"
+                alt="Logo"
+                width={175}
+                height={32}
+                className="h-8 w-auto object-contain group-hover:opacity-90 transition-opacity"
+              />
             </Link>
             
             <p className="text-[11px] sm:text-sm text-slate-300 leading-relaxed max-w-sm">

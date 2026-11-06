@@ -480,30 +480,20 @@ export default function Navbar() {
               <Menu className="w-6 h-6 stroke-[1.8]" />
             </button>
 
-            {/* Center: Authentic JudesCart Brand Logo */}
+            {/* Center: Authentic Brand Logo */}
             <Link
               href="/"
-              className="flex items-center gap-1.5 group focus-visible:outline-none py-0.5"
-              aria-label="JudesCart Home"
+              className="flex items-center group focus-visible:outline-none py-1"
+              aria-label="Home"
             >
-              <div className="relative w-6 h-6 shrink-0">
-                <Image
-                  src="/logo-icon.webp"
-                  alt="JudesCart Logo"
-                  fill
-                  sizes="24px"
-                  className="object-contain group-hover:scale-105 transition-transform"
-                  priority
-                />
-              </div>
-              <div className="flex flex-col">
-                <span className="text-base font-bold tracking-tight text-[#111111] group-hover:text-[#946000] transition-colors leading-none">
-                  Judes<span className="text-[#946000]">Cart</span>
-                </span>
-                <span className="text-[9px] tracking-wider font-semibold text-[#64748B] uppercase mt-0.5 leading-none">
-                  Shop More. Live Better.
-                </span>
-              </div>
+              <Image
+                src="/logo.png"
+                alt="Logo"
+                width={130}
+                height={26}
+                className="h-6 w-auto object-contain group-hover:opacity-90 transition-opacity"
+                priority
+              />
             </Link>
 
             {/* Right: Wishlist & Cart Icons with Clean JudesCart Badges */}
@@ -579,25 +569,15 @@ export default function Navbar() {
             
             {/* Left: Logo */}
             <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
-              <Link href="/" className="group flex items-center shrink-0 pr-1 focus-visible:outline-none" aria-label="JudesCart Home">
-                <div className="relative w-10 h-10 shrink-0">
-                  <Image
-                    src="/logo-icon.webp"
-                    alt="JudesCart Logo"
-                    fill
-                    sizes="40px"
-                    className="object-contain group-hover:scale-105 transition-transform"
-                    priority
-                  />
-                </div>
-                <div className="flex flex-col ml-2.5">
-                  <span className="text-xl sm:text-2xl font-bold tracking-tight text-[#111111] group-hover:text-[#946000] transition-colors leading-none">
-                    Judes<span className="text-[#946000]">Cart</span>
-                  </span>
-                  <span className="text-[13px] tracking-wider font-semibold text-[#4B5563] uppercase mt-0.5">
-                    Shop More. Live Better.
-                  </span>
-                </div>
+              <Link href="/" className="group flex items-center shrink-0 pr-1 focus-visible:outline-none" aria-label="Home">
+                <Image
+                  src="/logo.png"
+                  alt="Logo"
+                  width={180}
+                  height={32}
+                  className="h-8 sm:h-9 w-auto object-contain group-hover:opacity-90 transition-opacity"
+                  priority
+                />
               </Link>
 
               {/* Center: Large Search Bar (Desktop) */}
@@ -917,20 +897,16 @@ export default function Navbar() {
                 <Link
                   href="/"
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="flex items-center gap-2"
+                  className="flex items-center"
+                  aria-label="Home"
                 >
-                  <div className="relative w-7 h-7 shrink-0">
-                    <Image
-                      src="/logo-icon.webp"
-                      alt="JudesCart Logo"
-                      fill
-                      sizes="28px"
-                      className="object-contain"
-                    />
-                  </div>
-                  <span className="text-lg font-bold tracking-tight text-[#111111] leading-none">
-                    Judes<span className="text-[#946000]">Cart</span>
-                  </span>
+                  <Image
+                    src="/logo.png"
+                    alt="Logo"
+                    width={130}
+                    height={26}
+                    className="h-6 w-auto object-contain"
+                  />
                 </Link>
                 <button
                   type="button"

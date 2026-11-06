@@ -20,12 +20,11 @@ export default function Footer() {
             <div className="text-left">
               <Link href="/">
                 <Image
-                  src="/logo.svg"
-                  alt="Steve John"
-                  width={0}
-                  height={0}
-                  sizes="100vw"
-                  className="h-12 md:h-20 w-auto mb-6 mx-0"
+                  src="/logo-white.png"
+                  alt="Logo"
+                  width={180}
+                  height={32}
+                  className="h-8 md:h-10 w-auto mb-6 mx-0 object-contain"
                   priority
                 />
               </Link>
@@ -124,7 +123,7 @@ export default function Footer() {
       <div className="border-t border-white/10">
         <div className="max-w-7xl mx-auto px-6 py-6 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-500">
           
-          <p>© {new Date().getFullYear()} Steve John. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} All rights reserved.</p>
 
           <div className="flex gap-6">
             <Link href="#" className="hover:text-white transition">Privacy Policy</Link>

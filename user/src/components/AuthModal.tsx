@@ -145,7 +145,7 @@ export default function AuthModal({
             <div className="relative w-9 h-9 shrink-0">
               <Image
                 src="/logo-icon.webp"
-                alt="JudesCart"
+                alt="Logo"
                 fill
                 sizes="36px"
                 className="object-contain"

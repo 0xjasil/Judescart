@@ -107,13 +107,14 @@ export default function LoginPage() {
           
           {/* Header Banner */}
           <div className="p-8 pb-6 border-b border-[#061B3A] bg-[#0A192F] text-white text-center relative overflow-hidden">
-            <div className="relative w-12 h-12 mx-auto mb-3">
+            <div className="flex justify-center mb-3">
               <Image
-                src="/logo-icon.webp"
-                alt="JudesCart Logo"
-                fill
-                sizes="48px"
-                className="object-contain"
+                src="/logo-white.png"
+                alt="Logo"
+                width={160}
+                height={32}
+                className="h-8 w-auto object-contain"
+                priority
               />
             </div>
             <p className="text-[10px] font-bold uppercase tracking-widest text-[#DF9F28]">

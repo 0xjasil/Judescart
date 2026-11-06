@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { IconInnerShadowTop } from "@tabler/icons-react";
@@ -129,12 +130,22 @@ export function AppSidebar({ user, isAdminMode = false, ...props }: AppSidebarPr
             {/* Admin Header */}
             <div className="flex h-16 items-center border-b border-sidebar-border px-6">
               <Link href="/" className="flex items-center space-x-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-sidebar-primary">
-                  <LayoutDashboard className="h-4 w-4 text-sidebar-primary-foreground" />
-                </div>
-                <span className="text-lg font-semibold text-sidebar-foreground">
-                  Admin Panel
-                </span>
+                <Image
+                  src="/logo.png"
+                  alt="Admin"
+                  width={130}
+                  height={26}
+                  className="h-6 w-auto object-contain dark:hidden"
+                  priority
+                />
+                <Image
+                  src="/logo-white.png"
+                  alt="Admin"
+                  width={130}
+                  height={26}
+                  className="h-6 w-auto object-contain hidden dark:block"
+                  priority
+                />
               </Link>
             </div>
 
