@@ -13,6 +13,11 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
+        hostname: "**.vercel.app",
+        pathname: "/**", // allow all images from deployed Vercel apps
+      },
+      {
+        protocol: "https",
         hostname: "i.pinimg.com",
         pathname: "/**", // allow all images from Pinterest
       },
