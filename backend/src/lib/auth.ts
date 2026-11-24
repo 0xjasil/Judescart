@@ -14,6 +14,8 @@ const defaultOrigins = [
   process.env.ADMIN_URL,
   process.env.NEXT_PUBLIC_ADMIN_URL,
   process.env.NEXT_PUBLIC_APP_URL,
+  "https://www.karteevo.com",
+  "https://karteevo.com",
   "https://judescart-admin.vercel.app",
   "https://judescart-ammi.vercel.app",
   "https://judescart-feg8.vercel.app",
@@ -34,7 +36,9 @@ const getTrustedOrigins = (request?: any) => {
       if (
         url.hostname.endsWith(".vercel.app") ||
         url.hostname === "localhost" ||
-        url.hostname === "127.0.0.1"
+        url.hostname === "127.0.0.1" ||
+        url.hostname === "karteevo.com" ||
+        url.hostname.endsWith(".karteevo.com")
       ) {
         if (!origins.includes(origin)) {
           origins.push(origin);

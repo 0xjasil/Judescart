@@ -36,6 +36,8 @@ const PORT = process.env.PORT || 5000;
 
 const allowedOrigins = [
     process.env.FRONTEND_URL || 'http://localhost:3000',
+    'https://www.karteevo.com',
+    'https://karteevo.com',
     'https://judescart-admin.vercel.app',
     'https://judescart-feg8.vercel.app',
     'https://judescart-ammi.vercel.app',
@@ -56,6 +58,8 @@ const isAllowedOrigin = (origin: string) => {
             url.hostname === 'localhost' ||
             url.hostname === '127.0.0.1' ||
             url.hostname.endsWith('.vercel.app') ||
+            url.hostname === 'karteevo.com' ||
+            url.hostname.endsWith('.karteevo.com') ||
             allowedOrigins.includes(origin)
         );
     } catch {
