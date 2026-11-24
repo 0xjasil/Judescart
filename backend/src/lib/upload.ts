@@ -20,16 +20,20 @@ const getMimeType = (filename: string): string => {
     }
 };
 
+// Cloudinary is temporarily disabled per user request.
+// Set ENABLE_CLOUDINARY=true in environment variables to re-enable cloud upload.
+const ENABLE_CLOUD_STORAGE = process.env.ENABLE_CLOUDINARY === 'true';
+
 export const uploadToCloudinary = async (fileBuffer: Buffer, originalName: string) => {
-    const hasCloudinary = Boolean(
+    const mimeType = getMimeType(originalName);
+    const base64 = fileBuffer.toString('base64');
+    const dataUri = `data:${mimeType};base64,${base64}`;
+
+    const hasCloudinary = ENABLE_CLOUD_STORAGE && Boolean(
         process.env.CLOUDINARY_CLOUD_NAME &&
         process.env.CLOUDINARY_API_KEY &&
         process.env.CLOUDINARY_API_SECRET
     );
-
-    const mimeType = getMimeType(originalName);
-    const base64 = fileBuffer.toString('base64');
-    const dataUri = `data:${mimeType};base64,${base64}`;
 
     if (hasCloudinary) {
         try {
@@ -41,43 +45,13 @@ export const uploadToCloudinary = async (fileBuffer: Buffer, originalName: strin
                 return uploadResult.secure_url;
             }
         } catch (error: any) {
-            console.warn('Cloudinary upload failed, falling back:', error?.message || error);
+            console.warn('Cloudinary upload failed, falling back to data URL:', error?.message || error);
         }
     }
 
-    // In a serverless environment (Vercel, AWS Lambda), local disk (/var/task) is strictly read-only.
-    // Falling back to local disk write will cause "ENOENT: mkdir /var/task/uploads".
-    // We safely return the base64 data URI so product creation always succeeds in serverless.
-    const isServerless = Boolean(
-        process.env.VERCEL ||
-        process.env.AWS_LAMBDA_FUNCTION_NAME ||
-        process.env.LAMBDA_TASK_ROOT
-    );
-
-    if (isServerless) {
-        console.warn(
-            '⚠️ [Upload Notice] Cloudinary is not configured or failed on Vercel. Storing image as inline Data URL. ' +
-            'For optimal production performance, configure CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET in your Vercel project settings.'
-        );
-        return dataUri;
-    }
-
-    // Local development storage fallback
-    try {
-        const uploadDir = path.join(process.cwd(), 'uploads');
-        if (!fs.existsSync(uploadDir)) {
-            fs.mkdirSync(uploadDir, { recursive: true });
-        }
-        const ext = path.extname(originalName) || '.jpg';
-        const fileName = `${Date.now()}-${Math.random().toString(36).substring(2, 9)}${ext}`;
-        const filePath = path.join(uploadDir, fileName);
-        fs.writeFileSync(filePath, fileBuffer);
-        const baseUrl = process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 5000}`;
-        return `${baseUrl}/uploads/${fileName}`;
-    } catch (localErr) {
-        console.warn('Local disk write failed, falling back to data URL:', localErr);
-        return dataUri;
-    }
+    // Cloud upload temporarily removed: return Base64 Data URL directly
+    // This requires 0 external services, 0 disk writes, and works seamlessly in Vercel Serverless & local
+    return dataUri;
 };
 
 export const safeDeleteImage = async (imageUrl?: string | null) => {
